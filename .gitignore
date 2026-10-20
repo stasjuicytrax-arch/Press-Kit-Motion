@@ -9,3 +9,4 @@ dist
 .impeccable/config.local.json
 .DS_Store
 Thumbs.db
+.cache/
