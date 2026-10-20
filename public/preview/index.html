@@ -1,0 +1,85 @@
+<!doctype html>
+<!--
+  Служебная страница для владельца: смотреть записи сайтов артистов (TZ.md §13, пункт 2).
+  Не часть лендинга, не индексируется. Значения цветов — копия токенов из src/styles/tokens.css.
+-->
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Записи сайтов · Press Kit Motion</title>
+    <style>
+      :root {
+        --bg: #f2f2ee; --surface: #e4e5de; --ink: #111111; --muted: #5a5b55; --field: #0c0e0a;
+        --radius-screen: 28px; --margin: clamp(16px, 2.2vw, 32px); --gutter: clamp(12px, 1.5vw, 24px);
+        color-scheme: light;
+      }
+      * { box-sizing: border-box; margin: 0; }
+      body {
+        background: var(--bg); color: var(--ink); padding: 48px var(--margin) 96px;
+        font: 400 17px/1.5 "Onest", system-ui, sans-serif; letter-spacing: -0.005em;
+      }
+      ::selection { background: #c6f135; color: #111; }
+      h1 { font-size: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem); font-weight: 600; letter-spacing: -0.04em; line-height: 0.95; }
+      .lead { color: var(--muted); max-width: 60ch; margin-top: 16px; }
+      .switch { display: flex; gap: 8px; margin-top: 32px; }
+      .switch button {
+        font: inherit; border: 0; border-radius: 999px; padding: 10px 20px; min-height: 44px;
+        background: var(--surface); color: var(--ink); cursor: pointer;
+      }
+      .switch button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+      .switch button:focus-visible, a:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+      .grid { display: grid; gap: 48px var(--gutter); margin-top: 48px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+      .desktop .grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); }
+      video { width: 100%; border-radius: var(--radius-screen); background: var(--field); display: block; }
+      .mobile video { aspect-ratio: 390 / 844; }
+      .desktop video { aspect-ratio: 1440 / 900; }
+      h2 { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.03em; margin-top: 16px; }
+      .meta { color: var(--muted); font-size: 14px; }
+      a { color: inherit; text-underline-offset: 0.2em; text-decoration-thickness: 1.5px; }
+    </style>
+  </head>
+  <body class="mobile">
+    <h1>Записи сайтов артистов</h1>
+    <p class="lead">
+      Материал для 3D-ленты, секции «Работы» и панорамы. Каждый ролик около 11 секунд, без звука, до 1.5 МБ.
+      Служебная страница, на лендинге её нет.
+    </p>
+    <div class="switch" role="group" aria-label="Устройство">
+      <button type="button" data-device="mobile" aria-pressed="true">Телефон</button>
+      <button type="button" data-device="desktop" aria-pressed="false">Десктоп</button>
+    </div>
+    <div class="grid" id="grid"></div>
+    <script>
+      const SITES = [
+        ["nagoo", "DJ Nagoo", "Бахрейн · DJ и продюсер с 2005 года", "https://djnagoo.site"],
+        ["lolly", "Lolly", "Янгон · bass и drum & bass", "https://djlolly.site/"],
+        ["kingdom", "39 Kingdom", "дуэт · melodic techno", "https://stasjuicytrax-arch.github.io/39Kingdom/"],
+        ["sunrise", "Sunrise", "Бангкок и Паттайя", "https://stasjuicytrax-arch.github.io/djsunrise/"],
+        ["toropov", "Стас Торопов", "Пермь · ведущий мероприятий", "https://stastoropov-site.vercel.app/"],
+      ];
+      const grid = document.getElementById("grid");
+      function render(device) {
+        document.body.className = device;
+        grid.innerHTML = SITES.map(([key, name, meta, url]) => {
+          const dir = `../media/sites/${key}/`;
+          return `<figure>
+            <video autoplay muted loop playsinline preload="metadata" poster="${dir}${device}-poster.jpg">
+              <source src="${dir}${device}.webm" type="video/webm" />
+              <source src="${dir}${device}.mp4" type="video/mp4" />
+            </video>
+            <figcaption><h2>${name}</h2><p class="meta">${meta} · <a href="${url}" target="_blank" rel="noopener">Открыть сайт</a></p></figcaption>
+          </figure>`;
+        }).join("");
+      }
+      document.querySelectorAll("[data-device]").forEach((b) =>
+        b.addEventListener("click", () => {
+          document.querySelectorAll("[data-device]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+          render(b.dataset.device);
+        }),
+      );
+      render("mobile");
+    </script>
+  </body>
+</html>

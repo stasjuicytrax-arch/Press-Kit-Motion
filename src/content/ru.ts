@@ -25,6 +25,51 @@ export const ru = {
     geo: "Сайты для артистов из Петербурга, Перми, Бангкока и Янгона",
     toWork: "Смотреть работы",
   },
+  work: {
+    h2: "Пять сайтов, которые можно открыть прямо сейчас",
+    open: "Открыть сайт",
+    // TODO-OWNER: подтвердить разрешение артистов на показ работ.
+    // Подписи сверены с сайтами 2026-10-21.
+    artists: [
+      {
+        key: "nagoo",
+        name: "DJ Nagoo",
+        // TODO-OWNER: в ТЗ «Санкт-Петербург», на сайте «Live from Bahrain»
+        // («Best DJ Saint Petersburg — 2018» там только награда). Сейчас по сайту.
+        place: "Бахрейн",
+        genre: "DJ и продюсер с 2005 года",
+        url: "https://djnagoo.site",
+      },
+      {
+        key: "lolly",
+        name: "Lolly",
+        place: "Янгон",
+        genre: "bass и drum & bass",
+        url: "https://djlolly.site/",
+      },
+      {
+        key: "kingdom",
+        name: "39 Kingdom",
+        place: "дуэт",
+        genre: "melodic techno",
+        url: "https://stasjuicytrax-arch.github.io/39Kingdom/",
+      },
+      {
+        key: "sunrise",
+        name: "Sunrise",
+        place: "Бангкок и Паттайя",
+        genre: "резидент клубов DJ Mag Top 100",
+        url: "https://stasjuicytrax-arch.github.io/djsunrise/",
+      },
+      {
+        key: "toropov",
+        name: "Стас Торопов",
+        place: "Пермь",
+        genre: "ведущий мероприятий",
+        url: "https://stastoropov-site.vercel.app/",
+      },
+    ],
+  },
   telegram: {
     defaultText: "Привет! Хочу сайт-пресс-кит.",
   },
