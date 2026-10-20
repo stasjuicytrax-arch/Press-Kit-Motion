@@ -1,0 +1,106 @@
+@import "@fontsource-variable/onest";
+@import "./tokens.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    font-kerning: normal;
+    accent-color: var(--accent);
+    caret-color: var(--ink);
+    scrollbar-color: var(--scrollbar-thumb) var(--bg);
+    scrollbar-width: thin;
+  }
+
+  body {
+    min-height: 100dvh;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: var(--step-body);
+    line-height: var(--leading-body);
+    letter-spacing: var(--track-body);
+    font-weight: 400;
+    overflow-x: clip;
+  }
+
+  ::selection {
+    background: var(--selection);
+    color: var(--accent-ink);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: var(--bg);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+    border-radius: var(--radius-pill);
+    border: 3px solid var(--bg);
+  }
+
+  h1, h2, h3 {
+    font-weight: 600;
+    letter-spacing: var(--track-head);
+    line-height: var(--leading-head);
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  a {
+    color: inherit;
+    text-decoration-thickness: var(--underline-thickness);
+    text-underline-offset: var(--underline-offset);
+  }
+
+  :focus {
+    outline: none;
+  }
+  :focus-visible {
+    outline: var(--focus-width) solid var(--focus-color);
+    outline-offset: var(--focus-offset);
+  }
+
+  input, textarea, button, select {
+    font: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--muted);
+    opacity: 1;
+  }
+
+  img, video, canvas, svg {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+  }
+}

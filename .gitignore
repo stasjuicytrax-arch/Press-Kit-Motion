@@ -1,0 +1,11 @@
+node_modules
+dist
+.vercel
+.env
+.env.local
+*.log
+.refs/
+.taste-skill/
+.impeccable/config.local.json
+.DS_Store
+Thumbs.db

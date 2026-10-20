@@ -1,0 +1,169 @@
+<title>Press Kit Motion палитры</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: one column of five full-width palette stages; each stage = the real hero idea in that palette (monument wordmark + dark artist screen + liquid glass CTA). Light-only on purpose: the site is light. */
+:root{
+  color-scheme: light;
+  --page:#ECEDEF; --ink:#0B0B0C; --muted:#55585E;
+  --font:"Onest", "Inter Tight", system-ui, sans-serif;
+}
+*{box-sizing:border-box}
+body{background:var(--page);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left,0px));padding-right:max(16px, env(safe-area-inset-right,0px));padding-block:40px 80px}
+.wrap{max-width:1200px;margin:0 auto;display:grid;gap:48px}
+header h1{font-size:clamp(2rem,1.2rem + 3.5vw,3.75rem);line-height:.98;letter-spacing:-.04em;font-weight:600;margin:0 0 16px;text-wrap:balance}
+header p{max-width:62ch;margin:0;color:var(--muted);font-size:1.0625rem}
+
+.pal{--bg:#fff;--surface:#f2f2f2;--ink2:#0a0a0a;--muted2:#666;--accent:#000;--accent-ink:#fff;--screen:#0B0D12;--glow1:#ff3b6b;--glow2:#3b6bff;
+  background:var(--bg);color:var(--ink2);border-radius:28px;overflow:hidden;display:grid}
+.stage{position:relative;height:clamp(380px,52vw,560px);overflow:hidden;perspective:1400px}
+.mono{position:absolute;left:0;right:0;bottom:-0.12em;margin:0;font-weight:600;letter-spacing:-.06em;line-height:.8;
+  font-size:clamp(56px,12.6vw,152px);white-space:nowrap;padding-left:24px;color:var(--ink2);z-index:1}
+.nav{position:absolute;top:20px;left:24px;right:24px;display:flex;justify-content:space-between;align-items:center;z-index:4;font-size:14px;font-weight:500}
+.nav span:first-child{font-weight:700;letter-spacing:-.02em}
+.screens{position:absolute;inset:0;display:flex;justify-content:center;align-items:center;transform-style:preserve-3d;z-index:2;pointer-events:none}
+.scr{position:absolute;width:clamp(150px,22vw,260px);aspect-ratio:9/16;border-radius:18px;background:var(--screen);overflow:hidden;
+  box-shadow:0 30px 60px -20px rgba(0,0,0,.35)}
+.scr::before{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 40% at 30% 30%, var(--glow1), transparent 70%),
+  radial-gradient(50% 40% at 75% 65%, var(--glow2), transparent 70%);opacity:.85}
+.scr::after{content:attr(data-name);position:absolute;left:14px;bottom:14px;color:#fff;font-weight:700;font-size:clamp(16px,2vw,24px);letter-spacing:-.03em}
+.s1{transform:translate3d(-58%,-6%,-220px) rotateY(32deg)}
+.s2{transform:translate3d(0,-8%,0) rotateY(0)}
+.s3{transform:translate3d(58%,-6%,-220px) rotateY(-32deg)}
+.s1,.s3{opacity:.9}
+@media (prefers-reduced-motion:no-preference){
+  .s2{animation:float 6s ease-in-out infinite}
+  @keyframes float{50%{transform:translate3d(0,-11%,0) rotateY(-4deg)}}
+}
+.cta{position:absolute;z-index:5;left:50%;top:58%;transform:translateX(-50%);}
+.glass{position:relative;display:inline-flex;align-items:center;gap:10px;padding:16px 28px;border-radius:999px;border:0;cursor:pointer;
+  font:600 16px/1 var(--font);color:var(--ink2);
+  background:color-mix(in oklch, var(--bg) 22%, transparent);
+  -webkit-backdrop-filter:blur(6px) saturate(170%);backdrop-filter:url(#lg) blur(3px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(255,255,255,.25), inset 0 0 0 1px rgba(255,255,255,.35), 0 12px 30px -10px rgba(0,0,0,.35);
+  transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.glass:hover{transform:scale(1.04)}
+.glass:active{transform:scale(.97)}
+.glass:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.glass .dot{width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.solid{display:inline-flex;align-items:center;padding:16px 26px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-weight:600;font-size:15px}
+
+.info{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:32px;padding:28px 24px 28px;background:var(--bg)}
+.info h2{margin:0 0 8px;font-size:clamp(1.5rem,1.2rem + 1.2vw,2.25rem);letter-spacing:-.035em;line-height:1;font-weight:600}
+.info p{margin:0 0 16px;color:var(--muted2);max-width:52ch}
+.sw{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.sw div{border-radius:14px;height:72px;display:flex;align-items:flex-end;padding:8px;font-size:12px;font-weight:500;font-variant-numeric:tabular-nums}
+.sw small{display:block}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.pick{border:0;border-radius:999px;padding:12px 20px;font:600 15px/1 var(--font);background:var(--ink2);color:var(--bg);cursor:pointer}
+.pick[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.info{grid-template-columns:1fr}.sw div{height:60px}.cta{top:62%}}
+
+/* palettes */
+#p1{--bg:#F4F6F9;--surface:#E6EBF2;--ink2:#0C0F14;--muted2:#545C69;--accent:#2B59FF;--accent-ink:#fff;--screen:#0A0D14;--glow1:#2B59FF;--glow2:#7FD6FF}
+#p2{--bg:#FAFAF8;--surface:#EEEEEA;--ink2:#0B0B0B;--muted2:#5F5F5B;--accent:#E3261B;--accent-ink:#fff;--screen:#120808;--glow1:#E3261B;--glow2:#FF8A5B}
+#p3{--bg:#F2F2EE;--surface:#E4E5DE;--ink2:#111111;--muted2:#5A5B55;--accent:#C6F135;--accent-ink:#111;--screen:#0C0E0A;--glow1:#C6F135;--glow2:#2FD6A0}
+#p4{--bg:#F6F4F1;--surface:#ECE8E2;--ink2:#17130F;--muted2:#635B52;--accent:#FF5B14;--accent-ink:#fff;--screen:#140D08;--glow1:#FF5B14;--glow2:#FFC46B}
+#p5{--bg:#EDEEF0;--surface:#DFE1E5;--ink2:#0A0A0A;--muted2:#565A60;--accent:#0A0A0A;--accent-ink:#fff;--screen:#08090B;--glow1:#C9D3E0;--glow2:#6E7B8C}
+.note{background:#fff;border-radius:20px;padding:20px 24px;color:var(--muted)}
+.note b{color:var(--ink)}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="lg" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="n"/>
+    <feGaussianBlur in="n" stdDeviation="2" result="nb"/>
+    <feDisplacementMap in="SourceGraphic" in2="nb" scale="38" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="wrap">
+  <header>
+    <h1>Пять светлых палитр для Press Kit Motion</h1>
+    <p>Каждая показана на идее первого экрана: огромное имя «Press Kit Motion», тёмные сайты артистов парят в 3D над светлым фоном, а кнопка «Написать в Телеграм» сделана из жидкого стекла и преломляет то, что под ней. Выберите одну и напишите номер в чат.</p>
+  </header>
+
+  <section class="pal" id="p1" aria-labelledby="t1">
+    <div class="stage">
+      <div class="nav"><span>PKM</span><span>Работы · Цена · FAQ</span></div>
+      <div class="screens"><div class="scr s1" data-name="LOLLY"></div><div class="scr s2" data-name="NAGOO"></div><div class="scr s3" data-name="SUNRISE"></div></div>
+      <div class="cta"><button class="glass"><span class="dot"></span>Написать в Телеграм</button></div>
+      <p class="mono" aria-hidden="true">Press Kit Motion</p>
+    </div>
+    <div class="info">
+      <div><h2 id="t1">1. Лёд</h2><p>Холодный белый, графит и электрический синий. Самая «технологичная» и стеклянная: стекло на холодном фоне читается лучше всего. Ближе всего к референсу Nexora.</p>
+        <div class="row"><span class="solid">Написать в Телеграм</span><button class="pick" aria-pressed="false" data-n="1">Выбрать «Лёд»</button></div></div>
+      <div class="sw"><div style="background:#F4F6F9;box-shadow:inset 0 0 0 1px #0001">#F4F6F9<br>фон</div><div style="background:#E6EBF2">#E6EBF2<br>панель</div><div style="background:#0C0F14;color:#fff">#0C0F14<br>текст</div><div style="background:#545C69;color:#fff">#545C69<br>второй</div><div style="background:#2B59FF;color:#fff">#2B59FF<br>акцент</div></div>
+    </div>
+  </section>
+
+  <section class="pal" id="p2" aria-labelledby="t2">
+    <div class="stage">
+      <div class="nav"><span>PKM</span><span>Работы · Цена · FAQ</span></div>
+      <div class="screens"><div class="scr s1" data-name="39 KINGDOM"></div><div class="scr s2" data-name="NAGOO"></div><div class="scr s3" data-name="LOLLY"></div></div>
+      <div class="cta"><button class="glass"><span class="dot"></span>Написать в Телеграм</button></div>
+      <p class="mono" aria-hidden="true">Press Kit Motion</p>
+    </div>
+    <div class="info">
+      <div><h2 id="t2">2. Сигнал</h2><p>Почти белый, чёрный и сигнальный красный. Клубная энергия и плакатная резкость, как в референсе kozyuk. Красный только на кнопке и одном акценте на экран.</p>
+        <div class="row"><span class="solid">Написать в Телеграм</span><button class="pick" aria-pressed="false" data-n="2">Выбрать «Сигнал»</button></div></div>
+      <div class="sw"><div style="background:#FAFAF8;box-shadow:inset 0 0 0 1px #0001">#FAFAF8<br>фон</div><div style="background:#EEEEEA">#EEEEEA<br>панель</div><div style="background:#0B0B0B;color:#fff">#0B0B0B<br>текст</div><div style="background:#5F5F5B;color:#fff">#5F5F5B<br>второй</div><div style="background:#E3261B;color:#fff">#E3261B<br>акцент</div></div>
+    </div>
+  </section>
+
+  <section class="pal" id="p3" aria-labelledby="t3">
+    <div class="stage">
+      <div class="nav"><span>PKM</span><span>Работы · Цена · FAQ</span></div>
+      <div class="screens"><div class="scr s1" data-name="SUNRISE"></div><div class="scr s2" data-name="LOLLY"></div><div class="scr s3" data-name="NAGOO"></div></div>
+      <div class="cta"><button class="glass"><span class="dot"></span>Написать в Телеграм</button></div>
+      <p class="mono" aria-hidden="true">Press Kit Motion</p>
+    </div>
+    <div class="info">
+      <div><h2 id="t3">3. Кислота</h2><p>Жемчужно-серый, чёрный и кислотный лайм. Рейв, флаеры, техно-сцена. Самая дерзкая: лайм на светлом фоне не работает как цвет текста, только как заливка кнопок и плашек.</p>
+        <div class="row"><span class="solid">Написать в Телеграм</span><button class="pick" aria-pressed="false" data-n="3">Выбрать «Кислота»</button></div></div>
+      <div class="sw"><div style="background:#F2F2EE;box-shadow:inset 0 0 0 1px #0001">#F2F2EE<br>фон</div><div style="background:#E4E5DE">#E4E5DE<br>панель</div><div style="background:#111111;color:#fff">#111111<br>текст</div><div style="background:#5A5B55;color:#fff">#5A5B55<br>второй</div><div style="background:#C6F135">#C6F135<br>акцент</div></div>
+    </div>
+  </section>
+
+  <section class="pal" id="p4" aria-labelledby="t4">
+    <div class="stage">
+      <div class="nav"><span>PKM</span><span>Работы · Цена · FAQ</span></div>
+      <div class="screens"><div class="scr s1" data-name="NAGOO"></div><div class="scr s2" data-name="SUNRISE"></div><div class="scr s3" data-name="39 KINGDOM"></div></div>
+      <div class="cta"><button class="glass"><span class="dot"></span>Написать в Телеграм</button></div>
+      <p class="mono" aria-hidden="true">Press Kit Motion</p>
+    </div>
+    <div class="info">
+      <div><h2 id="t4">4. Рассвет</h2><p>Тёплый светлый, тёмно-коричневый и оранжевый, как свет на фестивальной сцене. Мягче и «живее» остальных. Ближе к референсу Dominic, только в светлом.</p>
+        <div class="row"><span class="solid">Написать в Телеграм</span><button class="pick" aria-pressed="false" data-n="4">Выбрать «Рассвет»</button></div></div>
+      <div class="sw"><div style="background:#F6F4F1;box-shadow:inset 0 0 0 1px #0001">#F6F4F1<br>фон</div><div style="background:#ECE8E2">#ECE8E2<br>панель</div><div style="background:#17130F;color:#fff">#17130F<br>текст</div><div style="background:#635B52;color:#fff">#635B52<br>второй</div><div style="background:#FF5B14;color:#fff">#FF5B14<br>акцент</div></div>
+    </div>
+  </section>
+
+  <section class="pal" id="p5" aria-labelledby="t5">
+    <div class="stage">
+      <div class="nav"><span>PKM</span><span>Работы · Цена · FAQ</span></div>
+      <div class="screens"><div class="scr s1" data-name="LOLLY"></div><div class="scr s2" data-name="39 KINGDOM"></div><div class="scr s3" data-name="SUNRISE"></div></div>
+      <div class="cta"><button class="glass"><span class="dot"></span>Написать в Телеграм</button></div>
+      <p class="mono" aria-hidden="true">Press Kit Motion</p>
+    </div>
+    <div class="info">
+      <div><h2 id="t5">5. Хром</h2><p>Светлый алюминий, чёрный и никаких цветных акцентов: весь цвет приходит из сайтов артистов и 3D-хрома. Самая премиальная и «эппловская», как референс MR L Production.</p>
+        <div class="row"><span class="solid">Написать в Телеграм</span><button class="pick" aria-pressed="false" data-n="5">Выбрать «Хром»</button></div></div>
+      <div class="sw"><div style="background:#EDEEF0;box-shadow:inset 0 0 0 1px #0001">#EDEEF0<br>фон</div><div style="background:#DFE1E5">#DFE1E5<br>панель</div><div style="background:#0A0A0A;color:#fff">#0A0A0A<br>текст</div><div style="background:#565A60;color:#fff">#565A60<br>второй</div><div style="background:linear-gradient(135deg,#f5f6f8,#9aa3ae 45%,#e9ecef 60%,#5b636d)">хром<br>3D</div></div>
+    </div>
+  </section>
+
+  <p class="note" id="out"><b>Как выбрать:</b> нажмите «Выбрать» под понравившейся палитрой и напишите её номер в чат. Жидкое стекло полностью видно в Chrome и Edge, в Safari кнопка будет просто матовой.</p>
+</div>
+<script>
+document.querySelectorAll('.pick').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.pick').forEach(x=>x.setAttribute('aria-pressed','false'));
+  b.setAttribute('aria-pressed','true');
+  const n=b.dataset.n, name=b.closest('.pal').querySelector('h2').textContent;
+  document.getElementById('out').innerHTML='<b>Выбрано: '+name+'.</b> Напишите в чат «палитра '+n+'», и я зафиксирую её в дизайн-системе.';
+}));
+</script>

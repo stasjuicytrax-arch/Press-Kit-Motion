@@ -1,0 +1,148 @@
+/*
+ * Токены Press Kit Motion. Единственный источник значений — DESIGN.md.
+ * Меняем значение в DESIGN.md → здесь → компоненты подхватывают через Tailwind.
+ */
+:root {
+  color-scheme: light;
+
+  /* §2 Цвета — палитра «Кислота» */
+  --bg: #F2F2EE;
+  --surface: #E4E5DE;
+  --surface-2: #FAFAF7;
+  --ink: #111111;
+  --muted: #5A5B55;
+  --accent: #C6F135;
+  --accent-ink: #111111;
+  --accent-deep: #9BC41A;
+  --field: #0C0E0A;
+  --field-ink: #F2F2EE;
+  --glow-1: #C6F135;
+  --glow-2: #2FD6A0;
+  --selection: #C6F135;
+  --scrollbar-thumb: rgb(17 17 17 / 0.4);
+
+  /* §3 Типографика */
+  --font-sans: "Onest Variable", "Onest", "Inter Tight", system-ui, sans-serif;
+  --step-mono: clamp(96px, 15vw, 240px);
+  --step-head: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  /* Статичный монумент (reduced-motion, без JS): имя ровно от поля до поля.
+     Делитель = ширина строки в em при трекинге -0.06em. */
+  --mono-static-em: 6.8;
+  --step-mono-static: min(var(--step-mono), calc((100vw - 2 * var(--margin)) / var(--mono-static-em)));
+
+  --track-mono: -0.06em;
+  --track-head: -0.04em;
+  --track-body: -0.005em;
+  --leading-mono: 0.8;
+  --leading-head: 0.95;
+  --leading-body: 1.5;
+  --leading-lead: 1.25;
+  --measure-lead: 36ch;
+  --measure-body: 65ch;
+
+  /* §4 Сетка и отступы */
+  --cols: 4;
+  --margin: clamp(16px, 2.2vw, 32px);
+  --gutter: clamp(12px, 1.5vw, 24px);
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+  --space-10: 128px;
+  --space-11: 192px;
+  --space-12: 240px;
+  --tap: 44px;
+  --button-h: 56px;
+  --button-inset: calc((var(--button-h) - var(--tap)) / 2);
+  --icon-sm: 16px;
+  --icon-md: 20px;
+
+  /* §5 Глубина и стекло */
+  --shadow-float: 0 30px 60px -24px rgb(17 17 17 / 0.28), 0 8px 16px -8px rgb(17 17 17 / 0.12);
+  --glass-tint: rgb(250 250 247 / 0.22);
+  --glass-tint-dark: rgb(12 14 10 / 0.28);
+  --glass-blur: 3px;
+  --glass-blur-fallback: 14px;
+  --glass-saturate: 170%;
+  --glass-refraction: 38;
+  --glass-rim: inset 0 1px 0 rgb(255 255 255 / 0.85),
+               inset 0 -1px 0 rgb(255 255 255 / 0.25),
+               inset 0 0 0 1px rgb(255 255 255 / 0.35);
+
+  /* §6 Формы */
+  --radius-pill: 999px;
+  --radius-screen: 28px;
+  --radius-panel: 20px;
+  --radius-none: 0;
+
+  /* §7 Фокус */
+  --focus-width: 2px;
+  --focus-offset: 4px;
+  --focus-color: var(--ink);
+  --underline-offset: 0.2em;
+  --underline-thickness: 1.5px;
+
+  /* §8 Движение */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-fast: 200ms;
+  --dur-base: 450ms;
+  --dur-slow: 800ms;
+  --dur-scene: 1400ms;
+  --dur-reduced: 150ms;
+  --stagger: 70ms;
+  --rise: 24px;
+  --rise-blur: 8px;
+  --press-scale: 0.97;
+  --hover-scale: 1.03;
+  --nudge: 2px;
+}
+
+/* На телефоне монумент 34vw (DESIGN.md §3) */
+@media (max-width: 767px) {
+  :root {
+    --step-mono: 34vw;
+    /* Две строки «Press Kit / Motion»: делитель по длинной строке */
+    --mono-static-em: 3.66;
+  }
+}
+
+/* §4 Сетка: 4 → 6 → 12 колонок */
+@media (min-width: 768px) {
+  :root {
+    --cols: 6;
+  }
+}
+@media (min-width: 1024px) {
+  :root {
+    --cols: 12;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: var(--dur-reduced);
+    --dur-base: var(--dur-reduced);
+    --dur-slow: var(--dur-reduced);
+    --dur-scene: var(--dur-reduced);
+    --stagger: 0ms;
+    --rise: 0px;
+    --rise-blur: 0px;
+    --hover-scale: 1;
+    --nudge: 0px;
+  }
+}
+
+/* Тёмный блок (финальный CTA): фокус лаймом */
+.surface-field {
+  --focus-color: var(--accent);
+}
