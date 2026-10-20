@@ -93,6 +93,149 @@
   }
 }
 
+@layer components {
+  /* Навигация-капсула: по центру сверху, на телефоне на всю ширину между полями */
+  .nav-shell {
+    position: fixed;
+    z-index: 50;
+    top: var(--nav-top);
+    left: var(--margin);
+    right: var(--margin);
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+  }
+  .nav-shell > nav {
+    width: 100%;
+  }
+  @media (min-width: 768px) {
+    .nav-shell > nav {
+      width: auto;
+    }
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+  .nav-link:hover {
+    background-color: var(--glass-tint);
+  }
+
+  /* «Меню»: слово + две линии, которые собираются в крестик */
+  .burger {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: var(--tap);
+    padding-inline: var(--space-4);
+    border-radius: var(--radius-pill);
+    font-weight: 500;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+  }
+  .burger-icon {
+    position: relative;
+    width: var(--burger-w);
+    height: var(--burger-gap);
+  }
+  .burger-icon > span {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: var(--line);
+    background: currentColor;
+    border-radius: var(--radius-pill);
+    transition: transform var(--dur-base) var(--ease-spring);
+  }
+  .burger-icon > span:first-child {
+    top: 0;
+  }
+  .burger-icon > span:last-child {
+    bottom: 0;
+  }
+  .burger[data-open="true"] .burger-icon > span:first-child {
+    transform: translateY(calc((var(--burger-gap) - var(--line)) / 2)) rotate(45deg);
+  }
+  .burger[data-open="true"] .burger-icon > span:last-child {
+    transform: translateY(calc((var(--burger-gap) - var(--line)) / -2)) rotate(-45deg);
+  }
+
+  /* Полноэкранное меню из матового стекла */
+  .mobile-menu {
+    position: fixed !important;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: calc(var(--nav-top) + var(--button-h) + var(--space-7)) var(--margin) calc(var(--sticky-bottom) + var(--space-5));
+    background: var(--menu-veil);
+    opacity: 0;
+    visibility: hidden;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      visibility 0s linear var(--dur-base);
+  }
+  .mobile-menu[data-open="true"] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .menu-item {
+    opacity: 0;
+    transform: translateY(var(--rise));
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-slow) var(--ease-out);
+  }
+  .mobile-menu[data-open="true"] .menu-item {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--stagger-menu) * var(--i));
+  }
+  .menu-open,
+  .menu-open body {
+    overflow: hidden;
+  }
+
+  /* Липкая кнопка на телефоне */
+  .sticky-cta {
+    position: fixed;
+    z-index: 30;
+    left: var(--margin);
+    right: var(--margin);
+    bottom: var(--sticky-bottom);
+    transform: translateY(calc(100% + var(--sticky-bottom)));
+    transition: transform var(--dur-base) var(--ease-spring);
+  }
+  .sticky-cta[data-shown="true"] {
+    transform: none;
+  }
+  .menu-open .sticky-cta {
+    transform: translateY(calc(100% + var(--sticky-bottom)));
+  }
+}
+
+/* Стекло без прозрачности по просьбе системы (DESIGN.md §5) */
+@media (prefers-reduced-transparency: reduce) {
+  .lg-lens {
+    backdrop-filter: none !important; /* taste-skill-ignore: выключает стекло */
+    -webkit-backdrop-filter: none !important; /* taste-skill-ignore */
+    background: var(--surface-2);
+  }
+  .mobile-menu {
+    background: var(--surface-2);
+  }
+}
+
 @layer utilities {
   .tabular {
     font-variant-numeric: tabular-nums;

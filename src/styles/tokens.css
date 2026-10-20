@@ -39,7 +39,7 @@
   --leading-mono: 0.8;
   --leading-head: 0.95;
   --leading-body: 1.5;
-  --leading-lead: 1.25;
+  --leading-lead: 1.3;
   --measure-lead: 36ch;
   --measure-body: 65ch;
 
@@ -64,6 +64,21 @@
   --button-inset: calc((var(--button-h) - var(--tap)) / 2);
   --icon-sm: 16px;
   --icon-md: 20px;
+  --dot: 10px;
+  /* Навигация и липкая кнопка: отступ от края с учётом safe-area (DESIGN.md §7) */
+  --float-gap: 20px;
+  --nav-top: calc(env(safe-area-inset-top, 0px) + var(--float-gap));
+  --sticky-bottom: calc(env(safe-area-inset-bottom, 0px) + var(--float-gap));
+  --line: 1.5px;
+  --burger-w: 18px;
+  --burger-gap: 6px;
+  --stagger-menu: 60ms;
+  /* Вуаль полноэкранного меню поверх матового стекла: ссылки читаются над любым фоном */
+  --menu-veil: rgb(242 242 238 / 0.88);
+  /* Стекло: сила преломления по местам и плотная заливка главной стеклянной кнопки */
+  --glass-refraction-nav: 14;
+  --glass-refraction-cta: 18;
+  --glass-fill-strong: rgb(250 250 247 / 0.72);
 
   /* §5 Глубина и стекло */
   --shadow-float: 0 30px 60px -24px rgb(17 17 17 / 0.28), 0 8px 16px -8px rgb(17 17 17 / 0.12);
@@ -135,6 +150,7 @@
     --dur-slow: var(--dur-reduced);
     --dur-scene: var(--dur-reduced);
     --stagger: 0ms;
+    --stagger-menu: 0ms;
     --rise: 0px;
     --rise-blur: 0px;
     --hover-scale: 1;

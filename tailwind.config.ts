@@ -30,6 +30,7 @@ export default {
       "accent-deep": v("accent-deep"),
       field: v("field"),
       "field-ink": v("field-ink"),
+      "glass-fill": v("glass-fill-strong"),
     },
     spacing: {
       0: "0",
@@ -42,6 +43,7 @@ export default {
       inset: v("button-inset"),
       "icon-sm": v("icon-sm"),
       "icon-md": v("icon-md"),
+      dot: v("dot"),
     },
     fontFamily: {
       sans: v("font-sans"),

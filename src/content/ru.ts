@@ -12,6 +12,21 @@ export const ru = {
   brand: "Press Kit Motion",
   // Монумент в статичном виде: на телефоне две строки, с md одна
   brandLines: ["Press Kit", "Motion"],
+  nav: {
+    label: "Основная навигация",
+    home: "Press Kit Motion, наверх",
+    links: [
+      { href: "#work", label: "Работы" },
+      { href: "#price", label: "Цена" },
+      { href: "#faq", label: "Вопросы" },
+    ],
+    write: "Написать",
+    menu: "Меню",
+    close: "Закрыть",
+  },
+  sticky: {
+    cta: "Написать в Телеграм",
+  },
   hero: {
     // h1: визуально монумент + подзаголовок, семантически одна фраза
     h1Rest: "анимированные сайты-пресс-киты для диджеев и артистов",

@@ -1,16 +1,20 @@
-import { ArrowDown, ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowDown } from "@phosphor-icons/react";
 import { ru } from "./content/ru";
-import { telegramUrl } from "./lib/telegram";
+import { Nav } from "./components/Nav";
+import { StickyCta } from "./components/StickyCta";
+import { SolidCta } from "./components/SolidCta";
 
-// Каркас (TZ.md §13, пункт 1): статичный текстовый слой первого экрана на токенах.
+// Статичный текстовый слой первого экрана на токенах (TZ.md §13, пункты 1 и 3).
 // Статичный монумент — это и будущее состояние reduced-motion / без JS: имя читается целиком.
-// Бегущая строка, 3D-лента и стеклянная CTA появятся в пунктах 3–5.
+// Бегущая строка, 3D-лента и стеклянная CTA первого экрана появятся в пунктах 4–5.
 export default function App() {
   const { hero } = ru;
 
   return (
+    <>
+    <Nav />
     <main className="flex min-h-[100dvh] flex-col">
-      <section className="flex flex-1 flex-col justify-center gap-7 py-9">
+      <section id="top" className="flex flex-1 flex-col justify-center gap-7 py-9">
         <h1 className="px-margin text-mono-static font-semibold leading-mono tracking-mono">
           {/* Настоящий пробел между строками, чтобы скринридер прочёл «Press Kit Motion» */}
           <span className="block whitespace-nowrap md:inline">{ru.brandLines[0]}</span>{" "}
@@ -25,21 +29,7 @@ export default function App() {
           <p className="tabular text-body text-muted">
             {hero.factsTemplate(hero.facts.price, hero.facts.days)}
           </p>
-          <a
-            href={telegramUrl()}
-            target="_blank"
-            rel="noopener"
-            className="group inline-flex h-button w-full items-center justify-between gap-4 rounded-pill bg-accent pl-6 pr-inset font-medium text-accent-ink no-underline transition-transform duration-fast ease-spring hover:scale-hover active:scale-press sm:w-auto"
-          >
-            {hero.cta}
-            <span className="grid size-tap place-items-center rounded-pill bg-ink text-accent">
-              <ArrowUpRight
-                weight="regular"
-                aria-hidden="true"
-                className="size-icon-md transition-transform duration-fast ease-spring group-hover:translate-x-nudge group-hover:-translate-y-nudge"
-              />
-            </span>
-          </a>
+          <SolidCta label={hero.cta} place="hero" className="w-full sm:w-auto" />
         </div>
       </section>
 
@@ -52,5 +42,7 @@ export default function App() {
         </a>
       </div>
     </main>
+    <StickyCta />
+    </>
   );
 }
