@@ -671,11 +671,37 @@
   .price-swap {
     animation: crossfade var(--dur-fast) var(--ease-out);
   }
+  /* Огромная цена: tabular-nums и фиксированная ширина в ch — при смене пакета не прыгает */
   .price-figure {
-    font-size: var(--step-head);
+    min-width: 4ch;
+    font-size: var(--step-price);
     font-weight: 600;
-    line-height: 1;
+    line-height: 0.9;
     letter-spacing: var(--track-head);
+  }
+  .price-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .price-row {
+    display: grid;
+    grid-template-columns: var(--price-label-w) 1fr;
+    gap: var(--space-4);
+    align-items: baseline;
+  }
+  /* Дополнения без иконок-галочек: просто строки, выровненные по колонке значений */
+  .price-extra {
+    padding-left: calc(var(--price-label-w) + var(--space-4));
+  }
+  @media (max-width: 767px) {
+    .price-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+    .price-extra {
+      padding-left: 0;
+    }
   }
 
   /* 7.8 FAQ */
