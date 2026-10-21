@@ -10,8 +10,8 @@ export const ru = {
       "Анимированный сайт-пресс-кит для диджея и артиста. Одна ссылка вместо PDF. Примеры работ, цена, сроки.",
   },
   brand: "Press Kit Motion",
-  // Монумент в статичном виде: на телефоне две строки, с md одна
-  brandLines: ["Press Kit", "Motion"] as const,
+  // Монумент первого экрана по словам: десктоп «Press Kit / Motion», телефон в три строки
+  brandWords: ["Press", "Kit", "Motion"] as const,
   nav: {
     label: "Основная навигация",
     home: "Press Kit Motion, наверх",
@@ -37,8 +37,6 @@ export const ru = {
     factsTemplate: (price: string, days: number) =>
       `От ${price} ₽ · готово за ${days} дней`,
     cta: "Написать в Телеграм",
-    ribbonAlt: "Сайт-пресс-кит",
-    ribbonLabel: "Примеры сайтов-пресс-китов",
     geo: "Сайты для артистов из Петербурга, Перми, Бангкока и Янгона",
     toWork: "Смотреть работы",
   },
