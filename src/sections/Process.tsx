@@ -1,15 +1,14 @@
 import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
+import { ProcessScene } from "./ProcessScenes";
 
-// Как это работает — колонка с врезками (TZ.md §7.6). Колонка 560px с 5-й колонки сетки,
-// после каждого абзаца кроп реального сайта. Слева липкий лаймовый прогресс чтения —
-// единственная линия на странице, она несёт информацию. Без номеров шагов.
+// Как появляется сайт (TZ.md §7.6). Колонка 560px с 5-й колонки сетки, после каждого абзаца —
+// живая сцена, нарисованная кодом (ProcessScenes). Слева липкий лаймовый прогресс чтения.
 export function Process() {
   const { process } = ru;
   const sectionRef = useRef<HTMLElement>(null);
   const barRef = useRef<HTMLSpanElement>(null);
-  const base = import.meta.env.BASE_URL;
-
+  
   useEffect(() => {
     const s = sectionRef.current;
     const bar = barRef.current;
@@ -51,9 +50,7 @@ export function Process() {
                 <p className="text-body text-muted">
                   <strong className="font-semibold text-ink">{s.lead}</strong> {s.text}
                 </p>
-                <div className="process-shot">
-                  <img src={`${base}media/sites/${s.shot}.jpg`} alt={s.alt} loading="lazy" decoding="async" width={780} height={1688} />
-                </div>
+                <ProcessScene kind={s.key} label={s.alt} />
               </div>
             ))}
           </div>

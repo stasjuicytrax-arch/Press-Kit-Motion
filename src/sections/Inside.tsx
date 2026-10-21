@@ -4,10 +4,22 @@ import { ru } from "../content/ru";
 import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
 // Что внутри — круговая карусель (TZ.md §7.4, приём circular-carousel nexus-ui).
-// Десктоп: карточки по дуге в CSS-3D, активная в центре крупно, стеклянные кнопки и лаймовые точки,
+// Все карточки — один кадр 9:16 с блоком сайта по центру тёмной подложки; боковые отличаются
+// только наклоном, масштабом и прозрачностью. Подпись под центральной карточкой крупно, по центру.
+// Десктоп: карточки по дуге в CSS-3D, активная в центре, стеклянные кнопки и лаймовые точки,
 // автопрокрутка 4 с с паузой при наведении, фокусе и reduced-motion, стрелки клавиатуры.
 // Телефон: горизонтальный свайп со scroll-snap, карточка 80vw.
 const AUTOPLAY = 4000;
+
+// Снимок блока целиком по центру тёмной подложки 9:16 (scripts/capture-blocks.mjs)
+function Shot({ base, shot, title, lazy }: { base: string; shot: string; title: string; lazy?: boolean }) {
+  return (
+    <picture>
+      <source srcSet={`${base}media/blocks/${shot}.avif`} type="image/avif" />
+      <img src={`${base}media/blocks/${shot}.jpg`} alt={`${title}: блок с сайта артиста`} loading={lazy ? "lazy" : undefined} decoding="async" />
+    </picture>
+  );
+}
 
 export function Inside() {
   const { inside } = ru;
@@ -70,11 +82,11 @@ export function Inside() {
                 onClick={() => setActive(i)}
               >
                 <div className="carousel-shot">
-                  <img src={`${base}media/sites/${c.shot}.jpg`} alt={`${c.title}: блок с сайта артиста`} decoding="async" width={780} height={1688} />
+                  <Shot base={base} shot={c.shot} title={c.title} />
                 </div>
-                <figcaption className="mt-4">
-                  <span className="block text-lead font-semibold leading-lead tracking-head">{c.title}</span>
-                  <span className="mt-1 block text-small text-muted">{c.text}</span>
+                <figcaption className="carousel-caption">
+                  <span className="block font-semibold leading-head tracking-head">{c.title}</span>
+                  <span className="mt-2 block text-body text-muted">{c.text}</span>
                 </figcaption>
               </figure>
             );
@@ -111,7 +123,7 @@ export function Inside() {
         {inside.cards.map((c) => (
           <figure key={c.title} className="inside-card">
             <div className="carousel-shot">
-              <img src={`${base}media/sites/${c.shot}.jpg`} alt={`${c.title}: блок с сайта артиста`} loading="lazy" decoding="async" width={780} height={1688} />
+              <Shot base={base} shot={c.shot} title={c.title} lazy />
             </div>
             <figcaption className="mt-4">
               <span className="block text-lead font-semibold leading-lead tracking-head">{c.title}</span>

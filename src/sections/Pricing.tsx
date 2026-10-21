@@ -125,7 +125,7 @@ export function Pricing() {
             <span>{words}</span>
           </div>
         </div>
-        <ul className="price-cards" data-reveal>
+        <ul className="price-cards" data-reveal data-hide-sticky>
           {pricing.packages.map((pk) => (
             <Card key={pk.name} pk={pk} />
           ))}

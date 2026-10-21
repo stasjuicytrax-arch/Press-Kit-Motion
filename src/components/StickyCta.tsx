@@ -4,7 +4,7 @@ import { GlassCta } from "./GlassCta";
 import { inert } from "../lib/inert";
 
 // Липкая стеклянная кнопка на телефоне (TZ.md §7.0): появляется после первого экрана,
-// прячется, когда виден финальный CTA или подвал (элементы с data-hide-sticky)
+// прячется, когда видны свои кнопки блока: конструктор, цены, финальный CTA, подвал (data-hide-sticky)
 // и пока открыто полноэкранное меню (класс menu-open на <html>).
 export function StickyCta() {
   const [pastHero, setPastHero] = useState(false);

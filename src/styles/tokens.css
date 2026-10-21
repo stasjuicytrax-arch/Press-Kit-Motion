@@ -105,10 +105,13 @@
   --pan-ratio: 16 / 10;
   --swipe-w: 78vw;
   --bezel: 10px;
-  --carousel-w: clamp(240px, 22vw, 340px);
-  --carousel-h: calc(var(--carousel-w) * 5 / 4 + 120px);
-  --carousel-step: calc(var(--carousel-w) * 0.92);
-  --carousel-depth: 240px;
+  --carousel-w: clamp(220px, 19vw, 300px);
+  --carousel-h: calc(var(--carousel-w) * 16 / 9 + 150px);
+  --carousel-pad: var(--space-3); /* воздух вокруг блока внутри кадра */
+  --carousel-shot-r: 14px; /* скругление снимка блока внутри кадра */
+  --carousel-shrink: 0.12; /* масштаб боковых карточек: −12% на шаг */
+  --step-caption: clamp(1.5rem, 1.2rem + 1.1vw, 2.25rem); /* подпись центральной карточки */
+  --carousel-step: calc(var(--carousel-w) * 0.98);
   --carousel-turn: 26deg;
   --carousel-perspective: 1400px;
   --builder-phone-w: clamp(240px, 24vw, 340px);
@@ -126,11 +129,17 @@
   --price-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 0 0 1px rgb(255 255 255 / 0.3), 0 30px 60px -28px rgb(17 17 17 / 0.35);
   --footer-mark-em: 6.78; /* ширина «Press Kit Motion» в em (Onest 600, трекинг -0.06em) */
   --dot-sm: 6px;
+  /* Конструктор */
+  --builder-form-w: 520px;
+  --mini-hero-h: 74cqh; /* доля высоты экрана телефона (container query units) */
+  --mini-name: clamp(1.75rem, 1.2rem + 1.4vw, 2.5rem);
+  --mini-scroll-h: 52cqh;
   /* Работы — шоурум: браузер не выше 62vh, телефон поверх угла */
   --work-bar-h: 36px;
   --work-browser-w: min(100%, calc((62svh - var(--work-bar-h)) * 1.6));
   --work-phone-w: clamp(120px, 11vw, 190px); /* точка пункта в карточке цены */
   --field-muted: rgb(242 242 238 / 0.68); /* вторичный текст на --field, контраст ≈ 9:1 */
+  --online: #34C759; /* зелёная точка «сайт онлайн» в сцене запуска */
   --step-final: clamp(3rem, 10vw, 11rem);
   --drift-w: clamp(160px, 16vw, 240px);
 
