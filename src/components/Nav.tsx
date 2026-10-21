@@ -132,13 +132,10 @@ export function Nav() {
         </LiquidGlass>
       </div>
 
-      <LiquidGlass
+      {/* Меню на весь экран — плотная вуаль без backdrop-filter (большая площадь над видео, п. 10) */}
+      <div
         id="mobile-menu"
-        mode="frost"
-        material="regular"
-        fallbackBlur={32}
         className="mobile-menu md:hidden"
-        style={{ borderRadius: "var(--radius-none)" }}
         data-open={open}
         aria-hidden={!open}
         {...inert(!open)}
@@ -158,7 +155,7 @@ export function Nav() {
             <SolidCta label={ru.sticky.cta} place="nav" onClick={close} className="w-full" />
           </li>
         </ul>
-      </LiquidGlass>
+      </div>
     </>
   );
 }

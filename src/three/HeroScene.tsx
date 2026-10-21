@@ -82,7 +82,7 @@ function CameraRig() {
 }
 
 function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLost">) {
-  const { size, invalidate, setFrameloop } = useThree();
+  const { size, invalidate } = useThree();
   const outer = useRef<THREE.Group>(null);
   const inner = useRef<THREE.Group>(null);
   const matRef = useRef<THREE.Material>(null);
@@ -202,16 +202,21 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero || reduced) return;
+    // Режим меняем только при переходе: раньше каждый scroll ниже первого экрана звал invalidate()
+    // и перерисовывал дорогое стекло на каждый шаг прокрутки по всей странице (п. 10)
+    let asleep: boolean | null = null;
     const onScroll = () => {
       const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.6)));
       exit.current = p;
-      setFrameloop(p >= 1 ? "demand" : "always");
-      if (p >= 1) invalidate();
+      const sleep = p >= 1;
+      if (sleep === asleep) return;
+      asleep = sleep;
+      if (sleep) invalidate(); // последний кадр: капля скрыта (сам режим сна — в frameloop у Canvas)
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [reduced, heroRef, setFrameloop, invalidate]);
+  }, [reduced, heroRef, invalidate]);
 
   const k = tokenNumber("--drop-spring-k", 90);
   const c = tokenNumber("--drop-spring-c", 14);
@@ -372,14 +377,33 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
   );
 }
 
+// Сон сцены ниже первого экрана держим в самом frameloop Canvas: ручной setFrameloop
+// перебивался пропсом при любой перерисовке, и стекло капли снова считалось каждый кадр (п. 10)
+function useAsleep(reduced: boolean) {
+  const [asleep, setAsleep] = useState(false);
+  useEffect(() => {
+    if (reduced) return;
+    let last: boolean | null = null;
+    const onScroll = () => {
+      const v = window.scrollY >= window.innerHeight * 0.6;
+      if (v !== last) setAsleep((last = v));
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [reduced]);
+  return asleep;
+}
+
 export default function HeroScene(props: Props) {
+  const asleep = useAsleep(props.reduced);
   return (
     <Canvas
       className="hero-canvas"
       aria-hidden="true"
       flat
       dpr={[1, 1.25]}
-      frameloop={props.reduced ? "demand" : "always"}
+      frameloop={props.reduced || asleep ? "demand" : "always"}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: FOV, position: [0, 0, 1000] }}
       onCreated={({ gl }) => gl.domElement.addEventListener("webglcontextlost", () => props.onLost(), { once: true })}

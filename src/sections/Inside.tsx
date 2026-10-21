@@ -1,7 +1,7 @@
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
-import { LiquidGlass, LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
+import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
 // Что внутри — круговая карусель (TZ.md §7.4, приём circular-carousel nexus-ui).
 // Все карточки — один кадр 9:16 с блоком сайта по центру тёмной подложки; боковые отличаются
@@ -12,15 +12,16 @@ import { LiquidGlass, LiquidGlassButton } from "../components/ui/apple-tahoe-liq
 const AUTOPLAY = 4000;
 
 // Кадр 9:16 мобильной версии сайта от верха блока, на всю карточку; вместо рамки — тонкая
-// кромка жидкого стекла, как у телефона в конструкторе (scripts/capture-blocks.mjs)
+// стеклянная кромка, как у телефона в конструкторе (статичное стекло без backdrop-filter:
+// карточки большие и крутятся в 3D, п. 10). Снимки — scripts/capture-blocks.mjs
 function Shot({ base, shot, title, lazy }: { base: string; shot: string; title: string; lazy?: boolean }) {
   return (
-    <LiquidGlass refraction={14} bezel={10} blur={4} className="carousel-glass">
+    <div className="carousel-glass glass-static">
       <picture className="carousel-shot">
         <source srcSet={`${base}media/blocks/${shot}.avif`} type="image/avif" />
         <img src={`${base}media/blocks/${shot}.jpg`} alt={`${title}: блок с сайта артиста`} loading={lazy ? "lazy" : undefined} decoding="async" width={720} height={1280} />
       </picture>
-    </LiquidGlass>
+    </div>
   );
 }
 

@@ -620,6 +620,13 @@
     scroll-snap-align: start;
   }
 
+  /* Статичное стекло для больших поверхностей (телефон, карточки карусели): без backdrop-filter,
+     вид дают полупрозрачная заливка, блик сверху и мягкая тень (п. 10 владельца) */
+  .glass-static {
+    background: var(--glass-static-fill);
+    box-shadow: var(--glass-static-shadow); /* taste-skill-ignore: блик и тень статичного стекла */
+  }
+
   /* Стеклянный телефон, двойной безель */
   .glass-phone {
     padding: var(--bezel);
@@ -683,7 +690,6 @@
   .carousel-glass {
     padding: var(--carousel-rim);
     border-radius: var(--radius-screen);
-    box-shadow: var(--carousel-glass-shadow); /* taste-skill-ignore: блик и тень стеклянной кромки (стекло, DESIGN.md §5) */
   }
   .carousel-shot {
     display: block;
@@ -1576,10 +1582,11 @@
     letter-spacing: var(--track-mono);
     white-space: nowrap;
   }
+  /* Двигает lib/priceMarquee.ts: только translate3d, без filter; стоит вне экрана */
   .price-marquee-track {
     display: flex;
     width: max-content;
-    animation: marquee-left 70s linear infinite;
+    will-change: transform;
   }
   .price-marquee-track > span {
     padding-right: 0.3em;
@@ -1604,8 +1611,9 @@
       display: grid;
       grid-template-rows: subgrid;
     }
-    .price-card > .price-glass,
-    .price-card > .price-glass > .price-panel {
+    .price-card > .price-tilt,
+    .price-tilt > .price-glass,
+    .price-glass > .price-panel {
       grid-row: 1 / -1;
       display: grid;
       grid-template-rows: subgrid;
@@ -1613,13 +1621,12 @@
   }
   .price-card {
     position: relative;
-    --rx: 0deg;
-    --ry: 0deg;
-    /* Наклон без preserve-3d: в 3D-контексте Chrome отключает backdrop-filter у стекла */
-    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry));
+  }
+  /* Наклон пишет JS прямо в transform (раз в кадр); без preserve-3d — иначе Chrome выключает стекло кромки */
+  .price-tilt {
     transition: transform var(--dur-base) var(--ease-out);
   }
-  .price-card[data-hover] {
+  .price-tilt[data-hover] {
     transition: transform var(--dur-fast) linear;
   }
   /* Средняя чуть крупнее и приподнята; на телефоне — первой */
@@ -1630,13 +1637,22 @@
   @media (min-width: 1024px) {
     .price-card--featured {
       order: 0;
-      transform: perspective(1200px) translateY(calc(var(--space-5) * -1)) scale(1.04) rotateX(var(--rx)) rotateY(var(--ry));
+      transform: translateY(calc(var(--space-5) * -1)) scale(1.04);
     }
   }
-  /* Двойной безель: тонкий стеклянный контур, внутри панель */
+  /* Двойной безель: кромка жидкого стекла --price-rim по контуру, внутри панель */
   .price-glass {
-    padding: var(--price-bezel);
+    position: relative;
+    isolation: isolate;
+    padding: var(--price-rim);
     border-radius: var(--radius-screen);
+    overflow: hidden;
+    box-shadow: var(--price-glass-shadow); /* taste-skill-ignore: статичный блик и тень стекла */
+  }
+  .price-rim {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
   }
   .price-panel {
     position: relative;
@@ -1645,27 +1661,55 @@
     flex-direction: column;
     gap: var(--space-4);
     padding: var(--space-6) var(--space-5) var(--space-5);
-    border-radius: calc(var(--radius-screen) - var(--price-bezel));
-    background: var(--price-panel-light);
+    isolation: isolate;
+    border-radius: calc(var(--radius-screen) - var(--price-rim));
+    /* Непрозрачная основа: живая надпись за карточкой не просвечивает, её заменяет копия .price-ghost */
+    background: var(--bg);
     box-shadow: var(--price-panel-rim); /* taste-skill-ignore: кромка стеклянной панели цены */
     overflow: hidden;
     color: var(--ink);
   }
   .price-card--featured .price-panel {
-    background: var(--price-panel-dark);
     box-shadow: var(--price-panel-rim-dark); /* taste-skill-ignore: лаймовая кромка выделенной цены */
     color: var(--field-ink);
   }
-  /* Блик бежит за курсором (свет на стекле — часть материала, DESIGN.md §5) */
-  .price-glare {
+  /* Копия надписи внутри карточки: заранее размытая картинка (lib/priceMarquee.ts), двигается transform */
+  .price-ghost {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    height: var(--price-ghost-h, 0);
+    background: var(--price-ghost-img, none) repeat-x 0 0 / var(--price-ghost-w, 0) 100%;
+    will-change: transform;
+    pointer-events: none;
+  }
+  /* Тон стекла поверх копии: светлое молочное или дымчатое тёмное */
+  .price-tint {
     position: absolute;
     inset: 0;
+    z-index: -1;
+    background: var(--price-panel-light);
+    pointer-events: none;
+  }
+  .price-card--featured .price-tint {
+    background: var(--price-panel-dark);
+  }
+  /* Блик за курсором: статичное пятно, двигается только transform, появляется только opacity */
+  .price-glare {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: calc(var(--price-glare-r) * 2);
+    height: calc(var(--price-glare-r) * 2);
+    border-radius: var(--radius-pill);
     pointer-events: none;
     opacity: 0;
-    background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.32), transparent 60%); /* taste-skill-ignore: блик стекла под курсором */
+    background: radial-gradient(closest-side, rgb(255 255 255 / 0.32), transparent); /* taste-skill-ignore: блик стекла под курсором */
     transition: opacity var(--dur-base) var(--ease-out);
   }
-  .price-card[data-hover] .price-glare {
+  .price-tilt[data-hover] .price-glare {
     opacity: 1;
   }
   .price-name {
