@@ -84,9 +84,9 @@
   --step-hero: 17vw; /* монумент «Press Kit / Motion» */
   --leading-hero: 0.82;
   --hero-lead-size: var(--step-lead);
-  --drop-size: 26vw; /* диаметр капли */
-  --drop-spring-k: 38; /* мягкая пружина: капля шевелится от мыши, а не гонится за ней */
-  --drop-spring-c: 9;
+  --drop-size: 16vw; /* диаметр капли (было 26vw — на ноутбуке слишком огромная) */
+  --drop-spring-k: 30; /* критически демпфированная пружина: плавно, без перелёта и дрожи */
+  --drop-spring-c: 11;
   --hero-top: calc(var(--nav-top) + var(--button-h) + var(--space-4));
 
   /* Секции 7.2–7.10 (TZ.md §7) */
@@ -160,7 +160,7 @@
     --mono-static-em: 3.66;
     /* Телефон: монумент в три строки, капля крупнее (TZ.md §7.1) */
     --step-hero: 27vw;
-    --drop-size: 42vw;
+    --drop-size: 30vw;
     --hero-lead-size: 1.125rem; /* 18px на телефоне (TZ.md §7.1) */
     --pan-w: 64vw;
     --pan-ratio: 4 / 5;

@@ -32,7 +32,7 @@ const LIME = css("--glow-1", "#C6F135");
 const FOV = 30;
 const FALL_KEY = "pkm-drop-fell";
 
-function readWords(hero: HTMLElement, title: HTMLElement): { words: Word[]; kit: { x: number; y: number }; bounds: DOMRect; W: number; H: number; navBottom: number; textHalf: number } {
+function readWords(hero: HTMLElement, title: HTMLElement): { words: Word[]; kit: { x: number; y: number }; bounds: DOMRect; W: number; H: number; navBottom: number; textHalf: number; boundsOriginX: number; boundsOriginY: number } {
   const hr = hero.getBoundingClientRect();
   const W = hr.width;
   const H = hr.height;
@@ -62,7 +62,7 @@ function readWords(hero: HTMLElement, title: HTMLElement): { words: Word[]; kit:
   // Границы самих букв (не блока h1 на всю ширину): над ними капля чуть крупнее
   const cx = hr.left + W / 2;
   const bounds = new DOMRect(cx - textHalf, top, textHalf * 2, bottom - top);
-  return { words, kit, bounds, W, H, navBottom, textHalf };
+  return { words, kit, bounds, W, H, navBottom, textHalf, boundsOriginX: hr.left, boundsOriginY: hr.top };
 }
 
 function CameraRig() {
@@ -103,7 +103,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     phase: "idle" as "fall" | "idle" | "follow",
     fallT: 0, startY: 0,
     tx: 0, ty: 0, lastPointer: -10, touching: false,
-    tiltX: 0, tiltY: 0, t: 0, ready: false, idleT: 0,
+    tiltX: 0, tiltY: 0, t: 0, ready: false, idleT: 0, pullW: 0, angle: 0, stretch: 0,
   });
 
   const radius = (size.width * tokenNumber("--drop-size", phone ? 42 : 26, true)) / 100 / 2;
@@ -147,21 +147,12 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
       const r = hero.getBoundingClientRect();
       return { x: cx - r.left - r.width / 2, y: r.height / 2 - (cy - r.top) };
     };
-    let prev: { x: number; y: number } | null = null;
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch" && !s.touching) return;
       const p = toLocal(e.clientX, e.clientY);
       s.tx = p.x;
       s.ty = p.y;
       s.lastPointer = s.t;
-      // Толчок от скорости мыши: капля «чувствует» движение, но не летит за курсором
-      if (prev && s.phase !== "fall") {
-        const ix = Math.max(-40, Math.min(40, p.x - prev.x));
-        const iy = Math.max(-40, Math.min(40, p.y - prev.y));
-        s.vx += ix * 2.5;
-        s.vy += iy * 2.5;
-      }
-      prev = p;
       if (s.phase === "idle") s.phase = "follow";
     };
     const onDown = (e: PointerEvent) => {
@@ -246,20 +237,25 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         // Дом капли — над «Kit». Пока мышь (или палец) движется, капля мягко тянется в его
         // сторону, но не дальше половины своего радиуса; мышь замерла — капля возвращается.
         // Решение владельца 2026-10-21: капля не должна «прилипать» к курсору.
-        const moving = s.t - s.lastPointer < 0.5 || s.touching;
+        const moving = s.t - s.lastPointer < 0.6 || s.touching;
         if (moving) s.idleT = 0;
         else s.idleT += dt;
+        // Вес притяжения к курсору нарастает и спадает плавно (~0.5 с): цель не прыгает,
+        // когда мышь останавливается или трогается
+        s.pullW += ((moving ? 1 : 0) - s.pullW) * Math.min(1, dt * 3);
         const re = radius * 1.08; // видимый радиус (перспектива увеличивает каплю)
         let tx = layout.kit.x;
         let ty = layout.kit.y;
-        if (moving) {
+        if (s.pullW > 0.001) {
           const dx = s.tx - tx;
           const dy = s.ty - ty;
           const d = Math.hypot(dx, dy) || 1;
-          const pull = Math.min(d * 0.12, re * 0.5);
-          tx += (dx / d) * pull;
-          ty += (dy / d) * pull;
-        } else if (phone && s.idleT < 12) {
+          // Мягкое насыщение: чем дальше курсор, тем меньше прирост, максимум 0.6 радиуса
+          const pull = re * 0.6 * Math.tanh(d / (re * 4));
+          tx += (dx / d) * pull * s.pullW;
+          ty += (dy / d) * pull * s.pullW;
+        }
+        if (!moving && phone && s.idleT < 12) {
           // Телефон без касаний: лёгкое покачивание вокруг «Kit», через 12 с замирает (WCAG 2.2.2)
           const fade = Math.max(0, 1 - Math.max(0, s.idleT - 9) / 3);
           tx += Math.sin(s.t * 0.5) * re * 0.35 * fade;
@@ -275,17 +271,6 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         s.vy += ay2 * dt;
         s.x += s.vx * dt;
         s.y += s.vy * dt;
-        // Поводок: от «Kit» капля отходит не дальше 0.75 радиуса, как бы ни дёргали мышь
-        const ox = s.x - layout.kit.x;
-        const oy = s.y - layout.kit.y;
-        const od = Math.hypot(ox, oy);
-        const leash = re * 0.75;
-        if (od > leash) {
-          s.x = layout.kit.x + (ox / od) * leash;
-          s.y = layout.kit.y + (oy / od) * leash;
-          s.vx *= 0.6;
-          s.vy *= 0.6;
-        }
       }
       // Пружина расплющивания: после удара капля дрожит и собирается
       const sa = 180 * (1 - s.sq) - 8 * s.sqv;
@@ -293,15 +278,13 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
       s.sq += s.sqv * dt;
     }
 
-    // Над буквами капля чуть крупнее
+    // Над буквами капля чуть крупнее (в координатах сцены, без чтения раскладки в кадре)
     const b = layout.bounds;
-    const hr = heroRef.current?.getBoundingClientRect();
-    let over = false;
-    if (hr) {
-      const px = s.x + hr.width / 2 + hr.left;
-      const py = hr.height / 2 - s.y + hr.top;
-      over = px > b.left && px < b.right && py > b.top && py < b.bottom;
-    }
+    const left = b.left - (layout.boundsOriginX ?? 0);
+    const top = b.top - (layout.boundsOriginY ?? 0);
+    const px = s.x + layout.W / 2;
+    const py = layout.H / 2 - s.y;
+    const over = px > left && px < left + b.width && py > top && py < top + b.height;
     s.grow += ((over ? 1.08 : 1) - s.grow) * Math.min(1, dt * 6);
 
     // Уход при скролле
@@ -315,11 +298,18 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     // По глубине капля приплюснута (0.55): край меньше уводит лучи за пределы букв
     g.scale.set((1 / Math.sqrt(s.sq)) * radius * s.grow * exitS, s.sq * radius * s.grow * exitS, 0.55 * radius * s.grow * exitS);
 
-    // Растяжение по скорости: вдоль движения длиннее, поперёк тоньше
+    // Растяжение по скорости: вдоль движения длиннее. Направление обновляется только на заметной
+    // скорости и сглаженно — на почти нулевой скорости atan2 скачет, и капля дрожала
     const speed = Math.hypot(s.vx, s.vy);
-    const stretch = Math.min(0.35, speed / 2600);
-    i.rotation.z = Math.atan2(s.vy, s.vx);
-    i.scale.set(1 + stretch, 1 - stretch * 0.5, 1 - stretch * 0.5);
+    if (speed > 40) {
+      const target = Math.atan2(s.vy, s.vx);
+      let d = target - s.angle;
+      d = Math.atan2(Math.sin(d), Math.cos(d));
+      s.angle += d * Math.min(1, dt * 8);
+    }
+    s.stretch += (Math.min(0.18, speed / 1800) - s.stretch) * Math.min(1, dt * 6);
+    i.rotation.z = s.angle;
+    i.scale.set(1 + s.stretch, 1 - s.stretch * 0.5, 1 - s.stretch * 0.5);
   });
 
   if (!layout) return null;
@@ -349,7 +339,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
               ref={matRef as never}
               transmission={1}
               thickness={0.45}
-              backsideThickness={0.2}
+
               ior={1.25}
               roughness={0.04}
               chromaticAberration={0.05}
@@ -357,11 +347,11 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
               distortion={0.07}
               distortionScale={0.4}
               temporalDistortion={reduced ? 0 : 0.08}
-              backside
+              backside={false}
               color={BG}
               background={new THREE.Color(BG)}
-              resolution={phone ? 256 : 512}
-              samples={phone ? 3 : 6}
+              resolution={phone ? 256 : 384}
+              samples={phone ? 3 : 4}
             />
           </mesh>
         </group>
@@ -385,7 +375,7 @@ export default function HeroScene(props: Props) {
       className="hero-canvas"
       aria-hidden="true"
       flat
-      dpr={[1, 1.5]}
+      dpr={[1, 1.25]}
       frameloop={props.reduced ? "demand" : "always"}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: FOV, position: [0, 0, 1000] }}
