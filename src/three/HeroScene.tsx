@@ -106,7 +106,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     phase: "idle" as "fall" | "idle" | "follow",
     fallT: 0, startY: 0,
     tx: 0, ty: 0, lastPointer: -10, touching: false,
-    tiltX: 0, tiltY: 0, t: 0, ready: false, idleT: 0, pullW: 0, angle: 0, stretch: 0,
+    tiltX: 0, tiltY: 0, t: 0, ready: false, wander: 0, pullW: 0, angle: 0, stretch: 0,
   });
 
   const radius = (size.width * tokenNumber("--drop-size", phone ? 42 : 26, true)) / 100 / 2;
@@ -232,18 +232,24 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
           s.vx = s.vy = 0;
         }
       } else {
-        // Дом капли — над «Kit». Пока мышь (или палец) движется, капля мягко тянется в его
-        // сторону, но не дальше половины своего радиуса; мышь замерла — капля возвращается.
-        // Решение владельца 2026-10-21: капля не должна «прилипать» к курсору.
+        // Капля сама медленно плавает по всей надписи (восьмёрка по ширине «Press Kit Motion»),
+        // а мышь или палец мягко притягивают её, но не дальше 0.6 радиуса — не «прилипает»
+        // (решения владельца 2026-10-21: не прилипать к курсору, не застывать, летать по надписи).
         const moving = s.t - s.lastPointer < 0.6 || s.touching;
-        if (moving) s.idleT = 0;
-        else s.idleT += dt;
         // Вес притяжения к курсору нарастает и спадает плавно (~0.5 с): цель не прыгает,
         // когда мышь останавливается или трогается
         s.pullW += ((moving ? 1 : 0) - s.pullW) * Math.min(1, dt * 3);
         const re = radius * 1.08; // видимый радиус (перспектива увеличивает каплю)
-        let tx = layout.kit.x;
-        let ty = layout.kit.y;
+        s.wander += dt;
+        const midY = (layout.words[0].y + layout.words[layout.words.length - 1].y) / 2;
+        const spanX = Math.max(0, layout.textHalf - re * 0.6);
+        const spanY = Math.abs(layout.words[0].y - layout.words[layout.words.length - 1].y) / 2;
+        // Старт траектории в «Kit», затем плавный переход на восьмёрку за ~3 с
+        const blend = Math.min(1, s.wander / 3);
+        const wx = Math.sin(s.wander * 0.28) * spanX;
+        const wy = midY + Math.sin(s.wander * 0.45 + 0.9) * spanY;
+        let tx = layout.kit.x + (wx - layout.kit.x) * blend;
+        let ty = layout.kit.y + (wy - layout.kit.y) * blend;
         if (s.pullW > 0.001) {
           const dx = s.tx - tx;
           const dy = s.ty - ty;
@@ -252,12 +258,6 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
           const pull = re * 0.6 * Math.tanh(d / (re * 4));
           tx += (dx / d) * pull * s.pullW;
           ty += (dy / d) * pull * s.pullW;
-        }
-        if (!moving && phone && s.idleT < 12) {
-          // Телефон без касаний: лёгкое покачивание вокруг «Kit», через 12 с замирает (WCAG 2.2.2)
-          const fade = Math.max(0, 1 - Math.max(0, s.idleT - 9) / 3);
-          tx += Math.sin(s.t * 0.5) * re * 0.35 * fade;
-          ty += Math.sin(s.t * 1.0) * re * 0.18 * fade;
         }
         const xLim = size.width / 2 - re * 0.75;
         const yTop = size.height / 2 - layout.navBottom - re - 12;
@@ -342,7 +342,6 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
               backside={false}
               color={BG}
               background={new THREE.Color(BG)}
-              resolution={phone ? 256 : 384}
               samples={phone ? 3 : 4}
             />
           </mesh>
