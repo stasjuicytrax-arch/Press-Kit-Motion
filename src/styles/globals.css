@@ -266,8 +266,17 @@
       display: block;
     }
   }
-  .hero[data-scene="webgl"] .hero-title {
+  /* Наверху буквы рисует WebGL (капля их преломляет); при прокрутке — снова DOM */
+  .hero[data-scene="webgl"]:not([data-gltext="off"]) .hero-title {
     color: transparent;
+  }
+  /* Капля живёт поверх всей страницы: фиксированный слой в <body>, под навигацией и липкой кнопкой */
+  .hero-canvas.hero-canvas--fixed {
+    position: fixed !important;
+    inset: 0;
+    z-index: 25;
+    opacity: 1;
+    pointer-events: none;
   }
 
   /* Сцена поверх всей секции; события ловит секция, сам canvas их не перехватывает */
