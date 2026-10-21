@@ -224,6 +224,189 @@
   }
 }
 
+/* ---------- Первый экран (TZ.md §7.1) ---------- */
+@layer components {
+  .hero {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    min-height: 100svh;
+    padding-top: var(--hero-top);
+    overflow: clip;
+    /* Свой фон: секция изолирована, лента и строка живут над ним */
+    background: var(--bg);
+  }
+
+  .hero-stage {
+    position: relative;
+    height: var(--ribbon-h);
+  }
+
+  .ribbon {
+    position: absolute;
+    inset: 0;
+    perspective: var(--ribbon-perspective);
+    /* Лента декоративная: в 3D экраны с translateZ перехватывали бы наведение у строки */
+    pointer-events: none;
+  }
+  .ribbon-scene {
+    position: absolute;
+    inset: 0;
+    transform-style: preserve-3d;
+  }
+  .ribbon-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--screen-w);
+    aspect-ratio: var(--screen-ratio);
+    margin-left: calc(var(--screen-w) / -2);
+    transform: translate3d(0, -50%, 0);
+    border-radius: var(--radius-screen);
+    overflow: hidden;
+    background: var(--field);
+    box-shadow: var(--shadow-float); /* taste-skill-ignore: парящий экран, DESIGN.md §11 */
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+  }
+  .ribbon-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    user-select: none;
+  }
+
+  /* Строка-монумент = видимый h1. Чёрная копия на фоне и светлая поверх, вырезанная
+     по силуэтам экранов ленты (clip-path ставит ScreenRibbon): TZ.md §7.1, второй вариант. */
+  .marquee {
+    position: absolute;
+    z-index: 2;
+    left: 0;
+    right: 0;
+    top: var(--marquee-at);
+    transform: translateY(-50%);
+    overflow: hidden;
+    font-size: var(--step-mono);
+    font-weight: 600;
+    letter-spacing: var(--track-mono);
+    line-height: var(--leading-mono);
+    white-space: nowrap;
+  }
+  .mq-layer {
+    display: block;
+  }
+  .mq-ink {
+    color: var(--ink);
+  }
+  .mq-light {
+    position: absolute;
+    inset: 0;
+    color: var(--field-ink);
+    /* Без JS светлой копии нет: силуэты экранов считает скрипт */
+    clip-path: inset(100%);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee var(--marquee-duration, 40s) linear infinite;
+  }
+  .marquee:hover .marquee-track,
+  .is-offscreen .marquee-track {
+    animation-play-state: paused;
+  }
+  .marquee-chunk {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.28em;
+    padding-right: 0.28em;
+  }
+  .marquee-dot {
+    width: 0.2em;
+    height: 0.2em;
+    border-radius: var(--radius-pill);
+    background: currentColor;
+  }
+  .marquee-static {
+    display: none;
+    font-size: var(--step-mono-static);
+  }
+
+  .hero-cta {
+    position: relative;
+    z-index: 3;
+    justify-content: center;
+    margin-top: calc(var(--button-h) / -2);
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-4);
+    padding: var(--space-6) var(--margin) 0;
+    text-align: center;
+  }
+
+  .hero-foot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-top: auto;
+    padding: var(--space-6) var(--margin) var(--float-gap);
+  }
+  @media (min-width: 768px) {
+    .hero-foot {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: var(--space-5);
+    }
+  }
+
+  /* Загрузка: текст стоит сразу, лента выплывает из глубины, затем едет строка */
+  .js-motion .ribbon-scene {
+    animation: ribbon-in var(--dur-scene) var(--ease-out) both;
+  }
+  .js-motion .marquee-track {
+    animation-delay: var(--dur-scene);
+  }
+  /* Светлая копия появляется, когда лента встала: силуэты считаются без анимации входа */
+  .js-motion .mq-light {
+    animation: fade-in var(--dur-base) var(--ease-out) var(--dur-scene) both;
+  }
+}
+
+@keyframes ribbon-in {
+  from {
+    opacity: 0;
+    transform: translateZ(var(--ribbon-depth));
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Reduced motion: трек стоит и прячется, вместо него статичный монумент; h1 остаётся */
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    display: none;
+  }
+  .marquee-static {
+    display: block;
+  }
+}
+
 /* Стекло без прозрачности по просьбе системы (DESIGN.md §5) */
 @media (prefers-reduced-transparency: reduce) {
   .lg-lens {

@@ -80,6 +80,22 @@
   --glass-refraction-cta: 18;
   --glass-fill-strong: rgb(250 250 247 / 0.72);
 
+  /* Первый экран (TZ.md §7.1): лента экранов и бегущая строка */
+  --screen-w: min(clamp(170px, 16vw, 280px), 34svh);
+  --screen-ratio: 9 / 16;
+  --ribbon-gap: 20px;
+  --ribbon-gap-px: 20;
+  --ribbon-speed: 28;
+  --ribbon-bend: 50;
+  --ribbon-lift: 300;
+  --ribbon-perspective: 1400px;
+  --ribbon-h: calc(var(--screen-w) * 16 / 9 * 1.12);
+  --ribbon-depth: -420px;
+  --hero-top: calc(var(--nav-top) + var(--button-h) + var(--space-4));
+  /* Строка идёт по ленте: доля высоты ленты от её верха (десктоп ~40% экрана, телефон ~26%) */
+  --marquee-at: 58%;
+  --marquee-speed: 40;
+
   /* §5 Глубина и стекло */
   --shadow-float: 0 30px 60px -24px rgb(17 17 17 / 0.28), 0 8px 16px -8px rgb(17 17 17 / 0.12);
   --glass-tint: rgb(250 250 247 / 0.22);
@@ -128,6 +144,20 @@
     --step-mono: 34vw;
     /* Две строки «Press Kit / Motion»: делитель по длинной строке */
     --mono-static-em: 3.66;
+    /* Телефон: три экрана, центральный крупнее (края уходят вглубь); строка на ~26% высоты */
+    --screen-w: min(52vw, 220px, 27svh);
+    --ribbon-gap: 12px;
+    --ribbon-gap-px: 12;
+    --ribbon-bend: -30;
+    --ribbon-lift: -230;
+    --marquee-at: 36%;
+  }
+}
+
+/* Планшет: экраны ленты крупнее, чтобы под первым экраном не оставалась пустая полоса */
+@media (min-width: 768px) and (max-width: 1023px) {
+  :root {
+    --screen-w: min(40vw, 34svh);
   }
 }
 

@@ -9,5 +9,8 @@ export function siteMedia(key: string, device: Device) {
     webm: `${dir}${device}.webm`,
     poster: `${dir}${device}-poster.jpg`,
     posterAvif: `${dir}${device}-poster.avif`,
+    /** Лёгкий постер 360px для экранов ленты на телефоне (только mobile) */
+    posterSmall: `${dir}${device}-poster-360.jpg`,
+    posterSmallAvif: `${dir}${device}-poster-360.avif`,
   };
 }
