@@ -683,7 +683,7 @@
   .carousel-glass {
     padding: var(--carousel-rim);
     border-radius: var(--radius-screen);
-    box-shadow: var(--carousel-glass-shadow);
+    box-shadow: var(--carousel-glass-shadow); /* taste-skill-ignore: блик и тень стеклянной кромки (стекло, DESIGN.md §5) */
   }
   .carousel-shot {
     display: block;
