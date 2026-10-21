@@ -99,11 +99,16 @@ async function launch() {
 /** Ждём шрифты и картинки первого экрана, затем интро (время сайта идёт через clock). */
 async function settle(page) {
   await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => {});
-  await page.evaluate(async () => {
-    await document.fonts?.ready;
-    const imgs = [...document.images].filter((i) => i.getBoundingClientRect().top < innerHeight * 1.5);
-    await Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
-  });
+  // Шрифты и картинки первого экрана, но не дольше 8 с: ленивые картинки могут не загрузиться
+  // никогда. Таймер на стороне Node — часы страницы под управлением page.clock.
+  await Promise.race([
+    page.evaluate(async () => {
+      await document.fonts?.ready;
+      const imgs = [...document.images].filter((i) => i.loading !== "lazy" && i.getBoundingClientRect().top < innerHeight * 1.5);
+      await Promise.all(imgs.map((i) => (i.complete ? null : new Promise((r) => { i.onload = i.onerror = r; }))));
+    }),
+    sleep(8000),
+  ]);
   // Курсор не нужен ни в кадре, ни для hover-эффектов
   await page.addStyleTag({ content: "*, *::before, *::after { cursor: none !important; }" });
   await page.clock.runFor(INTRO_WAIT);
