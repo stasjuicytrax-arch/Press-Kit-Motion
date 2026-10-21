@@ -661,56 +661,91 @@
     object-position: top;
   }
 
-  /* 7.7 Цена */
-  .price-name {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    padding-block: var(--space-2);
-    border: 0;
-    background: none;
-    color: var(--muted);
-    text-align: left;
-    cursor: pointer;
-    transition: color var(--dur-fast) var(--ease-out);
+  /* 7.7 Цена — три карточки (TZ.md §7.7, версия 2) */
+  .price-cards {
+    row-gap: var(--gutter);
   }
-  .price-name[aria-checked="true"] {
+  .price-card {
+    display: grid;
+    /* подпись · название · цена · для кого · список · срок · кнопка */
+    grid-template-rows: auto auto auto auto 1fr auto auto;
+    row-gap: var(--space-4);
+    grid-column: 1 / -1;
+    padding: var(--space-6);
+    border-radius: var(--radius-screen);
+    background: var(--surface-2);
     color: var(--ink);
   }
-  .price-swap {
-    animation: crossfade var(--dur-fast) var(--ease-out);
+  .price-card--featured {
+    order: -1; /* на телефоне «Букинг» первой */
+    background: var(--field);
+    color: var(--field-ink);
   }
-  /* Огромная цена: tabular-nums и фиксированная ширина в ch — при смене пакета не прыгает */
+  @media (min-width: 1024px) {
+    /* Три в ряд по 4 колонки; строки всех карточек на общих линиях через subgrid */
+    .price-cards {
+      grid-template-rows: repeat(7, auto);
+    }
+    .price-card {
+      grid-column: span 4;
+      grid-row: span 7;
+      grid-template-rows: subgrid;
+    }
+    .price-card--featured {
+      order: 0;
+    }
+  }
+  .price-badge {
+    min-height: 1lh;
+    color: var(--accent);
+  }
+  /* Пустая строка подписи нужна только для выравнивания карточек в ряд */
+  @media (max-width: 1023px) {
+    .price-badge:empty {
+      display: none;
+    }
+  }
   .price-figure {
-    min-width: 4ch;
     font-size: var(--step-price);
     font-weight: 600;
     line-height: 0.9;
     letter-spacing: var(--track-head);
   }
-  .price-list {
+  .price-who {
+    max-width: 30ch;
+  }
+  .price-items {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
+    gap: var(--space-3);
+    padding-top: var(--space-2);
   }
-  .price-row {
-    display: grid;
-    grid-template-columns: var(--price-label-w) 1fr;
-    gap: var(--space-4);
-    align-items: baseline;
+  /* Пункты обычным текстом с точкой: лаймовая на тёмной карточке, --ink на светлых */
+  .price-item {
+    position: relative;
+    padding-left: var(--space-5);
   }
-  /* Дополнения без иконок-галочек: просто строки, выровненные по колонке значений */
-  .price-extra {
-    padding-left: calc(var(--price-label-w) + var(--space-4));
+  .price-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: calc(0.75em - var(--dot-sm) / 2);
+    width: var(--dot-sm);
+    height: var(--dot-sm);
+    border-radius: var(--radius-pill);
+    background: var(--ink);
   }
-  @media (max-width: 767px) {
-    .price-row {
-      grid-template-columns: 1fr;
-      gap: var(--space-1);
-    }
-    .price-extra {
-      padding-left: 0;
-    }
+  .price-card--featured .price-item::before {
+    background: var(--accent);
+  }
+  .price-muted {
+    color: var(--muted);
+  }
+  .price-card--featured .price-muted {
+    color: var(--field-muted);
+  }
+  .price-days {
+    padding-top: var(--space-2);
   }
 
   /* 7.8 FAQ */

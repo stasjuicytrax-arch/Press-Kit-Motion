@@ -7,10 +7,13 @@ type Props = {
   text?: string;
   className?: string;
   onClick?: () => void;
+  /** accent — лаймовая (главная), ink — чёрная капсула для второстепенных карточек цены */
+  variant?: "accent" | "ink";
 };
 
-// Главная сплошная кнопка (DESIGN.md §7): лаймовая капсула и вложенный кружок со стрелкой.
-export function SolidCta({ label, place, text, className = "", onClick }: Props) {
+// Главная сплошная кнопка (DESIGN.md §7): капсула и вложенный кружок со стрелкой.
+export function SolidCta({ label, place, text, className = "", onClick, variant = "accent" }: Props) {
+  const tone = variant === "accent" ? "bg-accent text-accent-ink" : "bg-ink text-bg";
   return (
     <a
       href={telegramUrl(text)}
@@ -18,10 +21,10 @@ export function SolidCta({ label, place, text, className = "", onClick }: Props)
       rel="noopener"
       data-place={place}
       onClick={onClick}
-      className={`group inline-flex h-button items-center justify-between gap-4 rounded-pill bg-accent pl-6 pr-inset font-medium text-accent-ink no-underline transition-transform duration-fast ease-spring hover:scale-hover active:scale-press ${className}`}
+      className={`group inline-flex h-button items-center justify-between gap-4 rounded-pill ${tone} pl-6 pr-inset font-medium no-underline transition-transform duration-fast ease-spring hover:scale-hover active:scale-press ${className}`}
     >
       {label}
-      <ArrowChip />
+      <ArrowChip tone={variant === "accent" ? "ink" : "accent"} />
     </a>
   );
 }
