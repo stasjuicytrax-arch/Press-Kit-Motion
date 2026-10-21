@@ -85,9 +85,28 @@
   --leading-hero: 0.82;
   --hero-lead-size: var(--step-lead);
   --drop-size: 26vw; /* диаметр капли */
-  --drop-spring-k: 90; /* пружина следования за курсором */
-  --drop-spring-c: 14;
+  --drop-spring-k: 38; /* мягкая пружина: капля шевелится от мыши, а не гонится за ней */
+  --drop-spring-c: 9;
   --hero-top: calc(var(--nav-top) + var(--button-h) + var(--space-4));
+
+  /* Секции 7.2–7.10 (TZ.md §7) */
+  --section-gap: clamp(var(--space-9), 12vw, var(--space-11));
+  --caption-w: 260px;
+  --pan-w: 58vw;
+  --pan-ratio: 16 / 10;
+  --swipe-w: 78vw;
+  --bezel: 10px;
+  --carousel-w: clamp(240px, 22vw, 340px);
+  --carousel-h: calc(var(--carousel-w) * 5 / 4 + 120px);
+  --carousel-step: calc(var(--carousel-w) * 0.92);
+  --carousel-depth: 240px;
+  --carousel-turn: 26deg;
+  --carousel-perspective: 1400px;
+  --builder-phone-w: clamp(240px, 24vw, 340px);
+  --builder-name: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
+  --process-w: 560px;
+  --step-final: clamp(3rem, 10vw, 11rem);
+  --drift-w: clamp(160px, 16vw, 240px);
 
   /* §5 Глубина и стекло */
   --shadow-float: 0 30px 60px -24px rgb(17 17 17 / 0.28), 0 8px 16px -8px rgb(17 17 17 / 0.12);
@@ -141,6 +160,9 @@
     --step-hero: 27vw;
     --drop-size: 42vw;
     --hero-lead-size: 1.125rem; /* 18px на телефоне (TZ.md §7.1) */
+    --pan-w: 64vw;
+    --pan-ratio: 4 / 5;
+    --builder-phone-w: min(62vw, 34svh);
   }
 }
 

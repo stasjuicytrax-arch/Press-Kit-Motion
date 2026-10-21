@@ -1,14 +1,39 @@
+import { useEffect } from "react";
 import { Nav } from "./components/Nav";
 import { StickyCta } from "./components/StickyCta";
 import { Hero } from "./sections/Hero";
+import { Problem } from "./sections/Problem";
+import { Work } from "./sections/Work";
+import { Inside } from "./sections/Inside";
+import { Builder } from "./sections/Builder";
+import { Process } from "./sections/Process";
+import { Pricing } from "./sections/Pricing";
+import { Faq } from "./sections/Faq";
+import { FinalCta } from "./sections/FinalCta";
+import { Footer } from "./sections/Footer";
+import { startReveal } from "./lib/reveal";
 
+// Порядок секций — TZ.md §7: утверждение → доказательство.
 export default function App() {
+  useEffect(() => {
+    startReveal();
+  }, []);
+
   return (
     <>
       <Nav />
       <main>
         <Hero />
+        <Problem />
+        <Work />
+        <Inside />
+        <Builder />
+        <Process />
+        <Pricing />
+        <Faq />
+        <FinalCta />
       </main>
+      <Footer />
       <StickyCta />
     </>
   );

@@ -1,0 +1,125 @@
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ru } from "../content/ru";
+import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
+
+// Что внутри — круговая карусель (TZ.md §7.4, приём circular-carousel nexus-ui).
+// Десктоп: карточки по дуге в CSS-3D, активная в центре крупно, стеклянные кнопки и лаймовые точки,
+// автопрокрутка 4 с с паузой при наведении, фокусе и reduced-motion, стрелки клавиатуры.
+// Телефон: горизонтальный свайп со scroll-snap, карточка 80vw.
+const AUTOPLAY = 4000;
+
+export function Inside() {
+  const { inside } = ru;
+  const n = inside.cards.length;
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const base = import.meta.env.BASE_URL;
+  const stageRef = useRef<HTMLDivElement>(null);
+
+  const go = useCallback((d: number) => setActive((a) => (a + d + n) % n), [n]);
+
+  useEffect(() => {
+    if (paused || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const id = window.setInterval(() => go(1), AUTOPLAY);
+    return () => window.clearInterval(id);
+  }, [paused, go]);
+
+  const onKey = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowRight") go(1);
+    if (e.key === "ArrowLeft") go(-1);
+  };
+
+
+  return (
+    <section className="section" aria-labelledby="inside-h">
+      <div className="page-grid" data-reveal>
+        <h2 id="inside-h" className="col-span-full text-head font-semibold leading-head tracking-head lg:col-span-6">
+          {inside.h2}
+        </h2>
+        <p className="col-span-full max-w-body self-end text-body text-muted lg:col-span-4 lg:col-start-8">{inside.lead}</p>
+      </div>
+
+      {/* Десктоп: дуга */}
+      <div
+        ref={stageRef}
+        className="carousel mt-9 hidden lg:block"
+        role="region"
+        aria-roledescription="карусель"
+        aria-label={inside.h2}
+        tabIndex={0}
+        onKeyDown={onKey}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onFocus={() => setPaused(true)}
+        onBlur={() => setPaused(false)}
+      >
+        <div className="carousel-stage">
+          {inside.cards.map((c, i) => {
+            let o = i - active;
+            if (o > n / 2) o -= n;
+            if (o < -n / 2) o += n;
+            const hidden = Math.abs(o) > 2;
+            return (
+              <figure
+                key={c.title}
+                className="carousel-card"
+                style={{ "--o": o, "--abs": Math.abs(o) } as React.CSSProperties}
+                aria-hidden={o !== 0}
+                data-hidden={hidden}
+                onClick={() => setActive(i)}
+              >
+                <div className="carousel-shot">
+                  <img src={`${base}media/sites/${c.shot}.jpg`} alt={`${c.title}: блок с сайта артиста`} decoding="async" width={780} height={1688} />
+                </div>
+                <figcaption className="mt-4">
+                  <span className="block text-lead font-semibold leading-lead tracking-head">{c.title}</span>
+                  <span className="mt-1 block text-small text-muted">{c.text}</span>
+                </figcaption>
+              </figure>
+            );
+          })}
+        </div>
+        <div className="mt-7 flex items-center justify-center gap-5">
+          <LiquidGlassButton size="icon" interactive aria-label={inside.prev} onClick={() => go(-1)} className="bg-glass-fill">
+            <CaretLeft aria-hidden="true" className="size-icon-md" />
+          </LiquidGlassButton>
+          <div className="flex gap-2" role="tablist" aria-label={inside.dots}>
+            {inside.cards.map((c, i) => (
+              <button
+                key={c.title}
+                type="button"
+                role="tab"
+                aria-selected={i === active}
+                aria-label={c.title}
+                onClick={() => setActive(i)}
+                className="carousel-dot"
+              />
+            ))}
+          </div>
+          <LiquidGlassButton size="icon" interactive aria-label={inside.next} onClick={() => go(1)} className="bg-glass-fill">
+            <CaretRight aria-hidden="true" className="size-icon-md" />
+          </LiquidGlassButton>
+        </div>
+        <p className="sr-only" aria-live="polite">
+          {inside.cards[active].title}: {inside.cards[active].text}
+        </p>
+      </div>
+
+      {/* Телефон: свайп */}
+      <div className="inside-swipe mt-7 lg:hidden">
+        {inside.cards.map((c) => (
+          <figure key={c.title} className="inside-card">
+            <div className="carousel-shot">
+              <img src={`${base}media/sites/${c.shot}.jpg`} alt={`${c.title}: блок с сайта артиста`} loading="lazy" decoding="async" width={780} height={1688} />
+            </div>
+            <figcaption className="mt-4">
+              <span className="block text-lead font-semibold leading-lead tracking-head">{c.title}</span>
+              <span className="mt-1 block text-small text-muted">{c.text}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  );
+}

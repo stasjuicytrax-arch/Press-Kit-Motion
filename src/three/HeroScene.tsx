@@ -147,12 +147,21 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
       const r = hero.getBoundingClientRect();
       return { x: cx - r.left - r.width / 2, y: r.height / 2 - (cy - r.top) };
     };
+    let prev: { x: number; y: number } | null = null;
     const onMove = (e: PointerEvent) => {
       if (e.pointerType === "touch" && !s.touching) return;
       const p = toLocal(e.clientX, e.clientY);
       s.tx = p.x;
       s.ty = p.y;
       s.lastPointer = s.t;
+      // Толчок от скорости мыши: капля «чувствует» движение, но не летит за курсором
+      if (prev && s.phase !== "fall") {
+        const ix = Math.max(-40, Math.min(40, p.x - prev.x));
+        const iy = Math.max(-40, Math.min(40, p.y - prev.y));
+        s.vx += ix * 2.5;
+        s.vy += iy * 2.5;
+      }
+      prev = p;
       if (s.phase === "idle") s.phase = "follow";
     };
     const onDown = (e: PointerEvent) => {
@@ -234,25 +243,28 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
           s.vx = s.vy = 0;
         }
       } else {
-        // Цель: курсор/палец, иначе восьмёрка над надписью; плюс наклон телефона
-        const idle = s.phase === "idle" || (!s.touching && s.t - s.lastPointer > 4);
-        if (idle && s.phase !== "idle") {
-          s.phase = "idle";
-          s.idleT = 0;
+        // Дом капли — над «Kit». Пока мышь (или палец) движется, капля мягко тянется в его
+        // сторону, но не дальше половины своего радиуса; мышь замерла — капля возвращается.
+        // Решение владельца 2026-10-21: капля не должна «прилипать» к курсору.
+        const moving = s.t - s.lastPointer < 0.5 || s.touching;
+        if (moving) s.idleT = 0;
+        else s.idleT += dt;
+        const re = radius * 1.08; // видимый радиус (перспектива увеличивает каплю)
+        let tx = layout.kit.x;
+        let ty = layout.kit.y;
+        if (moving) {
+          const dx = s.tx - tx;
+          const dy = s.ty - ty;
+          const d = Math.hypot(dx, dy) || 1;
+          const pull = Math.min(d * 0.12, re * 0.5);
+          tx += (dx / d) * pull;
+          ty += (dy / d) * pull;
+        } else if (phone && s.idleT < 12) {
+          // Телефон без касаний: лёгкое покачивание вокруг «Kit», через 12 с замирает (WCAG 2.2.2)
+          const fade = Math.max(0, 1 - Math.max(0, s.idleT - 9) / 3);
+          tx += Math.sin(s.t * 0.5) * re * 0.35 * fade;
+          ty += Math.sin(s.t * 1.0) * re * 0.18 * fade;
         }
-        if (idle) s.idleT += dt;
-        // WCAG 2.2.2: самодвижение не бесконечно — через ~12с капля садится на «Kit»,
-        // курсор или касание её будят
-        const rest = idle && s.idleT > 12;
-        // Восьмёрка над надписью, капля целиком в кадре и ниже навигации
-        const b = layout.bounds;
-        // Видимый радиус: капля стоит ближе к камере, перспектива увеличивает её ~на 15%
-        const re = radius * 1.08;
-        const ax = Math.max(0, Math.min(layout.textHalf * 0.8, size.width / 2 - re - 16));
-        const ay = Math.min(b.height * 0.22, size.height * 0.14);
-        const tx = rest ? layout.kit.x : idle ? Math.sin(s.t * 0.35) * ax : s.tx;
-        const midY = (layout.words[0].y + layout.words[layout.words.length - 1].y) / 2;
-        const ty = rest ? layout.kit.y : idle ? midY + Math.sin(s.t * 0.7) * ay : s.ty;
         const xLim = size.width / 2 - re * 0.75;
         const yTop = size.height / 2 - layout.navBottom - re - 12;
         const cx = Math.max(-xLim, Math.min(xLim, tx + s.tiltX * size.width * 0.15));
@@ -263,6 +275,17 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         s.vy += ay2 * dt;
         s.x += s.vx * dt;
         s.y += s.vy * dt;
+        // Поводок: от «Kit» капля отходит не дальше 0.75 радиуса, как бы ни дёргали мышь
+        const ox = s.x - layout.kit.x;
+        const oy = s.y - layout.kit.y;
+        const od = Math.hypot(ox, oy);
+        const leash = re * 0.75;
+        if (od > leash) {
+          s.x = layout.kit.x + (ox / od) * leash;
+          s.y = layout.kit.y + (oy / od) * leash;
+          s.vx *= 0.6;
+          s.vy *= 0.6;
+        }
       }
       // Пружина расплющивания: после удара капля дрожит и собирается
       const sa = 180 * (1 - s.sq) - 8 * s.sqv;

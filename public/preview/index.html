@@ -43,7 +43,7 @@
   <body class="mobile">
     <h1>Записи сайтов артистов</h1>
     <p class="lead">
-      Материал для 3D-ленты, секции «Работы» и панорамы. Каждый ролик около 11 секунд, без звука, до 1.5 МБ.
+      Материал для 3D-ленты, секции «Работы» и панорамы. Каждый ролик 8–11 секунд, без звука: телефон 780px до 4 МБ, десктоп 1920px до 6 МБ. MP4 (H.264) первым источником.
       Служебная страница, на лендинге её нет.
     </p>
     <div class="switch" role="group" aria-label="Устройство">
@@ -65,13 +65,18 @@
         grid.innerHTML = SITES.map(([key, name, meta, url]) => {
           const dir = `../media/sites/${key}/`;
           return `<figure>
-            <video autoplay muted loop playsinline preload="metadata" poster="${dir}${device}-poster.jpg">
-              <source src="${dir}${device}.webm" type="video/webm" />
+            <video muted loop playsinline preload="none" poster="${dir}${device}-poster.jpg">
               <source src="${dir}${device}.mp4" type="video/mp4" />
+              <source src="${dir}${device}.webm" type="video/webm" />
             </video>
             <figcaption><h2>${name}</h2><p class="meta">${meta} · <a href="${url}" target="_blank" rel="noopener">Открыть сайт</a></p></figcaption>
           </figure>`;
         }).join("");
+        // Ролики тяжёлые (до 4–6 МБ): грузятся и играют, только когда видны (TZ.md §6.1, §10)
+        const io = new IntersectionObserver((entries) => {
+          for (const e of entries) e.isIntersecting ? e.target.play().catch(() => {}) : e.target.pause();
+        }, { rootMargin: "200px" });
+        grid.querySelectorAll("video").forEach((v) => io.observe(v));
       }
       document.querySelectorAll("[data-device]").forEach((b) =>
         b.addEventListener("click", () => {
