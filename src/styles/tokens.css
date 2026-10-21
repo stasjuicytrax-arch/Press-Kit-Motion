@@ -107,8 +107,8 @@
   --bezel: 10px;
   --carousel-w: clamp(220px, 19vw, 300px);
   --carousel-h: calc(var(--carousel-w) * 16 / 9 + 150px);
-  --carousel-pad: var(--space-3); /* воздух вокруг блока внутри кадра */
-  --carousel-shot-r: 14px; /* скругление снимка блока внутри кадра */
+  --carousel-rim: 4px; /* стеклянная кромка карточки карусели */
+  --carousel-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.75), inset 0 0 0 1px rgb(255 255 255 / 0.35), 0 18px 40px -22px rgb(17 17 17 / 0.35); /* блик сверху + мягкая тень по контуру */
   --carousel-shrink: 0.12; /* масштаб боковых карточек: −12% на шаг */
   --step-caption: clamp(1.5rem, 1.2rem + 1.1vw, 2.25rem); /* подпись центральной карточки */
   --carousel-step: calc(var(--carousel-w) * 0.98);

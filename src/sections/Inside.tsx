@@ -1,7 +1,7 @@
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
-import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
+import { LiquidGlass, LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
 // Что внутри — круговая карусель (TZ.md §7.4, приём circular-carousel nexus-ui).
 // Все карточки — один кадр 9:16 с блоком сайта по центру тёмной подложки; боковые отличаются
@@ -11,13 +11,16 @@ import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-but
 // Телефон: горизонтальный свайп со scroll-snap, карточка 80vw.
 const AUTOPLAY = 4000;
 
-// Снимок блока целиком по центру тёмной подложки 9:16 (scripts/capture-blocks.mjs)
+// Кадр 9:16 мобильной версии сайта от верха блока, на всю карточку; вместо рамки — тонкая
+// кромка жидкого стекла, как у телефона в конструкторе (scripts/capture-blocks.mjs)
 function Shot({ base, shot, title, lazy }: { base: string; shot: string; title: string; lazy?: boolean }) {
   return (
-    <picture>
-      <source srcSet={`${base}media/blocks/${shot}.avif`} type="image/avif" />
-      <img src={`${base}media/blocks/${shot}.jpg`} alt={`${title}: блок с сайта артиста`} loading={lazy ? "lazy" : undefined} decoding="async" />
-    </picture>
+    <LiquidGlass refraction={14} bezel={10} blur={4} className="carousel-glass">
+      <picture className="carousel-shot">
+        <source srcSet={`${base}media/blocks/${shot}.avif`} type="image/avif" />
+        <img src={`${base}media/blocks/${shot}.jpg`} alt={`${title}: блок с сайта артиста`} loading={lazy ? "lazy" : undefined} decoding="async" width={720} height={1280} />
+      </picture>
+    </LiquidGlass>
   );
 }
 
@@ -49,7 +52,10 @@ export function Inside() {
         <h2 id="inside-h" className="col-span-full text-head font-semibold leading-head tracking-head lg:col-span-6">
           {inside.h2}
         </h2>
-        <p className="col-span-full max-w-body self-end text-body text-muted lg:col-span-4 lg:col-start-8">{inside.lead}</p>
+        <div className="col-span-full flex max-w-body flex-col gap-3 self-end text-body text-muted lg:col-span-4 lg:col-start-8">
+          <p>{inside.lead}</p>
+          <p className="text-ink">{inside.phoneNote}</p>
+        </div>
       </div>
 
       {/* Десктоп: дуга */}
@@ -81,9 +87,7 @@ export function Inside() {
                 data-hidden={hidden}
                 onClick={() => setActive(i)}
               >
-                <div className="carousel-shot">
-                  <Shot base={base} shot={c.shot} title={c.title} />
-                </div>
+                <Shot base={base} shot={c.shot} title={c.title} />
                 <figcaption className="carousel-caption">
                   <span className="block font-semibold leading-head tracking-head">{c.title}</span>
                   <span className="mt-2 block text-body text-muted">{c.text}</span>
@@ -122,9 +126,7 @@ export function Inside() {
       <div className="inside-swipe mt-7 lg:hidden">
         {inside.cards.map((c) => (
           <figure key={c.title} className="inside-card">
-            <div className="carousel-shot">
-              <Shot base={base} shot={c.shot} title={c.title} lazy />
-            </div>
+            <Shot base={base} shot={c.shot} title={c.title} lazy />
             <figcaption className="mt-4">
               <span className="block text-lead font-semibold leading-lead tracking-head">{c.title}</span>
               <span className="mt-1 block text-small text-muted">{c.text}</span>

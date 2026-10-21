@@ -642,7 +642,6 @@
     position: relative;
     height: var(--carousel-h);
     perspective: var(--carousel-perspective);
-    mask-image: linear-gradient(to right, transparent, #000 18%, #000 82%, transparent); /* taste-skill-ignore: растворение краёв карусели */
   }
   .carousel-card {
     position: absolute;
@@ -654,8 +653,8 @@
     /* Боковые отличаются только наклоном, масштабом и прозрачностью — размер кадра у всех один */
     transform: translateX(calc(var(--o) * var(--carousel-step))) rotateY(calc(var(--o) * -1 * var(--carousel-turn)))
       scale(calc(1 - var(--abs) * var(--carousel-shrink)));
-    /* Карточки непрозрачные: тёмная подложка на светлом фоне иначе сереет. Дальние гаснут маской сцены */
-    opacity: 1;
+    /* Боковые только меньше, наклонены и полупрозрачнее: 0.8 и 0.6 */
+    opacity: calc(1 - var(--abs) * 0.2);
     transition:
       transform var(--dur-base) var(--ease-spring),
       opacity var(--dur-base) var(--ease-out);
@@ -679,25 +678,24 @@
   .carousel-caption > span:first-child {
     font-size: var(--step-caption);
   }
-  /* Кадр 9:16: блок сайта целиком по центру тёмной подложки, с полями */
-  .carousel-shot {
-    container-type: size;
-    display: grid;
-    grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-    place-items: center;
-    aspect-ratio: 9 / 16;
-    padding: var(--carousel-pad);
+  /* Кадр 9:16 мобильной версии сайта на всю карточку, без подложки и рамки.
+     Кромка — тонкое жидкое стекло (--carousel-rim): блик сверху, мягкая тень по контуру */
+  .carousel-glass {
+    padding: var(--carousel-rim);
     border-radius: var(--radius-screen);
-    overflow: hidden;
-    background: var(--field);
+    box-shadow: var(--carousel-glass-shadow);
   }
-  .carousel-shot picture {
-    display: contents;
+  .carousel-shot {
+    display: block;
+    aspect-ratio: 9 / 16;
+    border-radius: calc(var(--radius-screen) - var(--carousel-rim));
+    overflow: hidden;
   }
   .carousel-shot img {
-    max-width: 100cqw;
-    max-height: 100cqh;
-    border-radius: var(--carousel-shot-r);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
   }
   /* Точка 10px, тач-цель 44px за счёт прозрачной рамки */
   .carousel-dot {
