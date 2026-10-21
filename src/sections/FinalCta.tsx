@@ -10,7 +10,7 @@ export function FinalCta() {
   const { final, work } = ru;
   const posters = [...work.artists, ...work.artists];
   return (
-    <section className="final surface-field" aria-labelledby="final-h" data-hide-sticky>
+    <section className="final surface-field" aria-labelledby="final-h" data-hide-sticky data-theme="dark">
       <div className="final-drift" aria-hidden="true">
         <div className="final-drift-track">
           {posters.map((a, i) => (

@@ -63,6 +63,8 @@ export interface LiquidGlassOptions {
   fluid?: boolean;
   /** Tint color as #rrggbb. Colors transmitted light like pigmented glass. */
   tint?: string;
+  /** Доп. фильтры после преломления, например "saturate(180%) brightness(1.05)" (Press Kit Motion) */
+  backdropExtra?: string;
 }
 
 export interface LiquidGlassProps
@@ -1062,6 +1064,7 @@ function useLiquidGlass(options: LiquidGlassOptions, rootRef: React.RefObject<HT
     motion,
     fluid = false,
     tint,
+    backdropExtra = "",
   } = options;
 
   const lensRef = React.useRef<HTMLSpanElement | null>(null);
@@ -1201,7 +1204,7 @@ function useLiquidGlass(options: LiquidGlassOptions, rootRef: React.RefObject<HT
   const engineBlur =
     engine === "webkit" ? Math.min(fallbackBlur, 16) : fallbackBlur;
   const backdrop = refracting
-    ? `url(#${map!.filterId})${blur > 0 ? ` blur(${blur}px)` : ""}`
+    ? `url(#${map!.filterId})${blur > 0 ? ` blur(${blur}px)` : ""}${backdropExtra ? ` ${backdropExtra}` : ""}`
     : material === "regular"
       ? `blur(${Math.max(2, engineBlur * 0.5)}px) ${cssTone}`
       : `blur(${engineBlur}px) ${cssTone}`;
@@ -1364,6 +1367,7 @@ export const LiquidGlass = React.forwardRef<HTMLDivElement, LiquidGlassProps>(
       motion,
       fluid,
       tint,
+      backdropExtra,
       asChild,
       className,
       style,
@@ -1374,7 +1378,7 @@ export const LiquidGlass = React.forwardRef<HTMLDivElement, LiquidGlassProps>(
   ) => {
     const rootRef = React.useRef<HTMLDivElement | null>(null);
     const glass = useLiquidGlass(
-      { material, appearance, refraction, bezel, blur, saturation, brightness, dispersion, fallbackBlur, mode, interactive, motion, fluid, tint },
+      { material, appearance, refraction, bezel, blur, saturation, brightness, dispersion, fallbackBlur, mode, interactive, motion, fluid, tint, backdropExtra },
       rootRef
     );
     return renderSurface(
@@ -1414,6 +1418,7 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
       motion,
       fluid,
       tint,
+      backdropExtra,
       asChild,
       className,
       style,
@@ -1424,7 +1429,7 @@ export const LiquidGlassButton = React.forwardRef<HTMLButtonElement, LiquidGlass
   ) => {
     const rootRef = React.useRef<HTMLButtonElement | null>(null);
     const glass = useLiquidGlass(
-      { material, appearance, refraction, bezel, blur, saturation, brightness, dispersion, fallbackBlur, mode, interactive, motion, fluid, tint },
+      { material, appearance, refraction, bezel, blur, saturation, brightness, dispersion, fallbackBlur, mode, interactive, motion, fluid, tint, backdropExtra },
       rootRef
     );
     return renderSurface(

@@ -108,6 +108,19 @@
   .nav-shell > nav {
     width: 100%;
   }
+  /* Капсула меню: почти прозрачная заливка; в Safari/Firefox (frost) чуть плотнее */
+  .nav-glass {
+    background: var(--glass-fill-nav);
+    color: var(--ink);
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .nav-glass[data-liquid-glass="frost"] {
+    background: var(--glass-fill-nav-fallback);
+  }
+  /* Над тёмными блоками текст меню светлый */
+  .nav-shell[data-tone="dark"] .nav-glass {
+    color: var(--field-ink);
+  }
   @media (min-width: 768px) {
     .nav-shell > nav {
       width: auto;
@@ -393,44 +406,7 @@
     background: var(--field);
   }
 
-  /* 7.3 Работы */
-  .work-name {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-4);
-    padding-block: var(--space-2);
-    color: var(--muted);
-    text-decoration: none;
-    transition: color var(--dur-fast) var(--ease-out);
-  }
-  .work-name[data-active="true"] {
-    color: var(--ink);
-  }
-  .work-dot {
-    flex: 0 0 auto;
-    align-self: center;
-    width: var(--dot);
-    height: var(--dot);
-    border-radius: var(--radius-pill);
-    background: var(--accent);
-    opacity: 0;
-    transform: scale(0.4);
-    transition:
-      opacity var(--dur-fast) var(--ease-out),
-      transform var(--dur-fast) var(--ease-spring);
-  }
-  .work-name[data-active="true"] .work-dot,
-  .price-name[aria-checked="true"] .work-dot {
-    opacity: 1;
-    transform: none;
-  }
-  .work-sticky {
-    position: sticky;
-    top: 15vh;
-  }
-  .work-swap {
-    animation: crossfade var(--dur-fast) var(--ease-out);
-  }
+  /* 7.3 Работы — шоурум (правки владельца 2026-10-21) */
   .work-open {
     display: inline-flex;
     align-items: center;
@@ -438,7 +414,186 @@
     min-height: var(--tap);
     text-decoration: underline;
   }
-  .work-swipe,
+  @media (min-width: 1024px) {
+    /* Вся секция в один экран */
+    .work {
+      display: flex;
+      flex-direction: column;
+      min-height: 100svh;
+      padding-block: var(--space-8) var(--space-7);
+    }
+  }
+  .work-room {
+    flex: 1;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-top: var(--space-6);
+  }
+  .work-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-7);
+    padding-inline: var(--margin);
+  }
+  .work-tab {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font-size: var(--step-lead);
+    font-weight: 500;
+    letter-spacing: var(--track-head);
+    cursor: pointer;
+    transition: color var(--dur-fast) var(--ease-out);
+  }
+  .work-tab[aria-selected="true"] {
+    color: var(--ink);
+  }
+  .work-tab-bar {
+    display: block;
+    width: 100%;
+    height: 3px;
+    border-radius: var(--radius-pill);
+    overflow: hidden;
+  }
+  /* Лаймовая полоса прогресса до автосмены (8 с), пауза при наведении */
+  .work-tab-fill {
+    display: block;
+    height: 100%;
+    background: var(--accent-deep);
+    transform-origin: left;
+    animation: work-progress 8s linear forwards;
+  }
+  .work-tab-fill[data-paused="true"] {
+    animation-play-state: paused;
+  }
+  .work-stage {
+    flex: 1;
+    align-items: end;
+  }
+  .work-info {
+    padding-bottom: var(--space-4);
+  }
+  .work-fade {
+    animation: crossfade var(--dur-base) var(--ease-out);
+  }
+  /* Сцена: браузер 16:10 и телефон 9:16 поверх правого нижнего угла; ничего не обрезается */
+  .work-scene {
+    --srx: 0deg;
+    --sry: 0deg;
+    display: flex;
+    justify-content: center;
+    padding-right: var(--work-phone-w);
+    padding-bottom: var(--space-7);
+    transform: perspective(1400px) rotateX(var(--srx)) rotateY(var(--sry));
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .work-scene-in {
+    position: relative;
+    width: min(100%, var(--work-browser-w));
+    animation: work-swap var(--dur-base) var(--ease-out);
+  }
+  .work-browser {
+    border-radius: var(--radius-panel);
+    overflow: hidden;
+    background: var(--field);
+    box-shadow: var(--shadow-float); /* taste-skill-ignore: парящий экран, DESIGN.md §11 */
+  }
+  .work-browser-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    height: var(--work-bar-h);
+    padding-inline: var(--space-4);
+    background: var(--surface-2);
+    color: var(--muted);
+    font-size: var(--step-small);
+  }
+  .work-dots {
+    display: flex;
+    gap: var(--space-2);
+  }
+  .work-dots i {
+    width: 10px;
+    height: 10px;
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+  }
+  .work-url {
+    flex: 1;
+    max-width: 60%;
+    margin-inline: auto;
+    padding: var(--space-1) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--bg);
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .work-browser-screen {
+    aspect-ratio: 16 / 10;
+  }
+  .work-phone {
+    position: absolute;
+    right: calc(var(--work-phone-w) * -0.55);
+    bottom: calc(var(--space-7) * -1);
+    width: var(--work-phone-w);
+    aspect-ratio: 9 / 16;
+    border: var(--bezel) solid var(--ink);
+    border-radius: var(--radius-screen);
+    overflow: hidden;
+    background: var(--field);
+    box-shadow: var(--shadow-float); /* taste-skill-ignore: парящий телефон, DESIGN.md §11 */
+    transform: translateZ(40px);
+  }
+  /* Свайп на телефоне */
+  .work-swipe {
+    display: flex;
+    gap: var(--gutter);
+    padding-inline: var(--margin);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--margin);
+    scrollbar-width: none;
+  }
+  .work-swipe::-webkit-scrollbar {
+    display: none;
+  }
+  .work-card {
+    flex: 0 0 auto;
+    width: var(--swipe-w);
+    scroll-snap-align: start;
+  }
+  .work-card-screen {
+    aspect-ratio: 9 / 16;
+    border: var(--bezel) solid var(--ink);
+    border-radius: var(--radius-screen);
+    overflow: hidden;
+    background: var(--field);
+  }
+  .work-dots-nav {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin-top: var(--space-5);
+  }
+  .work-dots-nav span {
+    width: var(--dot);
+    height: var(--dot);
+    border-radius: var(--radius-pill);
+    background: var(--surface);
+    transition: background-color var(--dur-fast) var(--ease-out);
+  }
+  .work-dots-nav span[data-active="true"] {
+    background: var(--accent-deep);
+  }
+
   .inside-swipe {
     display: flex;
     gap: var(--gutter);
@@ -448,21 +603,13 @@
     scroll-padding-inline: var(--margin);
     scrollbar-width: none;
   }
-  .work-swipe::-webkit-scrollbar,
   .inside-swipe::-webkit-scrollbar {
     display: none;
   }
-  .work-card,
   .inside-card {
     flex: 0 0 auto;
     width: var(--swipe-w);
     scroll-snap-align: start;
-  }
-  .work-card-screen {
-    aspect-ratio: 9 / 16;
-    border-radius: var(--radius-screen);
-    overflow: hidden;
-    background: var(--field);
   }
 
   /* Стеклянный телефон, двойной безель */
@@ -652,91 +799,226 @@
     object-position: top;
   }
 
-  /* 7.7 Цена — три карточки (TZ.md §7.7, версия 2) */
-  .price-cards {
-    row-gap: var(--gutter);
+  /* 7.7 Цена — стеклянные карточки над бегущей надписью (TZ.md §7.7, правки 2026-10-21) */
+  .price-stage {
+    position: relative;
+    margin-top: var(--space-8);
+    padding-block: var(--space-8);
   }
-  .price-card {
-    display: grid;
-    /* подпись · название · цена · для кого · список · срок · кнопка */
-    grid-template-rows: auto auto auto auto 1fr auto auto;
-    row-gap: var(--space-4);
-    grid-column: 1 / -1;
-    padding: var(--space-6);
-    border-radius: var(--radius-screen);
-    background: var(--surface-2);
+  /* Огромная надпись сплошным --ink, размером как монумент, медленно едет за карточками */
+  .price-marquee {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    pointer-events: none;
     color: var(--ink);
+    font-size: var(--step-hero);
+    font-weight: 600;
+    line-height: var(--leading-hero);
+    letter-spacing: var(--track-mono);
+    white-space: nowrap;
   }
-  .price-card--featured {
-    order: -1; /* на телефоне «Букинг» первой */
-    background: var(--field);
-    color: var(--field-ink);
+  .price-marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-left 70s linear infinite;
+  }
+  .price-marquee-track > span {
+    padding-right: 0.3em;
+  }
+  .price-cards {
+    position: relative;
+    display: grid;
+    gap: var(--space-5);
+    width: min(var(--price-block-w), 100% - 2 * var(--margin));
+    margin-inline: auto;
   }
   @media (min-width: 1024px) {
-    /* Три в ряд по 4 колонки; строки всех карточек на общих линиях через subgrid */
+    /* Три карточки ~340px; строки всех карточек на общих линиях через subgrid */
     .price-cards {
-      grid-template-rows: repeat(7, auto);
+      grid-template-columns: repeat(3, minmax(0, var(--price-card-w)));
+      grid-template-rows: repeat(5, auto);
+      justify-content: center;
+      align-items: start;
     }
     .price-card {
-      grid-column: span 4;
-      grid-row: span 7;
+      grid-row: span 5;
+      display: grid;
       grid-template-rows: subgrid;
     }
+    .price-card > .price-glass,
+    .price-card > .price-glass > .price-panel {
+      grid-row: 1 / -1;
+      display: grid;
+      grid-template-rows: subgrid;
+    }
+  }
+  .price-card {
+    position: relative;
+    --rx: 0deg;
+    --ry: 0deg;
+    /* Наклон без preserve-3d: в 3D-контексте Chrome отключает backdrop-filter у стекла */
+    transform: perspective(1200px) rotateX(var(--rx)) rotateY(var(--ry));
+    transition: transform var(--dur-base) var(--ease-out);
+  }
+  .price-card[data-hover] {
+    transition: transform var(--dur-fast) linear;
+  }
+  /* Средняя чуть крупнее и приподнята; на телефоне — первой */
+  .price-card--featured {
+    order: -1;
+    z-index: 1;
+  }
+  @media (min-width: 1024px) {
     .price-card--featured {
       order: 0;
+      transform: perspective(1200px) translateY(calc(var(--space-5) * -1)) scale(1.04) rotateX(var(--rx)) rotateY(var(--ry));
     }
   }
-  .price-badge {
-    min-height: 1lh;
-    color: var(--accent);
+  /* Двойной безель: тонкий стеклянный контур, внутри панель */
+  .price-glass {
+    padding: var(--price-bezel);
+    border-radius: var(--radius-screen);
   }
-  /* Пустая строка подписи нужна только для выравнивания карточек в ряд */
-  @media (max-width: 1023px) {
-    .price-badge:empty {
-      display: none;
-    }
+  .price-panel {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-6) var(--space-5) var(--space-5);
+    border-radius: calc(var(--radius-screen) - var(--price-bezel));
+    background: var(--price-panel-light);
+    box-shadow: var(--price-panel-rim);
+    overflow: hidden;
+    color: var(--ink);
+  }
+  .price-card--featured .price-panel {
+    background: var(--price-panel-dark);
+    box-shadow: var(--price-panel-rim-dark);
+    color: var(--field-ink);
+  }
+  /* Блик бежит за курсором (свет на стекле — часть материала, DESIGN.md §5) */
+  .price-glare {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(260px circle at var(--gx, 50%) var(--gy, 0%), rgb(255 255 255 / 0.32), transparent 60%); /* taste-skill-ignore: блик стекла под курсором */
+    transition: opacity var(--dur-base) var(--ease-out);
+  }
+  .price-card[data-hover] .price-glare {
+    opacity: 1;
+  }
+  .price-name {
+    font-size: var(--step-small);
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    color: var(--muted);
+  }
+  .price-card--featured .price-name {
+    color: var(--field-muted);
   }
   .price-figure {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.04em;
     font-size: var(--step-price);
-    font-weight: 600;
+    font-weight: 300;
     line-height: 0.9;
     letter-spacing: var(--track-head);
   }
+  /* Знак валюты мельче и приподнят */
+  .price-cur {
+    margin-top: 0.12em;
+    font-size: 0.42em;
+    font-weight: 400;
+  }
   .price-who {
-    max-width: 30ch;
+    font-size: var(--step-body);
+    font-weight: 500;
+    line-height: 1.35;
   }
   .price-items {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
-    padding-top: var(--space-2);
   }
-  /* Пункты обычным текстом с точкой: лаймовая на тёмной карточке, --ink на светлых */
   .price-item {
     position: relative;
-    padding-left: var(--space-5);
+    padding-left: var(--space-4);
+    font-size: var(--step-small);
+    line-height: 1.6;
   }
   .price-item::before {
     content: "";
     position: absolute;
     left: 0;
-    top: calc(0.75em - var(--dot-sm) / 2);
+    top: calc(0.8em - var(--dot-sm) / 2);
     width: var(--dot-sm);
     height: var(--dot-sm);
     border-radius: var(--radius-pill);
-    background: var(--ink);
+    background: currentColor;
+    opacity: 0.55;
   }
   .price-card--featured .price-item::before {
     background: var(--accent);
+    opacity: 1;
   }
-  .price-muted {
-    color: var(--muted);
+  .price-actions {
+    display: flex;
+    flex-wrap: wrap;
+    min-width: 0;
+    align-items: center;
+    gap: var(--space-3);
+    padding-top: var(--space-3);
   }
-  .price-card--featured .price-muted {
-    color: var(--field-muted);
+  @media (min-width: 1024px) {
+    /* В сетке карточек — прижато к низу общей строки */
+    .price-actions {
+      align-self: end;
+    }
   }
+  .price-cta {
+    flex: 1;
+    min-width: 0;
+    padding-left: var(--space-4);
+    font-size: var(--step-small);
+    white-space: nowrap;
+  }
+  /* Срок — маленький стеклянный чип рядом с кнопкой */
   .price-days {
-    padding-top: var(--space-2);
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 auto;
+    min-height: var(--tap);
+    padding-inline: var(--space-3);
+    border-radius: var(--radius-pill);
+    background: var(--glass-fill-nav);
+    font-size: var(--step-small);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .price-card--featured .price-days {
+    color: var(--field-ink);
+    background: rgb(250 250 247 / 0.08);
+  }
+  /* «Чаще всего выбирают» — стеклянный чип наполовину над верхним краем карточки */
+  .price-badge {
+    position: absolute !important;
+    top: 0;
+    left: 50%;
+    z-index: 2;
+    transform: translate(-50%, -50%);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: rgb(12 14 10 / 0.7);
+    color: var(--accent);
+    font-size: var(--step-small);
+    font-weight: 600;
+    white-space: nowrap;
   }
 
   /* 7.8 FAQ */
@@ -775,10 +1057,10 @@
     isolation: isolate;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: var(--space-9);
-    min-height: 90svh;
-    padding: var(--space-10) var(--margin) var(--space-8);
+    /* Заголовок наверху, фраза и кнопка сразу под ним: без растяжки на всю высоту */
+    justify-content: flex-start;
+    gap: var(--space-8);
+    padding: var(--space-10) var(--margin);
     overflow: hidden;
     background: var(--field);
     color: var(--field-ink);
@@ -840,16 +1122,36 @@
     text-decoration: underline;
   }
   /* Имя на всю ширину, обрезано нижним краем: видна верхняя часть букв */
+  /* Имя целиком, ровно от левого до правого поля на любой ширине: размер от ширины экрана.
+     Делитель --footer-mark-em — ширина «Press Kit Motion» в em при трекинге -0.06em. */
   .footer-mark {
-    height: calc(var(--step-mono-static) * 0.62);
     margin-top: var(--space-9);
     padding-inline: var(--margin);
     overflow: hidden;
-    font-size: var(--step-mono-static);
+    font-size: calc((100vw - 2 * var(--margin)) / var(--footer-mark-em));
     font-weight: 600;
     line-height: var(--leading-hero);
     letter-spacing: var(--track-mono);
     white-space: nowrap;
+  }
+  .footer-char {
+    display: inline-block;
+  }
+  /* Буквы поднимаются снизу по очереди (только с JS; без него видны сразу) */
+  .js-motion .footer-mark[data-reveal] {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .js-motion .footer-mark .footer-char {
+    transition:
+      transform var(--dur-slow) var(--ease-out),
+      opacity var(--dur-slow) var(--ease-out);
+    transition-delay: calc(var(--i) * 35ms);
+  }
+  .js-motion .footer-mark:not(.is-in) .footer-char {
+    opacity: 0;
+    transform: translateY(60%);
   }
   .footer-legal {
     position: relative;
@@ -881,6 +1183,22 @@
   --style-glow: radial-gradient(120% 70% at 50% 0%, rgb(255 255 255 / 0.45), transparent 60%), radial-gradient(80% 50% at 80% 100%, rgb(190 196 204 / 0.45), transparent 70%); /* taste-skill-ignore */
 }
 
+@keyframes work-progress {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes work-swap {
+  from {
+    opacity: 0;
+    transform: perspective(1400px) translateX(48px) rotateY(-10deg);
+  }
+}
+@keyframes marquee-left {
+  to {
+    transform: translateX(-50%);
+  }
+}
 @keyframes crossfade {
   from {
     opacity: 0;
@@ -893,7 +1211,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .final-drift-track {
+  .final-drift-track,
+  .price-marquee-track {
     animation: none;
   }
 }

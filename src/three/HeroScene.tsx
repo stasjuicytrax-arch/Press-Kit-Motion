@@ -195,15 +195,23 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     };
   }, [heroRef, reduced, uniforms]);
 
-  // Капля живёт только на первом экране и уезжает вместе с ним (решение владельца 2026-10-21:
-  // в угол не улетать). Когда первый экран вне кадра, рендер полностью останавливается.
+  // Капля живёт только на первом экране (решение владельца 2026-10-21: в угол не улетать).
+  // При уходе с первого экрана улетает вниз-вправо и исчезает (масштаб → 0), затем сцена
+  // засыпает: frameloop "demand", пока первый экран снова не вернётся в кадр.
+  const exit = useRef(0);
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero || reduced) return;
-    const io = new IntersectionObserver(([e]) => setFrameloop(e.isIntersecting ? "always" : "never"));
-    io.observe(hero);
-    return () => io.disconnect();
-  }, [reduced, heroRef, setFrameloop]);
+    const onScroll = () => {
+      const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.6)));
+      exit.current = p;
+      setFrameloop(p >= 1 ? "demand" : "always");
+      if (p >= 1) invalidate();
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [reduced, heroRef, setFrameloop, invalidate]);
 
   const k = tokenNumber("--drop-spring-k", 90);
   const c = tokenNumber("--drop-spring-c", 14);
@@ -286,9 +294,13 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     s.grow += ((over ? 1.08 : 1) - s.grow) * Math.min(1, dt * 6);
 
     // Капля целиком перед надписью: стекло преломляет буквы, а не режется ими
-    g.position.set(s.x, s.y, radius * 0.4);
+    // Уход: капля улетает вниз-вправо и уменьшается до нуля
+    const e = exit.current * exit.current;
+    const fade = 1 - e;
+    g.visible = fade > 0.001;
+    g.position.set(s.x + e * size.width * 0.3, s.y - e * size.height * 0.35, radius * 0.4);
     // По глубине капля приплюснута (0.55): край меньше уводит лучи за пределы букв
-    g.scale.set((1 / Math.sqrt(s.sq)) * radius * s.grow, s.sq * radius * s.grow, 0.55 * radius * s.grow);
+    g.scale.set((1 / Math.sqrt(s.sq)) * radius * s.grow * fade, s.sq * radius * s.grow * fade, 0.55 * radius * s.grow * fade);
 
     // Растяжение по скорости: вдоль движения длиннее. Направление обновляется только на заметной
     // скорости и сглаженно — на почти нулевой скорости atan2 скачет, и капля дрожала

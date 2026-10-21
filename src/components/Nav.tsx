@@ -39,15 +39,54 @@ export function Nav() {
     return () => mq.removeEventListener("change", onChange);
   }, []);
 
+  // Читаемость над любым фоном: какая секция сейчас под капсулой (data-theme="dark" у тёмных
+  // блоков и видео) — такой и цвет текста меню, смена 200ms. Лаймовая «Написать» не меняется.
+  const [tone, setTone] = useState<"light" | "dark">("light");
+  useEffect(() => {
+    const dark = new Set<Element>();
+    let io: IntersectionObserver | null = null;
+    const setup = () => {
+      io?.disconnect();
+      dark.clear();
+      const shell = document.querySelector(".nav-shell > nav")?.getBoundingClientRect();
+      const top = Math.round(shell?.top ?? 20);
+      const bottom = Math.round(window.innerHeight - (shell?.bottom ?? 76));
+      // Полоса наблюдения — ровно высота капсулы
+      io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) e.isIntersecting ? dark.add(e.target) : dark.delete(e.target);
+          setTone(dark.size ? "dark" : "light");
+        },
+        { rootMargin: `-${top}px 0px -${bottom}px 0px` },
+      );
+      document.querySelectorAll('[data-theme="dark"]').forEach((el) => io!.observe(el));
+    };
+    setup();
+    window.addEventListener("resize", setup);
+    return () => {
+      io?.disconnect();
+      window.removeEventListener("resize", setup);
+    };
+  }, []);
+
   const close = () => setOpen(false);
 
   return (
     <>
-      <div className="nav-shell">
+      <div className="nav-shell" data-tone={tone}>
+        {/* Настоящее жидкое стекло: заливка почти прозрачная, сильное преломление у кромки
+            (карта смещения затухает к центру), дисперсия по краю, блики через box-shadow */}
         <LiquidGlass
           asChild
-          refraction={tokenNumber("--glass-refraction-nav", 14)}
-          className="pointer-events-auto rounded-pill bg-glass-fill"
+          refraction={tokenNumber("--glass-refraction-nav", 34)}
+          bezel={22}
+          blur={7}
+          dispersion={0.25}
+          backdropExtra="saturate(180%) brightness(1.05)"
+          fallbackBlur={16}
+          saturation={1.8}
+          className="nav-glass pointer-events-auto rounded-pill"
+          style={{ boxShadow: "var(--nav-glass-shadow)" }}
         >
           <nav aria-label={nav.label} className="flex min-h-button items-center justify-between gap-5 py-inset pl-5 pr-inset md:justify-start">
             <a href="#top" aria-label={nav.home} onClick={close} className="inline-flex min-h-tap items-center whitespace-nowrap rounded-pill text-body font-bold tracking-head no-underline">

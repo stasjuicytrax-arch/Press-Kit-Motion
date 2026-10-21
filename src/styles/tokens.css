@@ -76,9 +76,18 @@
   /* Вуаль полноэкранного меню поверх матового стекла: ссылки читаются над любым фоном */
   --menu-veil: rgb(242 242 238 / 0.88);
   /* Стекло: сила преломления по местам и плотная заливка главной стеклянной кнопки */
-  --glass-refraction-nav: 14;
+  --glass-refraction-nav: 34; /* меню: сильное преломление у кромки (решение владельца) */
   --glass-refraction-cta: 18;
   --glass-fill-strong: rgb(250 250 247 / 0.72);
+  /* Меню-капсула: почти прозрачное стекло, фон читается искажённым */
+  --glass-fill-nav: rgb(250 250 247 / 0.14);
+  --glass-fill-nav-fallback: rgb(250 250 247 / 0.2);
+  --nav-glass-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.95),
+    inset 0 -1px 0 rgb(255 255 255 / 0.35),
+    inset 0 0 0 1px rgb(255 255 255 / 0.28),
+    inset 0 0 18px rgb(17 17 17 / 0.06),
+    0 12px 32px -14px rgb(17 17 17 / 0.28);
 
   /* Первый экран «Стеклянная капля» (TZ.md §7.1, версия 3) */
   --step-hero: 17vw; /* монумент «Press Kit / Motion» */
@@ -105,8 +114,22 @@
   --builder-phone-w: clamp(240px, 24vw, 340px);
   --builder-name: clamp(2rem, 1.4rem + 2.4vw, 3.25rem);
   --process-w: 560px;
-  --step-price: clamp(3.25rem, 2rem + 3vw, 5rem);
-  --dot-sm: 6px; /* точка пункта в карточке цены */
+  --step-price: clamp(3.25rem, 2.4rem + 2.6vw, 4.75rem);
+  /* Цена из стекла */
+  --price-block-w: 1100px;
+  --price-card-w: 352px;
+  --price-bezel: 6px;
+  --price-panel-light: rgb(250 250 247 / 0.62);
+  --price-panel-dark: rgb(12 14 10 / 0.82);
+  --price-panel-rim: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 0 0 1px rgb(255 255 255 / 0.35);
+  --price-panel-rim-dark: inset 0 1px 0 rgb(255 255 255 / 0.22), inset 0 0 0 1px rgb(198 241 53 / 0.55);
+  --price-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 0 0 1px rgb(255 255 255 / 0.3), 0 30px 60px -28px rgb(17 17 17 / 0.35);
+  --footer-mark-em: 6.78; /* ширина «Press Kit Motion» в em (Onest 600, трекинг -0.06em) */
+  --dot-sm: 6px;
+  /* Работы — шоурум: браузер не выше 62vh, телефон поверх угла */
+  --work-bar-h: 36px;
+  --work-browser-w: min(100%, calc((62svh - var(--work-bar-h)) * 1.6));
+  --work-phone-w: clamp(120px, 11vw, 190px); /* точка пункта в карточке цены */
   --field-muted: rgb(242 242 238 / 0.68); /* вторичный текст на --field, контраст ≈ 9:1 */
   --step-final: clamp(3rem, 10vw, 11rem);
   --drift-w: clamp(160px, 16vw, 240px);

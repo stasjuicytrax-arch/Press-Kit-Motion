@@ -53,7 +53,7 @@ export function Problem() {
         </div>
       </div>
 
-      <div className="problem-pan" aria-label={problem.videoLabel} role="group">
+      <div className="problem-pan" aria-label={problem.videoLabel} role="group" data-theme="dark">
         <div ref={trackRef} className="problem-track">
           {work.artists.map((a) => (
             <figure key={a.key} className="problem-shot">
