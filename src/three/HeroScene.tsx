@@ -86,7 +86,10 @@ function CameraRig() {
 }
 
 function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLost">) {
-  const { size, invalidate } = useThree();
+  const { size, invalidate, setFrameloop } = useThree();
+  // Телефон и reduced-motion: слой внутри первого экрана, капля в угол не улетает
+  // (решение владельца 2026-10-21: на телефоне капля в углу мешала и тормозила)
+  const local = reduced || phone;
   const outer = useRef<THREE.Group>(null);
   const inner = useRef<THREE.Group>(null);
   const matRef = useRef<THREE.Material>(null);
@@ -211,14 +214,23 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
       scrollPx.current = y;
       // Пока страница едет, надпись — обычный DOM-текст (скроллится без задержки кадра),
       // наверху её снова рисует WebGL, чтобы капля преломляла буквы
-      const gl = y < 2 ? "on" : "off";
+      const gl = local || y < 2 ? "on" : "off";
       if (hero && hero.dataset.gltext !== gl) hero.dataset.gltext = gl;
       if (reduced) invalidate();
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [reduced, invalidate, heroRef]);
+  }, [reduced, local, invalidate, heroRef]);
+
+  // Локальный режим: когда первый экран ушёл из кадра, рендер полностью останавливается
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!local || !hero || reduced) return;
+    const io = new IntersectionObserver(([e]) => setFrameloop(e.isIntersecting ? "always" : "never"));
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [local, reduced, heroRef, setFrameloop]);
 
   const k = tokenNumber("--drop-spring-k", 90);
   const c = tokenNumber("--drop-spring-c", 14);
@@ -259,14 +271,15 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         const re = radius * 1.08; // видимый радиус (перспектива увеличивает каплю)
         // При прокрутке капля улетает в правый нижний угол и живёт там дальше (решение владельца
         // 2026-10-21): уменьшается, дышит, слегка тянется к мыши. На телефоне — над липкой кнопкой.
-        const p = reduced ? 0 : scroll.current;
+        const p = local ? 0 : scroll.current;
         const pe = p * p * (3 - 2 * p);
+        const scrolled = local ? 0 : Math.min(scrollPx.current, size.height);
         const cornerR = re * CORNER_SCALE;
         const bottomGap = phone ? layout.stickyGap : 32;
         const cornerX = size.width / 2 - 24 - cornerR;
         const cornerY = -size.height / 2 + bottomGap + cornerR;
         let tx = layout.kit.x + (cornerX - layout.kit.x) * pe;
-        let ty = layout.kit.y + Math.min(scrollPx.current, size.height) * (1 - pe) + (cornerY - layout.kit.y) * pe;
+        let ty = layout.kit.y + scrolled * (1 - pe) + (cornerY - layout.kit.y) * pe;
         if (s.pullW > 0.001) {
           const dx = s.tx - tx;
           const dy = s.ty - ty;
@@ -289,7 +302,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         const xLim = size.width / 2 - re * 0.75;
         const yTop = size.height / 2 - layout.navBottom - re - 12;
         const cx = Math.max(-xLim, Math.min(xLim, tx + s.tiltX * size.width * 0.15 * (1 - pe)));
-        const cy = Math.min(yTop + scrollPx.current, ty - s.tiltY * size.height * 0.1 * (1 - pe));
+        const cy = Math.min(yTop + scrolled, ty - s.tiltY * size.height * 0.1 * (1 - pe));
         const ax2 = k * (cx - s.x) - c * s.vx;
         const ay2 = k * (cy - s.y) - c * s.vy;
         s.vx += ax2 * dt;
@@ -313,11 +326,11 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     s.grow += ((over ? 1.08 : 1) - s.grow) * Math.min(1, dt * 6);
 
     // Размер: в углу капля меньше
-    const p = reduced ? 0 : scroll.current;
+    const p = local ? 0 : scroll.current;
     const pe = p * p * (3 - 2 * p);
     const sizeK = 1 + (CORNER_SCALE - 1) * pe;
     // Надпись в WebGL видна только наверху (при прокрутке её показывает DOM)
-    if (words.current) words.current.visible = scrollPx.current < 2;
+    if (words.current) words.current.visible = local || scrollPx.current < 2;
 
     // Капля целиком перед надписью: стекло преломляет буквы, а не режется ими
     g.position.set(s.x, s.y, radius * 0.4);
@@ -398,9 +411,10 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
 }
 
 export default function HeroScene(props: Props) {
+  const local = props.reduced || props.phone;
   const canvas = (
     <Canvas
-      className={props.reduced ? "hero-canvas" : "hero-canvas hero-canvas--fixed"}
+      className={local ? "hero-canvas" : "hero-canvas hero-canvas--fixed"}
       aria-hidden="true"
       flat
       dpr={[1, 1.25]}
@@ -408,13 +422,13 @@ export default function HeroScene(props: Props) {
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: FOV, position: [0, 0, 1000] }}
       onCreated={({ gl }) => gl.domElement.addEventListener("webglcontextlost", () => props.onLost(), { once: true })}
-      style={{ position: props.reduced ? "absolute" : "fixed" }}
+      style={{ position: local ? "absolute" : "fixed" }}
     >
       <CameraRig />
       <Drop heroRef={props.heroRef} titleRef={props.titleRef} reduced={props.reduced} phone={props.phone} onReady={props.onReady} />
     </Canvas>
   );
   // Капля живёт поверх всей страницы: слой выносится в <body>, иначе изолированный первый
-  // экран держит его под следующими секциями. При reduced-motion слой остаётся в первом экране.
-  return props.reduced ? canvas : createPortal(canvas, document.body);
+  // экран держит его под следующими секциями. Телефон и reduced-motion — слой в первом экране.
+  return local ? canvas : createPortal(canvas, document.body);
 }
