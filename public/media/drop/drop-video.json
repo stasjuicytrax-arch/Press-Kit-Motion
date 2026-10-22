@@ -1,0 +1,6 @@
+{
+  "width": 390,
+  "height": 526,
+  "offsetFromText": -133.4,
+  "note": "кадр снят при ширине 390; top = верх блока текста + offsetFromText*(ширина/390)"
+}

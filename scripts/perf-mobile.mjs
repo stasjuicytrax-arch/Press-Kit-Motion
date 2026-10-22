@@ -14,9 +14,11 @@ await cdp.send("Emulation.setCPUThrottlingRate", { rate: +cpu });
 await browser.startTracing(page, { categories: ["devtools.timeline", "disabled-by-default-devtools.timeline"] });
 const res = await page.evaluate(async () => {
   const secs = [...document.querySelectorAll("main > section, main > div > section, section")].filter((s, i, a) => a.indexOf(s) === i);
+  // Границы секций меряем один раз: замер на каждом кадре сам форсировал раскладку и занижал цифры
+  const marks = secs.map((s) => [s.getBoundingClientRect().top + scrollY, s.id || s.getAttribute("aria-labelledby") || s.className.split(" ")[0]]);
   const name = (y) => {
     let n = "?";
-    for (const s of secs) { const r = s.getBoundingClientRect(); if (r.top + scrollY <= y + innerHeight / 2) n = s.id || s.getAttribute("aria-labelledby") || s.className.split(" ")[0]; }
+    for (const [top, id] of marks) if (top <= y + innerHeight / 2) n = id;
     return n;
   };
   const end = document.documentElement.scrollHeight - innerHeight;

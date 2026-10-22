@@ -1,4 +1,4 @@
-import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Canvas, advance, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, MeshTransmissionMaterial, Text } from "@react-three/drei";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
@@ -66,6 +66,13 @@ function readWords(hero: HTMLElement, title: HTMLElement, vw: number, vh: number
   const bounds = new DOMRect(cx - textHalf, top, textHalf * 2, bottom - top);
   return { words, kit, bounds, W, H, navBottom, textHalf, boundsOriginX: hr.left, boundsOriginY: hr.top };
 }
+
+// ?drop-rec — режим записи видео капли для телефона: падение по сигналу скрипта, замкнутая траектория
+const REC = typeof window !== "undefined" && new URLSearchParams(location.search).has("drop-rec");
+const REC_LOOP = 10; // с, длина бесшовного цикла плавания
+
+// Запись: скрипт сам двигает время — один вызов = один кадр ровно на t секунд (без реальных часов)
+if (REC) (window as Window & { __dropAdvance?: (t: number) => void }).__dropAdvance = (t: number) => advance(t);
 
 function CameraRig() {
   const { camera, size } = useThree();
@@ -206,13 +213,14 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     const s = st.current;
     const dt = Math.min(delta, 1 / 30);
     s.t += dt;
+    if (REC) (window as Window & { __dropT?: number }).__dropT = s.t;
     if (!reduced) uniforms.uNoiseTime.value += dt;
     uniforms.uRipple.value = Math.max(0, uniforms.uRipple.value - dt * 2.4);
 
     if (!reduced) {
       if (s.phase === "fall") {
         // Падение 0.7с с ускорением, удар о «Kit»: расплющивание и волна
-        if (s.shown) s.fallT += dt;
+        if (s.shown && (!REC || (window as Window & { __dropGo?: boolean }).__dropGo)) s.fallT += dt;
         const p = Math.min(1, s.fallT / 0.7);
         s.y = s.startY + (layout.kit.y - s.startY) * p * p;
         if (p >= 1) {
@@ -232,13 +240,18 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
         s.pullW += ((moving ? 1 : 0) - s.pullW) * Math.min(1, dt * 3);
         const re = radius * 1.08; // видимый радиус (перспектива увеличивает каплю)
         s.wander += dt;
+        if (REC) (window as Window & { __dropW?: number }).__dropW = s.wander;
         const midY = (layout.words[0].y + layout.words[layout.words.length - 1].y) / 2;
         const spanX = Math.max(0, layout.textHalf - re * 0.6);
         const spanY = Math.abs(layout.words[0].y - layout.words[layout.words.length - 1].y) / 2;
         // Старт траектории в «Kit», затем плавный переход на восьмёрку за ~3 с
         const blend = Math.min(1, s.wander / 3);
-        const wx = Math.sin(s.wander * 0.28) * spanX;
-        const wy = midY + Math.sin(s.wander * 0.45 + 0.9) * spanY;
+        // Режим записи видео для телефона (scripts/record-drop.mjs): «восьмёрка», которая
+        // замыкается ровно через REC_LOOP секунд, — цикл видео склеивается без шва
+        const wx = REC ? Math.sin((s.wander * 2 * Math.PI) / REC_LOOP) * spanX : Math.sin(s.wander * 0.28) * spanX;
+        const wy = REC
+          ? midY + Math.sin((s.wander * 4 * Math.PI) / REC_LOOP + 0.9) * spanY
+          : midY + Math.sin(s.wander * 0.45 + 0.9) * spanY;
         let tx = layout.kit.x + (wx - layout.kit.x) * blend;
         let ty = layout.kit.y + (wy - layout.kit.y) * blend;
         if (s.pullW > 0.001) {
@@ -375,7 +388,7 @@ export default function HeroScene(props: Props) {
       aria-hidden="true"
       flat
       dpr={[1, 1.25]}
-      frameloop={props.reduced || asleep ? "demand" : "always"}
+      frameloop={REC ? "never" : props.reduced || asleep ? "demand" : "always"}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: FOV, position: [0, 0, 1000] }}
       onCreated={({ gl }) => gl.domElement.addEventListener("webglcontextlost", () => props.onLost(), { once: true })}

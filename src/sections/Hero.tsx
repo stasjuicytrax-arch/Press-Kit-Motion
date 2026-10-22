@@ -4,13 +4,15 @@ import { ru } from "../content/ru";
 import { GlassCta } from "../components/GlassCta";
 import { Magnetic } from "../components/Magnetic";
 import { canRunScene, isPhone, prefersReducedMotion } from "../lib/device";
+import { PhoneDrop } from "./PhoneDrop";
 
 // Three.js — отдельный чанк, но качать его начинаем сразу при загрузке страницы, параллельно
 // с первым рендером: капля должна упасть, как только страница открылась (владелец 2026-10-22)
 // На телефоне живое стекло капли (MeshTransmissionMaterial) слишком тяжёлое: сцена поднималась
 // секундами и тормозила. Там капля — готовый кадр того же стекла с CSS-падением и «дыханием»
 // (только transform, работает на композиторе). WebGL-капля — на планшете и компьютере.
-const webgl = () => typeof window !== "undefined" && !isPhone() && canRunScene();
+const webgl = () =>
+  typeof window !== "undefined" && (!isPhone() || new URLSearchParams(location.search).has("drop-rec")) && canRunScene();
 const loadScene = () => import("../three/HeroScene");
 const sceneChunk = webgl() ? loadScene() : null;
 const HeroScene = lazy(() => sceneChunk ?? loadScene());
@@ -33,12 +35,18 @@ export function Hero() {
 
   // Сцену монтируем сразу (чанк уже качается с загрузки модуля). Пока она поднимается, кадр
   // капли не показываем: раньше запасной кадр появлялся на медленном устройстве, исчезал,
-  // и капля падала заново. Кадр капли — на телефоне (с CSS-падением) и если WebGL нет или упал.
-  const [stillOn, setStillOn] = useState(() => !webgl());
+  // и капля падала заново. На телефоне — видео живой капли (PhoneDrop). Статичный кадр —
+  // только если WebGL нет/упал, reduced-motion или телефон запретил автоплей.
+  const phoneVideo = !webgl() && isPhone() && !opts.reduced;
+  const [stillOn, setStillOn] = useState(() => !webgl() && !phoneVideo);
+  const [videoFailed, setVideoFailed] = useState(false);
+  const onVideoFail = useCallback(() => {
+    setVideoFailed(true);
+    setStillOn(true);
+  }, []);
   useEffect(() => {
     if (webgl()) setMount(true);
   }, []);
-  const cssDrop = !webgl() && !opts.reduced;
 
   // Статичный кадр капли стоит над «Kit»
   useLayoutEffect(() => {
@@ -88,19 +96,21 @@ export function Hero() {
           <source media="(max-width: 767px)" srcSet={`${base}media/drop/drop-phone.jpg`} />
           <source srcSet={`${base}media/drop/drop-desktop.avif`} type="image/avif" />
           <img
-            className={`hero-drop-still${cssDrop ? " hero-drop-still--live" : ""}`}
+            className="hero-drop-still"
             src={`${base}media/drop/drop-desktop.jpg`}
             alt=""
             aria-hidden="true"
             width={640}
             height={640}
             decoding="async"
-            {...{ fetchpriority: cssDrop ? "high" : "low" }}
+            {...{ fetchpriority: "low" }}
             style={{ left: still.x, top: still.y }}
             onError={(e) => (e.currentTarget.style.display = "none")}
           />
         </picture>
       )}
+
+      {phoneVideo && !videoFailed && <PhoneDrop heroRef={heroRef} titleRef={titleRef} onFail={onVideoFail} />}
 
       {mount && (
         <Suspense fallback={null}>

@@ -10,6 +10,10 @@ type Props = {
 
 // Запись сайта артиста (TZ.md §6.1, §10): preload="none", играет только в кадре, MP4 первым
 // источником (на iPhone стабильнее), WebM вторым. При reduced-motion и Save-Data — только постер.
+// На телефоне одновременно играет только один ролик — тот, что виден хотя бы наполовину:
+// несколько декодеров сразу давали рывки прокрутки (2026-10-22).
+let playing: HTMLVideoElement | null = null;
+const isPhoneNow = () => window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
 export function SiteVideo({ site, device, label, className = "" }: Props) {
   const ref = useRef<HTMLVideoElement>(null);
   const m = siteMedia(site, device);
@@ -20,12 +24,20 @@ export function SiteVideo({ site, device, label, className = "" }: Props) {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const saveData = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData;
     if (reduced || saveData) return;
+    const phone = isPhoneNow();
     const io = new IntersectionObserver(
       ([e]) => {
-        if (e.isIntersecting) v.play().catch(() => {});
-        else v.pause();
+        const show = phone ? e.intersectionRatio >= 0.5 : e.isIntersecting;
+        if (show) {
+          if (phone && playing && playing !== v) playing.pause();
+          playing = v;
+          v.play().catch(() => {});
+        } else {
+          v.pause();
+          if (playing === v) playing = null;
+        }
       },
-      { rootMargin: "120px" },
+      phone ? { threshold: [0, 0.5] } : { rootMargin: "120px" },
     );
     io.observe(v);
     return () => io.disconnect();
