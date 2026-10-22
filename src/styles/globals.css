@@ -2198,6 +2198,71 @@
   }
 }
 
+/* Страница политики конфиденциальности: одна колонка для чтения */
+.privacy {
+  max-width: calc(var(--measure-body) + 2 * var(--margin));
+  margin-inline: auto;
+  padding-block: var(--space-8) var(--space-10);
+}
+.privacy-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap);
+  color: var(--ink);
+}
+
+/* Плашка согласия на cookie (2026-10-22): непрозрачная, внизу экрана; пока открыта —
+   липкая кнопка Телеграма спрятана (класс cookie-open на <html>) */
+.cookie {
+  position: fixed;
+  z-index: 45;
+  left: var(--float-gap);
+  right: var(--float-gap);
+  bottom: var(--sticky-bottom);
+  background: var(--surface-2);
+  box-shadow: var(--glass-static-shadow); /* taste-skill-ignore: плавающая плашка */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  border-radius: var(--radius-panel);
+  color: var(--ink);
+}
+@media (min-width: 768px) {
+  .cookie {
+    right: auto;
+    bottom: var(--float-gap);
+    max-width: var(--cookie-w);
+  }
+}
+.cookie-open .sticky-cta {
+  visibility: hidden;
+}
+.cookie-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+.cookie-btn {
+  min-height: var(--tap);
+  padding-inline: var(--space-5);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--surface);
+  font-size: var(--step-small);
+  font-weight: 500;
+  cursor: pointer;
+  transition: transform var(--dur-fast) var(--ease-spring);
+}
+.cookie-btn:active {
+  transform: scale(var(--press-scale));
+}
+.cookie-btn--accept {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
 /* Телефон (2026-10-22): никакого backdrop-filter — размытие под меню, липкой кнопкой и
    кнопками пересчитывалось видеокартой телефона на каждом кадре прокрутки. Вместо него —
    плотная светлая заливка; блики и кромки стекла (тени) остаются */

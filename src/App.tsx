@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Nav } from "./components/Nav";
 import { StickyCta } from "./components/StickyCta";
+import { CookieBanner } from "./components/CookieBanner";
 import { Hero } from "./sections/Hero";
 import { Problem } from "./sections/Problem";
 import { Work } from "./sections/Work";
@@ -37,6 +38,7 @@ export default function App() {
       </main>
       <Footer />
       <StickyCta />
+      <CookieBanner />
     </>
   );
 }
