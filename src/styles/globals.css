@@ -302,9 +302,20 @@
     stroke-linejoin: round;
     filter: drop-shadow(0 0 var(--neon-glow-1) var(--accent)) drop-shadow(0 0 var(--neon-glow-2) var(--neon-glow-color)) /* taste-skill-ignore: неоновое свечение, не тень */;
   }
+  /* Комета-молния: толще и ярче вспышки, чтобы разряд читался на светлом фоне */
+  .neon-trace-comet {
+    stroke-width: calc(var(--neon-w) * 1.6);
+    filter: drop-shadow(0 0 var(--neon-glow-1) var(--accent)) drop-shadow(0 0 var(--neon-comet-glow) var(--accent)) /* taste-skill-ignore: неоновое свечение */;
+  }
+  .neon-trace-head {
+    stroke-width: calc(var(--neon-w) * 3);
+  }
   /* Телефон: одно свечение ради производительности */
   @media (max-width: 767px), (pointer: coarse) {
-    .neon-trace-line {
+    .neon-trace-comet {
+      filter: drop-shadow(0 0 var(--neon-comet-glow) var(--accent)) /* taste-skill-ignore: неоновое свечение */;
+    }
+    .neon-trace-line:not(.neon-trace-comet) {
       filter: drop-shadow(0 0 var(--neon-glow-1) var(--accent)) /* taste-skill-ignore: неоновое свечение, не тень */;
     }
   }
