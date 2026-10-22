@@ -283,32 +283,6 @@
     color: transparent;
   }
 
-  /* Неоновый огонёк по контуру букв (NeonTraceHeading). В DOM стоит после видео капли
-     (телефон: огонёк над ним) и перед canvas (компьютер: стекло капли закрывает огонёк,
-     край букв WebGL ложится поверх внутренней половины обводки) */
-  .neon-trace {
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 2;
-    overflow: visible;
-    pointer-events: none;
-  }
-  .neon-trace-line {
-    fill: none;
-    stroke: var(--accent);
-    stroke-width: var(--neon-w);
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    filter: drop-shadow(0 0 var(--neon-glow-1) var(--accent)) drop-shadow(0 0 var(--neon-glow-2) var(--neon-glow-color)) /* taste-skill-ignore: неоновое свечение, не тень */;
-  }
-  /* Телефон: одно свечение ради производительности */
-  @media (max-width: 767px), (pointer: coarse) {
-    .neon-trace-line {
-      filter: drop-shadow(0 0 var(--neon-glow-1) var(--accent)) /* taste-skill-ignore: неоновое свечение, не тень */;
-    }
-  }
-
   /* Сцена поверх всей секции; события ловит секция, сам canvas их не перехватывает */
   .hero-canvas {
     position: absolute;

@@ -5,7 +5,6 @@ import { GlassCta } from "../components/GlassCta";
 import { Magnetic } from "../components/Magnetic";
 import { canRunScene, isPhone, prefersReducedMotion } from "../lib/device";
 import { PhoneDrop } from "./PhoneDrop";
-import { NeonTraceHeading } from "../components/NeonTraceHeading";
 
 // Three.js — отдельный чанк, но качать его начинаем сразу при загрузке страницы, параллельно
 // с первым рендером: капля должна упасть, как только страница открылась (владелец 2026-10-22)
@@ -112,9 +111,6 @@ export function Hero() {
       )}
 
       {phoneVideo && !videoFailed && <PhoneDrop heroRef={heroRef} titleRef={titleRef} onFail={onVideoFail} />}
-
-      {/* Неоновый огонёк по контуру букв: над видео капли на телефоне, под WebGL-сценой на компьютере */}
-      <NeonTraceHeading frameRef={heroRef} titleRef={titleRef} />
 
       {mount && (
         <Suspense fallback={null}>
