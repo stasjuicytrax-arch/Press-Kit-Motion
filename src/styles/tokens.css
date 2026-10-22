@@ -84,7 +84,6 @@
   --neon-w: 2.6px; /* неоновый контур: маска оставляет внешнюю половину — видно ~1.3px */
   --neon-glow-1: 3px;
   --neon-glow-2: 10px;
-  --neon-comet-glow: 9px; /* свечение кометы-молнии */
   --neon-glow-color: rgb(198 241 53 / 0.5); /* --accent с прозрачностью 50% */
   --cookie-w: 420px; /* плашка cookie на компьютере */
   --glass-fill-phone: rgb(250 250 247 / 0.92); /* стекло на телефоне без backdrop-filter */
