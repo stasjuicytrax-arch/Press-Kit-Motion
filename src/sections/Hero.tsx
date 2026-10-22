@@ -80,7 +80,10 @@ export function Hero() {
         <span className="block">
           {ru.brandWords.map((w, i) => (
             <span key={w}>
-              <span data-word={w} className={`hero-word${i === ru.brandWords.length - 1 ? " hero-word--break" : ""}`}>
+              <span
+                data-word={w}
+                className={`hero-word${i === ru.brandWords.length - 1 ? " hero-word--break" : ""}${w === ru.brandAccent ? " hero-word--accent" : ""}`}
+              >
                 {w}
               </span>
               {i < ru.brandWords.length - 1 ? " " : null}

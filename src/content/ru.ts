@@ -12,6 +12,8 @@ export const ru = {
   brand: "Press Kit Motion",
   // Монумент первого экрана по словам: десктоп «Press Kit / Motion», телефон в три строки
   brandWords: ["Press", "Kit", "Motion"] as const,
+  // Слово заголовка в фирменном лайме, как кнопки (владелец 2026-10-23)
+  brandAccent: "Kit",
   nav: {
     label: "Основная навигация",
     home: "Press Kit Motion, наверх",
