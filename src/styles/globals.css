@@ -2195,9 +2195,17 @@
     backdrop-filter: none !important; /* taste-skill-ignore: выключает стекло на телефоне */
     -webkit-backdrop-filter: none !important; /* taste-skill-ignore */
   }
-  .nav-glass,
   .bg-glass-fill {
     background: var(--glass-fill-phone) !important;
+  }
+  /* Исключение — капсула меню (владелец 2026-10-22): мягкое размытие фона без SVG-преломления.
+     Площадь маленькая, простой blur в разы дешевле живого преломления */
+  .nav-glass > .lg-lens {
+    backdrop-filter: blur(var(--nav-blur-phone)) saturate(170%) !important; /* taste-skill-ignore: стекло меню */
+    -webkit-backdrop-filter: blur(var(--nav-blur-phone)) saturate(170%) !important; /* taste-skill-ignore */
+  }
+  .nav-glass {
+    background: var(--glass-fill-nav-phone) !important;
   }
 }
 
