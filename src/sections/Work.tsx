@@ -16,6 +16,8 @@ const AUTOPLAY = 8000;
 type Artist = (typeof ru.work.artists)[number];
 
 const domain = (url: string) => url.replace(/^https?:\/\//, "").replace(/\/$/, "");
+// Факты с сайта артиста (есть не у всех)
+const facts = (a: Artist) => ("facts" in a ? a.facts : "");
 const meta = (a: Artist) => [a.place, a.genre, a.since ? ru.work.sinceLabel(a.since) : ""].filter(Boolean).join(" · ");
 
 function OpenSite({ a }: { a: Artist }) {
@@ -124,6 +126,7 @@ export function Work() {
             <div key={a.key} className="work-fade flex flex-col gap-4">
               <p className="text-head font-semibold leading-head tracking-head">{a.name}</p>
               <p className="text-body">{meta(a)}</p>
+              {facts(a) && <p className="text-small text-muted">{facts(a)}</p>}
               <div className="mt-2">
                 <OpenSite a={a} />
               </div>
@@ -163,6 +166,7 @@ export function Work() {
             <figcaption className="mt-4 flex flex-col gap-2">
               <span className="text-lead font-semibold tracking-head">{x.name}</span>
               <span className="text-body">{meta(x)}</span>
+              {facts(x) && <span className="text-small text-muted">{facts(x)}</span>}
               <div className="mt-2">
                 <OpenSite a={x} />
               </div>

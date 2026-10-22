@@ -6,4 +6,5 @@ export const SITES = {
   kingdom: { url: "https://stasjuicytrax-arch.github.io/39Kingdom/" },
   sunrise: { url: "https://stasjuicytrax-arch.github.io/djsunrise/" },
   toropov: { url: "https://stastoropov-site.vercel.app/" },
+  oppaacha: { url: "https://oppaacha.site/" },
 };

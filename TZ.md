@@ -95,6 +95,7 @@ git clone --depth 1 https://github.com/voltagent/awesome-design-md .refs/awesome
 | kingdom | https://stasjuicytrax-arch.github.io/39Kingdom/ | 39 Kingdom · дуэт · melodic techno |
 | sunrise | https://stasjuicytrax-arch.github.io/djsunrise/ | Sunrise · Бангкок, Паттайя |
 | toropov | https://stastoropov-site.vercel.app/ | Стас Торопов · Пермь · ведущий |
+| oppaacha | https://oppaacha.site/ | OPPAACHA · продюсер и DJ, Become Human Records |
 
 Подписи сверить с самими сайтами при записи.
 
@@ -207,7 +208,7 @@ git clone --depth 1 https://github.com/voltagent/awesome-design-md .refs/awesome
 **Телефон:** без липкого превью. Каждый артист = запись сайта 9:16 в рамке экрана на всю ширину (листается горизонтальным свайпом с прилипанием, `scroll-snap`), под ней имя, город, жанр и «Открыть сайт ↗».
 
 **Тексты:**
-- `h2`: «Пять сайтов, которые можно открыть прямо сейчас»
+- `h2`: «Живые сайты артистов» (без привязки к числу сайтов)
 - Список: DJ Nagoo — Санкт-Петербург, DJ с 2005 года · Lolly — Янгон, bass и drum & bass · 39 Kingdom — дуэт, melodic techno · Sunrise — Бангкок и Паттайя · Стас Торопов — Пермь, ведущий мероприятий.
 - `TODO-OWNER`: подтвердить разрешение артистов на показ.
 

@@ -28,6 +28,8 @@ const BLOCKS = {
   music: { site: "lolly", sel: "#music", offset: -24 },
   tours: { site: "lolly", sel: "#tours" },
   press: { site: "lolly", sel: "#press" },
+  support: { site: "oppaacha", sel: "#support" },
+  rider: { site: "oppaacha", sel: "#rider" },
   booking: { site: "sunrise", sel: "#contact" },
 };
 
@@ -79,6 +81,13 @@ for (const [slug, b] of list) {
     }
   });
   await page.waitForTimeout(300);
+  // Плавный скролл сайта может не доехать: докручиваем, пока верх кадра не встанет к верху экрана
+  for (let i = 0; i < 4; i++) {
+    const d = await el.evaluate((n, off) => n.getBoundingClientRect().top + off, b.offset || 0);
+    if (Math.abs(d) < 2) break;
+    await page.evaluate((d) => window.scrollBy({ top: d, behavior: "instant" }), d);
+    await page.waitForTimeout(700);
+  }
   // Где блок оказался на экране (плавный скролл сайта может не доехать)
   const y = await el.evaluate((n, off) => Math.max(0, n.getBoundingClientRect().top + off), b.offset || 0);
   await page.screenshot({ path: png, clip: { x: 0, y: Math.min(y, 844 - 693), width: 390, height: 693 } });

@@ -89,6 +89,16 @@ export const ru = {
         since: "",
         url: "https://stastoropov-site.vercel.app/",
       },
+      {
+        // Добавлен 2026-10-22. Город на сайте не указан — не пишем. Факты — только с oppaacha.site
+        key: "oppaacha",
+        name: "OPPAACHA",
+        place: "",
+        genre: "Продюсер и DJ · владелец Become Human Records",
+        since: "",
+        facts: "4M+ стримов · 100K+ Shazam · музыку играли на Tomorrowland, EDC и Ultra",
+        url: "https://oppaacha.site/",
+      },
     ],
   },
   problem: {
@@ -113,6 +123,8 @@ export const ru = {
       { title: "Музыка", text: "SoundCloud, Яндекс Музыка, свежий микс.", shot: "music" },
       { title: "Площадки и туры", text: "Где играл и где сыграешь, по годам или по странам.", shot: "tours" },
       { title: "Галерея и пресс-фото", text: "Фото, которые организатор скачает для афиши.", shot: "press" },
+      { title: "Поддержка артистов", text: "Кто из известных артистов играет твою музыку, с записями из их сетов.", shot: "support" },
+      { title: "Райдер", text: "Технический, бытовой и условия оплаты. Организатору не нужно переспрашивать.", shot: "rider" },
       { title: "Букинг", text: "Телеграм, WhatsApp, почта. Одна кнопка на каждом экране.", shot: "booking" },
     ],
     prev: "Предыдущий блок",
