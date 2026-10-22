@@ -15,25 +15,46 @@ export function Problem() {
     const section = sectionRef.current;
     if (!track || !section) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    // Размеры меряем только при ресайзе, в кадре — одно чтение позиции и transform без CSS-переменной
+    // (переменная пересчитывала стили всех роликов ленты); пока секция вне экрана — не слушаем скролл
     let raf = 0;
+    let room = 0;
+    let vh = 0;
+    let top = 0;
+    let height = 0;
+    const measure = () => {
+      vh = window.innerHeight;
+      room = Math.max(0, track.scrollWidth - track.clientWidth);
+      height = section.offsetHeight;
+      top = section.getBoundingClientRect().top + window.scrollY;
+    };
     const update = () => {
       raf = 0;
-      const r = section.getBoundingClientRect();
-      const vh = window.innerHeight;
       // 0, когда секция входит снизу, 1, когда уходит вверх
-      const p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
-      const room = Math.max(0, track.scrollWidth - track.clientWidth);
-      track.style.setProperty("--pan", `${(-p * room).toFixed(1)}px`);
+      const p = Math.min(1, Math.max(0, (window.scrollY + vh - top) / (vh + height)));
+      track.style.transform = `translate3d(${(-p * room).toFixed(1)}px,0,0)`;
     };
     const onScroll = () => {
       if (!raf) raf = requestAnimationFrame(update);
     };
+    const onResize = () => {
+      measure();
+      onScroll();
+    };
+    measure();
     update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        onResize();
+        window.addEventListener("scroll", onScroll, { passive: true });
+      } else window.removeEventListener("scroll", onScroll);
+    });
+    io.observe(section);
+    window.addEventListener("resize", onResize);
     return () => {
+      io.disconnect();
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
       cancelAnimationFrame(raf);
     };
   }, []);

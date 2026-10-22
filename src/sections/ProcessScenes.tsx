@@ -153,7 +153,7 @@ const scenes = { brief: Brief, concept: Concept, build: Build, launch: Launch };
 export function ProcessScene({ kind, label }: { kind: string; label: string }) {
   const Scene = scenes[kind as keyof typeof scenes] ?? Brief;
   return (
-    <div className="pscene" data-theme="dark" role="img" aria-label={label}>
+    <div className="pscene" data-theme="dark" data-pause-offscreen role="img" aria-label={label}>
       <div className="pscene-in" aria-hidden="true">
         <Scene />
       </div>

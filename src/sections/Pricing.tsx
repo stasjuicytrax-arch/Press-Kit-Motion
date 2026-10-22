@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
 import { SolidCta } from "../components/SolidCta";
 import { GlassCta } from "../components/GlassCta";
@@ -72,7 +72,13 @@ const RIM: React.CSSProperties[] = [
   { top: "var(--price-rim)", bottom: "var(--price-rim)", right: 0, width: RIM_W },
 ];
 
+// На телефоне полос нет: 12 живых фильтров над бегущей надписью заметно грузили прокрутку,
+// а на узком экране кромку 12px всё равно рисует статичная тень --price-glass-shadow
+const rimOn = () => typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
+
 function Rim({ dark }: { dark: boolean }) {
+  const [on] = useState(rimOn);
+  if (!on) return null;
   return (
     <span aria-hidden="true" className="price-rim">
       {RIM.map((st, i) => (

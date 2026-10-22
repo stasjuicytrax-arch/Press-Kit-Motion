@@ -145,7 +145,7 @@ export function Builder() {
           <SolidCta label={b.cta} place="builder" text={message} className="w-full sm:w-auto sm:self-start" />
         </div>
 
-        <div className="builder-phone-wrap" data-reveal>
+        <div className="builder-phone-wrap" data-reveal data-pause-offscreen>
           <GlassPhone ref={phoneRef} className="builder-phone">
             <div className="mini" data-style={st.key} style={{ "--mc": c.value, "--mc-ink": c.ink } as React.CSSProperties}>
               <div className="mini-scroll">

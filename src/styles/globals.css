@@ -397,12 +397,11 @@
     margin-top: var(--space-7);
     overflow: hidden;
   }
+  /* Сдвиг ленты пишет Problem.tsx прямо в transform (без CSS-переменной) */
   .problem-track {
-    --pan: 0px;
     display: flex;
     gap: var(--gutter);
     padding-inline: var(--margin);
-    transform: translate3d(var(--pan), 0, 0);
     will-change: transform;
   }
   .problem-shot {
@@ -1139,6 +1138,11 @@
   .pscene small {
     font-size: max(9px, 2.2cqw);
     color: var(--field-muted);
+  }
+  /* Вне экрана бесконечные анимации стоят (lib/offscreen.ts) — меньше работы при прокрутке */
+  [data-offscreen],
+  [data-offscreen] * {
+    animation-play-state: paused !important;
   }
   /* Пока шаг не в экране — сцена стоит на первом кадре */
   .js-motion [data-reveal]:not(.is-in) .pscene * {

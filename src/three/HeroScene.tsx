@@ -353,24 +353,22 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
 
 // Сон сцены ниже первого экрана держим в самом frameloop Canvas: ручной setFrameloop
 // перебивался пропсом при любой перерисовке, и стекло капли снова считалось каждый кадр (п. 10)
-function useAsleep(reduced: boolean) {
+// Через IntersectionObserver, а не scroll: чтение innerHeight в scroll-обработчике заставляло
+// Chrome на телефоне пересчитывать раскладку на каждом шаге прокрутки (мобильные тормоза, 2026-10-22)
+function useAsleep(reduced: boolean, heroRef: React.RefObject<HTMLElement>) {
   const [asleep, setAsleep] = useState(false);
   useEffect(() => {
-    if (reduced) return;
-    let last: boolean | null = null;
-    const onScroll = () => {
-      const v = window.scrollY >= window.innerHeight;
-      if (v !== last) setAsleep((last = v));
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [reduced]);
+    const hero = heroRef.current;
+    if (reduced || !hero) return;
+    const io = new IntersectionObserver(([e]) => setAsleep(!e.isIntersecting));
+    io.observe(hero);
+    return () => io.disconnect();
+  }, [reduced, heroRef]);
   return asleep;
 }
 
 export default function HeroScene(props: Props) {
-  const asleep = useAsleep(props.reduced);
+  const asleep = useAsleep(props.reduced, props.heroRef);
   return (
     <Canvas
       className="hero-canvas"

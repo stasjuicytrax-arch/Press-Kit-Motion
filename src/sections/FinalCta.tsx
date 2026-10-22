@@ -11,7 +11,7 @@ export function FinalCta() {
   const posters = [...work.artists, ...work.artists];
   return (
     <section className="final surface-field" aria-labelledby="final-h" data-hide-sticky data-theme="dark">
-      <div className="final-drift" aria-hidden="true">
+      <div className="final-drift" aria-hidden="true" data-pause-offscreen>
         <div className="final-drift-track">
           {posters.map((a, i) => (
             <img key={`${a.key}-${i}`} src={siteMedia(a.key, "mobile").poster} alt="" loading="lazy" decoding="async" width={780} height={1688} />

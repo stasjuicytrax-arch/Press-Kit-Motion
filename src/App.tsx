@@ -12,11 +12,13 @@ import { Faq } from "./sections/Faq";
 import { FinalCta } from "./sections/FinalCta";
 import { Footer } from "./sections/Footer";
 import { startReveal } from "./lib/reveal";
+import { startOffscreenPause } from "./lib/offscreen";
 
 // Порядок секций — TZ.md §7: утверждение → доказательство.
 export default function App() {
   useEffect(() => {
     startReveal();
+    startOffscreenPause();
   }, []);
 
   return (
