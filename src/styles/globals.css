@@ -324,6 +324,14 @@
   .hero[data-scene="webgl"] .hero-drop-still {
     opacity: 0;
   }
+  /* Телефон: капля из готового кадра — падает на «Kit», сплющивается и медленно «дышит».
+     Только transform: анимация идёт на композиторе и не грузит прокрутку */
+  .hero-drop-still--live {
+    animation:
+      drop-fall 900ms both,
+      drop-breathe 5s ease-in-out 900ms infinite alternate;
+    will-change: transform;
+  }
 
   .hero-bottom {
     position: relative;
@@ -2147,6 +2155,27 @@
     opacity: 0.35;
   }
 }
+@keyframes drop-fall {
+  0% {
+    transform: translate(-50%, -50%) translateY(-75vh);
+    animation-timing-function: cubic-bezier(0.55, 0, 1, 0.45);
+  }
+  62% {
+    transform: translate(-50%, -50%) scale(1.14, 0.84);
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(0.95, 1.05);
+  }
+  100% {
+    transform: translate(-50%, -50%);
+  }
+}
+@keyframes drop-breathe {
+  to {
+    transform: translate(-50%, -50%) scale(1.035, 0.975) rotate(2deg);
+  }
+}
 @keyframes drift {
   to {
     transform: translateX(-50%);
@@ -2157,7 +2186,8 @@
   .price-marquee-track,
   .mini-scroll,
   .mini-wave i,
-  .pscene * {
+  .pscene *,
+  .hero-drop-still--live {
     animation: none;
   }
   .ps-cursor {

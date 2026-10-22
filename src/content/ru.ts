@@ -45,8 +45,18 @@ export const ru = {
     // Год на сцене — только где он указан на самом сайте; у остальных TODO-OWNER
     sinceLabel: (y: string) => `на сцене с ${y}`,
     // TODO-OWNER: подтвердить разрешение артистов на показ работ.
-    // Подписи сверены с сайтами 2026-10-21.
+    // Подписи сверены с сайтами 2026-10-21. Порядок задал владелец 2026-10-22: OPPAACHA первым.
     artists: [
+      {
+        // Добавлен 2026-10-22. Город на сайте не указан — не пишем. Факты — только с oppaacha.site
+        key: "oppaacha",
+        name: "OPPAACHA",
+        place: "",
+        genre: "Продюсер и DJ · владелец Become Human Records",
+        since: "",
+        facts: "4M+ стримов · 100K+ Shazam · музыку играли на Tomorrowland, EDC и Ultra",
+        url: "https://oppaacha.site/",
+      },
       {
         key: "nagoo",
         name: "DJ Nagoo",
@@ -88,16 +98,6 @@ export const ru = {
         genre: "ведущий мероприятий",
         since: "",
         url: "https://stastoropov-site.vercel.app/",
-      },
-      {
-        // Добавлен 2026-10-22. Город на сайте не указан — не пишем. Факты — только с oppaacha.site
-        key: "oppaacha",
-        name: "OPPAACHA",
-        place: "",
-        genre: "Продюсер и DJ · владелец Become Human Records",
-        since: "",
-        facts: "4M+ стримов · 100K+ Shazam · музыку играли на Tomorrowland, EDC и Ultra",
-        url: "https://oppaacha.site/",
       },
     ],
   },

@@ -7,10 +7,13 @@ import { canRunScene, isPhone, prefersReducedMotion } from "../lib/device";
 
 // Three.js — отдельный чанк, но качать его начинаем сразу при загрузке страницы, параллельно
 // с первым рендером: капля должна упасть, как только страница открылась (владелец 2026-10-22)
+// На телефоне живое стекло капли (MeshTransmissionMaterial) слишком тяжёлое: сцена поднималась
+// секундами и тормозила. Там капля — готовый кадр того же стекла с CSS-падением и «дыханием»
+// (только transform, работает на композиторе). WebGL-капля — на планшете и компьютере.
+const webgl = () => typeof window !== "undefined" && !isPhone() && canRunScene();
 const loadScene = () => import("../three/HeroScene");
-const sceneChunk = typeof window !== "undefined" && canRunScene() ? loadScene() : null;
+const sceneChunk = webgl() ? loadScene() : null;
 const HeroScene = lazy(() => sceneChunk ?? loadScene());
-const STILL_FALLBACK_MS = 4000; // если сцена так и не поднялась — показать статичный кадр капли
 
 // Первый экран «Стеклянная капля» (TZ.md §7.1, версия 3).
 // Монумент «Press Kit / Motion» — обычный h1 (LCP, SEO, скринридеры). Когда WebGL готов,
@@ -28,17 +31,14 @@ export function Hero() {
   }));
   const [still, setStill] = useState<{ x: number; y: number } | null>(null);
 
-  // Сцену монтируем сразу (чанк уже качается с загрузки модуля). Пока она поднимается,
-  // статичный кадр капли не показываем — иначе капля висит над «Kit», а потом прыгает вверх
-  // и падает. Статичный кадр — только запасной вариант: нет WebGL, контекст потерян или сцена
-  // не поднялась за STILL_FALLBACK_MS.
-  const [stillOn, setStillOn] = useState(() => !canRunScene());
+  // Сцену монтируем сразу (чанк уже качается с загрузки модуля). Пока она поднимается, кадр
+  // капли не показываем: раньше запасной кадр появлялся на медленном устройстве, исчезал,
+  // и капля падала заново. Кадр капли — на телефоне (с CSS-падением) и если WebGL нет или упал.
+  const [stillOn, setStillOn] = useState(() => !webgl());
   useEffect(() => {
-    if (!canRunScene()) return;
-    setMount(true);
-    const id = window.setTimeout(() => setStillOn(true), STILL_FALLBACK_MS);
-    return () => window.clearTimeout(id);
+    if (webgl()) setMount(true);
   }, []);
+  const cssDrop = !webgl() && !opts.reduced;
 
   // Статичный кадр капли стоит над «Kit»
   useLayoutEffect(() => {
@@ -88,14 +88,14 @@ export function Hero() {
           <source media="(max-width: 767px)" srcSet={`${base}media/drop/drop-phone.jpg`} />
           <source srcSet={`${base}media/drop/drop-desktop.avif`} type="image/avif" />
           <img
-            className="hero-drop-still"
+            className={`hero-drop-still${cssDrop ? " hero-drop-still--live" : ""}`}
             src={`${base}media/drop/drop-desktop.jpg`}
             alt=""
             aria-hidden="true"
             width={640}
             height={640}
             decoding="async"
-            {...{ fetchpriority: "low" }}
+            {...{ fetchpriority: cssDrop ? "high" : "low" }}
             style={{ left: still.x, top: still.y }}
             onError={(e) => (e.currentTarget.style.display = "none")}
           />

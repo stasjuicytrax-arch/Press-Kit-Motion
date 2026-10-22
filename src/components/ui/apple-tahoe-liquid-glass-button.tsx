@@ -1078,8 +1078,11 @@ function useLiquidGlass(options: LiquidGlassOptions, rootRef: React.RefObject<HT
   const dark = appearance === "dark";
   const engine = React.useMemo(() => (typeof window === "undefined" ? "chromium" : detectEngine()), []);
 
+  // Press Kit Motion: на телефонах (узкий экран или палец вместо мыши) живое SVG-преломление
+  // пересчитывалось на каждом кадре прокрутки и давало рывки — там «auto» = frost (2026-10-22)
   useIsoLayoutEffect(() => {
-    setMode(requestedMode === "auto" ? detectMode() : requestedMode);
+    const phone = window.matchMedia("(max-width: 767px), (pointer: coarse)").matches;
+    setMode(requestedMode === "auto" ? (phone ? "frost" : detectMode()) : requestedMode);
   }, [requestedMode]);
 
   useIsoLayoutEffect(() => {
