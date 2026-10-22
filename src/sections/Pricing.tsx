@@ -95,7 +95,8 @@ function Rim({ dark }: { dark: boolean }) {
 function Card({ pk }: { pk: Pkg }) {
   const { pricing } = ru;
   const ref = useTilt();
-  const amount = pk.price.replace("$", "");
+  // «10 000 ₽»: число крупно, знак рубля мельче после него
+  const amount = pk.price.replace(/s*₽$/, "");
   return (
     <li className={`price-card${pk.featured ? " price-card--featured" : ""}`}>
       <div ref={ref} className="price-tilt">
@@ -107,8 +108,8 @@ function Card({ pk }: { pk: Pkg }) {
             <span aria-hidden="true" className="price-glare" />
             <p className="price-name">{pk.name}</p>
             <p className="price-figure tabular">
-              <span className="price-cur">$</span>
               {amount}
+              <span className="price-cur">{" "}₽</span>
             </p>
             <p className="price-who">{pk.who}</p>
             <ul className="price-items">

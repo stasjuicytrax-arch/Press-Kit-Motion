@@ -1733,17 +1733,16 @@
   }
   .price-figure {
     display: flex;
-    align-items: flex-start;
-    gap: 0.04em;
+    align-items: baseline;
+    white-space: nowrap;
     font-size: var(--step-price);
     font-weight: 300;
     line-height: 0.9;
     letter-spacing: var(--track-head);
   }
-  /* Знак валюты мельче и приподнят */
+  /* Знак рубля мельче, на одной линии с числом */
   .price-cur {
-    margin-top: 0.12em;
-    font-size: 0.42em;
+    font-size: 0.5em;
     font-weight: 400;
   }
   .price-who {
@@ -1791,8 +1790,10 @@
       align-self: end;
     }
   }
+  /* Кнопка на всю ширину карточки, срок под ней — одинаково во всех трёх карточках
+     (раньше кнопка «Выбрать Хедлайнер» сжималась, и кружок со стрелкой наезжал на срок) */
   .price-cta {
-    flex: 1;
+    flex: 1 1 100%;
     min-width: 0;
     padding-left: var(--space-4);
     font-size: var(--step-small);
