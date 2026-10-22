@@ -5,8 +5,12 @@ import { GlassCta } from "../components/GlassCta";
 import { Magnetic } from "../components/Magnetic";
 import { canRunScene, isPhone, prefersReducedMotion } from "../lib/device";
 
-// Three.js грузится отдельным чанком после первого рендера DOM (DESIGN.md §9)
-const HeroScene = lazy(() => import("../three/HeroScene"));
+// Three.js — отдельный чанк, но качать его начинаем сразу при загрузке страницы, параллельно
+// с первым рендером: капля должна упасть, как только страница открылась (владелец 2026-10-22)
+const loadScene = () => import("../three/HeroScene");
+const sceneChunk = typeof window !== "undefined" && canRunScene() ? loadScene() : null;
+const HeroScene = lazy(() => sceneChunk ?? loadScene());
+const STILL_FALLBACK_MS = 4000; // если сцена так и не поднялась — показать статичный кадр капли
 
 // Первый экран «Стеклянная капля» (TZ.md §7.1, версия 3).
 // Монумент «Press Kit / Motion» — обычный h1 (LCP, SEO, скринридеры). Когда WebGL готов,
@@ -24,12 +28,16 @@ export function Hero() {
   }));
   const [still, setStill] = useState<{ x: number; y: number } | null>(null);
 
-  // Сцену монтируем, когда браузер свободен: текст первого экрана уже нарисован
+  // Сцену монтируем сразу (чанк уже качается с загрузки модуля). Пока она поднимается,
+  // статичный кадр капли не показываем — иначе капля висит над «Kit», а потом прыгает вверх
+  // и падает. Статичный кадр — только запасной вариант: нет WebGL, контекст потерян или сцена
+  // не поднялась за STILL_FALLBACK_MS.
+  const [stillOn, setStillOn] = useState(() => !canRunScene());
   useEffect(() => {
     if (!canRunScene()) return;
-    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number };
-    if (w.requestIdleCallback) w.requestIdleCallback(() => setMount(true), { timeout: 1200 });
-    else setTimeout(() => setMount(true), 300);
+    setMount(true);
+    const id = window.setTimeout(() => setStillOn(true), STILL_FALLBACK_MS);
+    return () => window.clearTimeout(id);
   }, []);
 
   // Статичный кадр капли стоит над «Kit»
@@ -52,6 +60,7 @@ export function Hero() {
 
   const onReady = useCallback(() => setScene("webgl"), []);
   const onLost = useCallback(() => {
+    setStillOn(true);
     setScene("still");
     setMount(false);
   }, []);
@@ -73,7 +82,7 @@ export function Hero() {
         <span className="sr-only"> — {hero.h1Rest}</span>
       </h1>
 
-      {still && (
+      {still && stillOn && (
         <picture>
           <source media="(max-width: 767px)" srcSet={`${base}media/drop/drop-phone.avif`} type="image/avif" />
           <source media="(max-width: 767px)" srcSet={`${base}media/drop/drop-phone.jpg`} />

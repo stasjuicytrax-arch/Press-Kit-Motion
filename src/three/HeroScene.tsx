@@ -30,7 +30,6 @@ const INK = css("--ink", "#111111");
 const BG = css("--bg", "#F2F2EE");
 const LIME = css("--glow-1", "#C6F135");
 const FOV = 30;
-const FALL_KEY = "pkm-drop-fell";
 
 function readWords(hero: HTMLElement, title: HTMLElement, vw: number, vh: number): { words: Word[]; kit: { x: number; y: number }; bounds: DOMRect; W: number; H: number; navBottom: number; textHalf: number; boundsOriginX: number; boundsOriginY: number } {
   // Координаты слов относительно холста, который занимает весь первый экран
@@ -106,7 +105,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     phase: "idle" as "fall" | "idle" | "follow",
     fallT: 0, startY: 0,
     tx: 0, ty: 0, lastPointer: -10, touching: false,
-    tiltX: 0, tiltY: 0, t: 0, ready: false, wander: 0, pullW: 0, angle: 0, stretch: 0,
+    tiltX: 0, tiltY: 0, t: 0, ready: false, shown: false, wander: 0, pullW: 0, angle: 0, stretch: 0,
   });
 
   const radius = (size.width * tokenNumber("--drop-size", phone ? 42 : 26, true)) / 100 / 2;
@@ -117,19 +116,13 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     const s = st.current;
     if (s.ready) return;
     s.ready = true;
-    let fell = false;
-    try {
-      fell = sessionStorage.getItem(FALL_KEY) === "1";
-    } catch {}
+    // Падает при каждой загрузке страницы (владелец 2026-10-22), а не раз за сессию
     s.x = layout.kit.x;
     s.y = layout.kit.y;
-    if (!reduced && !fell) {
+    if (!reduced) {
       s.phase = "fall";
       s.startY = layout.H / 2 + radius * 1.4;
       s.y = s.startY;
-      try {
-        sessionStorage.setItem(FALL_KEY, "1");
-      } catch {}
     }
     invalidate();
   }, [layout, reduced, radius, invalidate]);
@@ -138,7 +131,11 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
   const synced = useRef(new Set<string>());
   const onSync = (word: string) => {
     synced.current.add(word);
-    if (layout && synced.current.size === layout.words.length) requestAnimationFrame(() => onReady());
+    if (layout && synced.current.size === layout.words.length)
+      requestAnimationFrame(() => {
+        st.current.shown = true; // падение стартует, только когда сцена уже видна
+        onReady();
+      });
   };
 
   // Курсор, касания, всплеск, наклон телефона
@@ -195,28 +192,9 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     };
   }, [heroRef, reduced, uniforms]);
 
-  // Капля живёт только на первом экране (решение владельца 2026-10-21: в угол не улетать).
-  // При уходе с первого экрана улетает вниз-вправо и исчезает (масштаб → 0), затем сцена
-  // засыпает: frameloop "demand", пока первый экран снова не вернётся в кадр.
-  const exit = useRef(0);
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero || reduced) return;
-    // Режим меняем только при переходе: раньше каждый scroll ниже первого экрана звал invalidate()
-    // и перерисовывал дорогое стекло на каждый шаг прокрутки по всей странице (п. 10)
-    let asleep: boolean | null = null;
-    const onScroll = () => {
-      const p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.6)));
-      exit.current = p;
-      const sleep = p >= 1;
-      if (sleep === asleep) return;
-      asleep = sleep;
-      if (sleep) invalidate(); // последний кадр: капля скрыта (сам режим сна — в frameloop у Canvas)
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [reduced, heroRef, invalidate]);
+  // Капля живёт только на первом экране и при прокрутке никуда не улетает: стоит на своём месте
+  // и уезжает вверх вместе с первым экраном (решение владельца, подтверждено 2026-10-22).
+  // Когда первый экран целиком ушёл, сцена спит (frameloop "demand" у Canvas, см. useAsleep).
 
   const k = tokenNumber("--drop-spring-k", 90);
   const c = tokenNumber("--drop-spring-c", 14);
@@ -234,7 +212,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     if (!reduced) {
       if (s.phase === "fall") {
         // Падение 0.7с с ускорением, удар о «Kit»: расплющивание и волна
-        s.fallT += dt;
+        if (s.shown) s.fallT += dt;
         const p = Math.min(1, s.fallT / 0.7);
         s.y = s.startY + (layout.kit.y - s.startY) * p * p;
         if (p >= 1) {
@@ -299,13 +277,9 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     s.grow += ((over ? 1.08 : 1) - s.grow) * Math.min(1, dt * 6);
 
     // Капля целиком перед надписью: стекло преломляет буквы, а не режется ими
-    // Уход: капля улетает вниз-вправо и уменьшается до нуля
-    const e = exit.current * exit.current;
-    const fade = 1 - e;
-    g.visible = fade > 0.001;
-    g.position.set(s.x + e * size.width * 0.3, s.y - e * size.height * 0.35, radius * 0.4);
+    g.position.set(s.x, s.y, radius * 0.4);
     // По глубине капля приплюснута (0.55): край меньше уводит лучи за пределы букв
-    g.scale.set((1 / Math.sqrt(s.sq)) * radius * s.grow * fade, s.sq * radius * s.grow * fade, 0.55 * radius * s.grow * fade);
+    g.scale.set((1 / Math.sqrt(s.sq)) * radius * s.grow, s.sq * radius * s.grow, 0.55 * radius * s.grow);
 
     // Растяжение по скорости: вдоль движения длиннее. Направление обновляется только на заметной
     // скорости и сглаженно — на почти нулевой скорости atan2 скачет, и капля дрожала
@@ -385,7 +359,7 @@ function useAsleep(reduced: boolean) {
     if (reduced) return;
     let last: boolean | null = null;
     const onScroll = () => {
-      const v = window.scrollY >= window.innerHeight * 0.6;
+      const v = window.scrollY >= window.innerHeight;
       if (v !== last) setAsleep((last = v));
     };
     onScroll();
