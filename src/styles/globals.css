@@ -282,13 +282,6 @@
   .hero[data-scene="webgl"] .hero-title {
     color: transparent;
   }
-  /* «Kit» в фирменном лайме, как кнопки — только на компьютере (владелец 2026-10-23).
-     В WebGL — тем же цветом (HeroScene); на телефоне надпись из видео капли, там чёрная */
-  @media (min-width: 768px) {
-    .hero:not([data-scene="webgl"]) .hero-word--accent {
-      color: var(--accent);
-    }
-  }
 
   /* Сцена поверх всей секции; события ловит секция, сам canvas их не перехватывает */
   .hero-canvas {

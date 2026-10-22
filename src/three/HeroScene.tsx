@@ -2,7 +2,6 @@ import { Canvas, advance, useFrame, useThree } from "@react-three/fiber";
 import { Environment, Lightformer, MeshTransmissionMaterial, Text } from "@react-three/drei";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-import { ru } from "../content/ru";
 import fontUrl from "@fontsource/onest/files/onest-latin-600-normal.woff?url";
 import { injectDropNoise, makeDropUniforms } from "./dropShader";
 import { tokenNumber } from "../lib/tokens";
@@ -30,7 +29,6 @@ const css = (name: string, fallback: string) =>
 const INK = css("--ink", "#111111");
 const BG = css("--bg", "#F2F2EE");
 const LIME = css("--glow-1", "#C6F135");
-const ACCENT = css("--accent", "#C6F135"); // «Kit» в фирменном лайме (ru.brandAccent); сцена работает только на планшете и компьютере
 const FOV = 30;
 
 function readWords(hero: HTMLElement, title: HTMLElement, vw: number, vh: number): { words: Word[]; kit: { x: number; y: number }; bounds: DOMRect; W: number; H: number; navBottom: number; textHalf: number; boundsOriginX: number; boundsOriginY: number } {
@@ -323,7 +321,7 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
             anchorX="center"
             anchorY="middle"
             position={[w.x, w.y, 0]}
-            color={w.text === ru.brandAccent ? ACCENT : INK}
+            color={INK}
             onSync={() => onSync(w.text)}
           >
             {w.text}
