@@ -576,18 +576,35 @@
   .work-browser-screen {
     aspect-ratio: 16 / 10;
   }
+  /* Телефон как современный айфон (владелец 2026-10-22): 9:19.5 — ровно как записи сайтов
+     (780×1688, видео не обрезается), тонкая рамка, крупное скругление, «островок» камеры */
   .work-phone {
     position: absolute;
     right: calc(var(--work-phone-w) * -0.55);
     bottom: calc(var(--space-7) * -1);
     width: var(--work-phone-w);
-    aspect-ratio: 9 / 16;
-    border: var(--bezel) solid var(--ink);
-    border-radius: var(--radius-screen);
+  }
+  .phone-frame {
+    position: relative;
+    aspect-ratio: 9 / 19.5;
+    border: var(--phone-bezel) solid var(--ink);
+    border-radius: var(--phone-radius);
     overflow: hidden;
     background: var(--field);
+  }
+  .work-phone .phone-frame {
     box-shadow: var(--shadow-float); /* taste-skill-ignore: парящий телефон, DESIGN.md §11 */
-    transform: translateZ(40px);
+  }
+  .phone-frame::after {
+    content: "";
+    position: absolute;
+    top: 2.2%;
+    left: 50%;
+    width: 30%;
+    height: 3.2%;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    transform: translateX(-50%);
   }
   /* Свайп на телефоне */
   .work-swipe {
@@ -604,16 +621,10 @@
   }
   .work-card {
     flex: 0 0 auto;
-    width: var(--swipe-w);
+    width: var(--work-card-w);
     scroll-snap-align: start;
   }
-  .work-card-screen {
-    aspect-ratio: 9 / 16;
-    border: var(--bezel) solid var(--ink);
-    border-radius: var(--radius-screen);
-    overflow: hidden;
-    background: var(--field);
-  }
+
   .work-dots-nav {
     display: flex;
     justify-content: center;

@@ -149,7 +149,9 @@ export function Work() {
                 </div>
               </div>
               <div className="work-phone">
-                <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}, версия для телефона`} />
+                <div className="phone-frame">
+                  <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}, версия для телефона`} />
+                </div>
               </div>
             </div>
           </div>
@@ -160,7 +162,7 @@ export function Work() {
       <div ref={swipeRef} className="work-swipe mt-7 lg:hidden" data-reveal>
         {work.artists.map((x) => (
           <figure key={x.key} className="work-card">
-            <div className="work-card-screen" data-theme="dark">
+            <div className="work-card-screen phone-frame" data-theme="dark">
               <SiteVideo site={x.key} device="mobile" label={`Сайт-пресс-кит ${x.name}`} />
             </div>
             <figcaption className="mt-4 flex flex-col gap-2">
