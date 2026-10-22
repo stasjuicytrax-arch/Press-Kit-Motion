@@ -1,5 +1,8 @@
 // Согласие на cookie (2026-10-22). Ответ хранится в localStorage (это «необходимое» хранение).
-// Яндекс Метрика загружается только после «Принять» и только если задан VITE_YM_ID.
+// Яндекс Метрика (счётчик владельца YM_ID) загружается только после «Принять» —
+// тот же код, что выдаёт Метрика, с теми же настройками, но без <noscript>: без JS
+// согласие спросить нельзя, значит и считать нельзя.
+import { YM_ID } from "./metrika";
 export type Consent = "all" | "necessary";
 const KEY = "pkm-consent";
 
@@ -21,7 +24,7 @@ export function setConsent(v: Consent) {
 
 let loaded = false;
 export function loadMetrika() {
-  const id = Number(import.meta.env.VITE_YM_ID);
+  const id = YM_ID;
   if (loaded || !id) return;
   loaded = true;
   type YmQueue = ((...a: unknown[]) => void) & { a?: unknown[][]; l?: number };
@@ -33,7 +36,16 @@ export function loadMetrika() {
   w.ym = ym;
   const s = document.createElement("script");
   s.async = true;
-  s.src = "https://mc.yandex.ru/metrika/tag.js";
+  s.src = `https://mc.yandex.ru/metrika/tag.js?id=${id}`;
   document.head.appendChild(s);
-  ym(id, "init", { clickmap: true, trackLinks: true, accurateTrackBounce: true });
+  ym(id, "init", {
+    ssr: true,
+    webvisor: true,
+    clickmap: true,
+    ecommerce: "dataLayer",
+    referrer: document.referrer,
+    url: location.href,
+    accurateTrackBounce: true,
+    trackLinks: true,
+  });
 }
