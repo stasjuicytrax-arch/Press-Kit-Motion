@@ -1,6 +1,7 @@
 import { UploadSimple, User } from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { GlassPhone } from "../components/GlassPhone";
 import { SolidCta } from "../components/SolidCta";
 import { reachGoal } from "../lib/metrika";
@@ -76,9 +77,7 @@ export function Builder() {
     <section className="section" aria-labelledby="builder-h">
       <div className="builder px-margin">
         <div className="builder-form" data-reveal data-hide-sticky>
-          <h2 id="builder-h" className="text-head font-semibold leading-head tracking-head">
-            {b.h2}
-          </h2>
+          <DisplayHeading id="builder-h" text={b.h2} accent={b.h2Accent} className="builder-title" />
           <p className="text-body text-muted">{b.lead}</p>
 
           <div className="builder-fields">

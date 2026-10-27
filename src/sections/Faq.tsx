@@ -1,5 +1,6 @@
 import { CaretDown } from "@phosphor-icons/react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 
 // Вопросы (TZ.md §7.8): широкий заголовок от поля, вопросы с 5-й по 12-ю колонку,
 // <details> без линий, открытый получает подложку --surface (DESIGN.md §7).
@@ -8,9 +9,7 @@ export function Faq() {
   return (
     <section id="faq" className="section" aria-labelledby="faq-h">
       <div className="page-grid gap-y-8">
-        <h2 id="faq-h" className="col-span-full text-head font-semibold leading-head tracking-head lg:col-span-4" data-reveal>
-          {faq.h2}
-        </h2>
+        <DisplayHeading id="faq-h" text={faq.h2} accent={faq.h2Accent} className="col-span-full lg:col-span-4" />
         <div className="col-span-full flex flex-col gap-2 lg:col-span-8 lg:col-start-5" data-reveal>
           {faq.items.map((it) => (
             <details key={it.q} className="faq-item">

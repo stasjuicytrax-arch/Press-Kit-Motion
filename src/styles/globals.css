@@ -1,4 +1,7 @@
 @import "@fontsource-variable/onest";
+@import "@fontsource-variable/unbounded";
+@import "@fontsource/playfair-display/latin-400-italic.css";
+@import "@fontsource/playfair-display/cyrillic-400-italic.css";
 @import "./tokens.css";
 
 @tailwind base;
@@ -94,6 +97,94 @@
 }
 
 @layer components {
+  /* ── Дизайн v2 (2026-10-27) ─────────────────────────────────────────────── */
+
+  /* Ночная сцена: переопределяет переменные — все компоненты внутри становятся тёмными сами */
+  .scene-dark {
+    --bg: var(--graphite);
+    --ink: var(--night-ink);
+    --muted: var(--night-muted);
+    --surface: var(--graphite-2);
+    --surface-2: var(--graphite-3);
+    --focus-color: var(--accent);
+    --scrollbar-thumb: rgb(242 242 238 / 0.4);
+    --glass-fill-strong: rgb(30 33 27 / 0.72);
+    position: relative;
+    isolation: isolate;
+    background: var(--bg);
+    color: var(--ink);
+    border-radius: var(--scene-radius) var(--scene-radius) 0 0;
+  }
+  /* Световые пятна: лаймовое сверху, мятное сбоку — статичные, рисуются один раз */
+  .scene-dark::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      radial-gradient(60% 45% at 85% 0%, var(--lime-haze), transparent 70%), /* taste-skill-ignore: свет в ночной сцене */
+      radial-gradient(45% 40% at 0% 55%, var(--mint-haze), transparent 70%), /* taste-skill-ignore: свет в ночной сцене */
+      radial-gradient(70% 50% at 50% 110%, var(--lime-haze), transparent 70%); /* taste-skill-ignore: свет в ночной сцене, дизайн v2 */
+  }
+  /* Ночные сцены без отступа-«склейки»: свой воздух сверху и снизу */
+  .scene-dark.section,
+  .scene-dark + .section {
+    padding-top: var(--section-gap);
+  }
+
+  /* Заголовки секций: дисплейный Unbounded, слова в масках (lib/motion.ts), курсив-акцент */
+  .display-heading {
+    font-family: var(--font-display);
+    font-size: var(--step-display);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--track-display);
+    line-height: var(--leading-display);
+    text-wrap: balance;
+  }
+  .dh-w {
+    display: inline-block;
+    overflow: hidden;
+    /* запас под выносные элементы и курсив, чтобы маска их не резала */
+    padding: 0.08em 0.06em 0.14em;
+    margin: -0.08em -0.06em -0.14em;
+    vertical-align: top;
+  }
+  .dh-i {
+    display: inline-block;
+    will-change: transform;
+  }
+  .dh-accent {
+    font-family: var(--font-accent);
+    font-style: italic;
+    font-weight: 400;
+    font-size: 1.12em;
+    letter-spacing: -0.01em;
+    line-height: 0.8;
+    /* На светлом — лаймовая плашка под словом, как маркер на афише */
+    padding-inline: 0.12em;
+    background: linear-gradient(transparent 58%, var(--accent) 58%, var(--accent) 92%, transparent 92%); /* taste-skill-ignore: маркер-плашка под акцентом */
+  }
+  /* На тёмном — чистый лайм вместо плашки (свечение маска слова обрезала бы в «коробку») */
+  .scene-dark .dh-accent {
+    background: none;
+    color: var(--accent);
+  }
+
+  /* Зерно поверх всего сайта — только на компьютере (на телефоне лишний слой) */
+  @media (hover: hover) and (pointer: fine) {
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 45;
+      pointer-events: none;
+      opacity: var(--grain-opacity);
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 0 0.5  0 0 0 1.2 -0.1'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+    }
+  }
+
   /* Навигация-капсула: по центру сверху, на телефоне на всю ширину между полями */
   .nav-shell {
     position: fixed;
@@ -1935,9 +2026,10 @@
   }
   .final-title {
     font-size: var(--step-final);
-    font-weight: 600;
-    line-height: var(--leading-head);
-    letter-spacing: var(--track-mono);
+  }
+  /* Подвал продолжает финальную сцену без скругления и без своего светового пятна сверху */
+  .scene-dark--flat {
+    border-radius: 0;
   }
   .final-bottom {
     display: flex;

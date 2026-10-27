@@ -19,10 +19,30 @@
   --glow-1: #C6F135;
   --glow-2: #2FD6A0;
   --selection: #C6F135;
+  /* Дизайн v2 (2026-10-27): ночные сцены и свет */
+  --void: #070806; /* глубокий чёрный */
+  --graphite: #10120E; /* фон тёмных сцен */
+  --graphite-2: #191C16; /* поверхность на тёмном */
+  --graphite-3: #23271F;
+  --night-ink: #F2F2EE;
+  --night-muted: rgb(242 242 238 / 0.62);
+  --night-line: rgb(242 242 238 / 0.12);
+  --lime-glow: rgb(198 241 53 / 0.55);
+  --lime-haze: rgb(198 241 53 / 0.16); /* световое пятно в тёмной сцене */
+  --mint-haze: rgb(47 214 160 / 0.1);
+  --grain-opacity: 0.07;
+  --scene-radius: 40px; /* скругление верха тёмной сцены, которая «наезжает» на светлый блок */
   --scrollbar-thumb: rgb(17 17 17 / 0.4);
 
   /* §3 Типографика */
   --font-sans: "Onest Variable", "Onest", "Inter Tight", system-ui, sans-serif;
+  /* v2: дисплейный для заголовков (кириллица) и курсив-акцент внутри заголовка */
+  --font-display: "Unbounded Variable", "Unbounded", var(--font-sans);
+  --font-accent: "Playfair Display", Georgia, serif;
+  --step-display: clamp(2.5rem, 1.1rem + 5.4vw, 7.5rem);
+  --track-display: -0.035em;
+  --leading-display: 1;
+  --display-weight: 500;
   --step-mono: clamp(96px, 15vw, 240px);
   --step-head: clamp(2.25rem, 1.4rem + 3.6vw, 4.5rem);
   --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
@@ -179,6 +199,8 @@
 
   /* §8 Движение */
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-expo: cubic-bezier(0.19, 1, 0.22, 1); /* v2: = EASE "expo.out" в lib/motion.ts */
+  --dur-reveal: 1100ms;
   --ease-spring: cubic-bezier(0.32, 0.72, 0, 1);
   --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
   --dur-fast: 200ms;

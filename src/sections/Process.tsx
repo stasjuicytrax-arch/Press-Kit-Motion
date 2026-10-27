@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { ProcessScene } from "./ProcessScenes";
 
 // Как появляется сайт (TZ.md §7.6). Колонка 560px с 5-й колонки сетки, после каждого абзаца —
@@ -33,7 +34,7 @@ export function Process() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section" aria-labelledby="process-h">
+    <section ref={sectionRef} className="section scene-dark" data-theme="dark" data-panel aria-labelledby="process-h">
       <div className="page-grid">
         <div className="hidden lg:col-span-1 lg:col-start-4 lg:flex lg:justify-end" aria-hidden="true">
           <div className="process-rail">
@@ -42,9 +43,7 @@ export function Process() {
         </div>
         <div className="col-span-full lg:col-span-6 lg:col-start-5">
           <div className="process-col">
-            <h2 id="process-h" className="text-head font-semibold leading-head tracking-head" data-reveal>
-              {process.h2}
-            </h2>
+            <DisplayHeading id="process-h" text={process.h2} accent={process.h2Accent} />
             {process.steps.map((s) => (
               <div key={s.lead} className="mt-9 flex flex-col gap-6" data-reveal>
                 <p className="text-body text-muted">

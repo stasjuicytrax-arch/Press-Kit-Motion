@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { SiteVideo } from "../components/SiteVideo";
 
 // Проблема — «Заголовок как подпись к панораме» (TZ.md §7.2).
@@ -60,11 +61,9 @@ export function Problem() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="problem section" aria-labelledby="problem-h">
+    <section ref={sectionRef} className="problem section scene-dark" data-theme="dark" data-panel aria-labelledby="problem-h">
       <div className="px-margin" data-reveal>
-        <h2 id="problem-h" className="max-w-[16ch] text-head font-semibold leading-head tracking-head">
-          {problem.h2}
-        </h2>
+        <DisplayHeading id="problem-h" text={problem.h2} accent={problem.h2Accent} className="max-w-[14ch]" />
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:gap-6">
           {problem.captions.map((c) => (
             <p key={c} className="problem-caption text-body">

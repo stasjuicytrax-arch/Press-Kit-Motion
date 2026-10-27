@@ -10,7 +10,7 @@ export function Footer() {
   const base = import.meta.env.BASE_URL;
   const href = (h: string) => (h.startsWith("#") || h.startsWith("http") ? h : `${base}${h}`);
   return (
-    <footer className="footer" data-hide-sticky data-theme="light">
+    <footer className="footer scene-dark scene-dark--flat" data-hide-sticky data-theme="dark">
       <div className="page-grid gap-y-8">
         <a href={telegramUrl()} target="_blank" rel="noopener" data-place="footer" className="col-span-full text-lead font-semibold tracking-head underline lg:col-span-5">
           {footer.telegram}

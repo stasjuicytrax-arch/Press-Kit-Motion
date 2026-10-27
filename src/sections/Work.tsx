@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { SiteVideo } from "../components/SiteVideo";
 import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
@@ -96,9 +97,7 @@ export function Work() {
 
   return (
     <section id="work" className="work section" aria-labelledby="work-h">
-      <h2 id="work-h" className="px-margin text-head font-semibold leading-head tracking-head" data-reveal>
-        {work.h2}
-      </h2>
+      <DisplayHeading id="work-h" text={work.h2} accent={work.h2Accent} className="px-margin" />
 
       {/* Десктоп: шоурум */}
       <div className="work-room hidden lg:flex" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>

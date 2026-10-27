@@ -1,6 +1,7 @@
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
 // Что внутри — круговая карусель (TZ.md §7.4, приём circular-carousel nexus-ui).
@@ -48,11 +49,9 @@ export function Inside() {
 
 
   return (
-    <section className="section" aria-labelledby="inside-h">
+    <section className="section scene-dark" data-theme="dark" data-panel aria-labelledby="inside-h">
       <div className="page-grid" data-reveal>
-        <h2 id="inside-h" className="col-span-full text-head font-semibold leading-head tracking-head lg:col-span-6">
-          {inside.h2}
-        </h2>
+        <DisplayHeading id="inside-h" text={inside.h2} accent={inside.h2Accent} className="col-span-full lg:col-span-7" />
         <div className="col-span-full flex max-w-body flex-col gap-3 self-end text-body text-muted lg:col-span-4 lg:col-start-8">
           <p>{inside.lead}</p>
           <p className="text-ink">{inside.phoneNote}</p>

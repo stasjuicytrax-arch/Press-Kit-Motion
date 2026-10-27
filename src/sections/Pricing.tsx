@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { SolidCta } from "../components/SolidCta";
 import { GlassCta } from "../components/GlassCta";
 import { LiquidGlass } from "../components/ui/apple-tahoe-liquid-glass-button";
@@ -154,11 +155,9 @@ export function Pricing() {
   useEffect(() => (stageRef.current ? startPriceMarquee(stageRef.current) : undefined), []);
 
   return (
-    <section id="price" className="section price" aria-labelledby="price-h">
+    <section id="price" className="section price scene-dark" data-theme="dark" aria-labelledby="price-h">
       <div className="page-grid">
-        <h2 id="price-h" className="col-span-full text-head font-semibold leading-head tracking-head" data-reveal>
-          {pricing.h2}
-        </h2>
+        <DisplayHeading id="price-h" text={pricing.h2} accent={pricing.h2Accent} className="col-span-full" />
       </div>
 
       <div ref={stageRef} className="price-stage">

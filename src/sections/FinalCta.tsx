@@ -1,4 +1,5 @@
 import { ru } from "../content/ru";
+import { DisplayHeading } from "../components/DisplayHeading";
 import { SolidCta } from "../components/SolidCta";
 import { siteMedia } from "../lib/media";
 
@@ -10,7 +11,7 @@ export function FinalCta() {
   const { final, work } = ru;
   const posters = [...work.artists, ...work.artists];
   return (
-    <section className="final surface-field" aria-labelledby="final-h" data-hide-sticky data-theme="dark">
+    <section className="final scene-dark" aria-labelledby="final-h" data-hide-sticky data-theme="dark" data-panel>
       <div className="final-drift" aria-hidden="true" data-pause-offscreen>
         <div className="final-drift-track">
           {posters.map((a, i) => (
@@ -18,10 +19,7 @@ export function FinalCta() {
           ))}
         </div>
       </div>
-      <h2 id="final-h" className="final-title" data-reveal>
-        <span className="block">{final.h2Lines[0]}</span>
-        <span className="block">{final.h2Lines[1]}</span>
-      </h2>
+      <DisplayHeading id="final-h" text={final.h2Lines.join(" ")} lines={final.h2Lines} accent={final.h2Accent} className="final-title" />
       <div className="final-bottom" data-reveal>
         <p className="max-w-[40ch] text-lead leading-lead">{final.text}</p>
         <SolidCta label={final.cta} place="cta" className="w-full md:w-auto" />
