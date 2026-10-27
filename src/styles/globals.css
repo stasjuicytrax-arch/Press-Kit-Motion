@@ -2642,6 +2642,94 @@
   color: var(--ink);
 }
 
+/* Кастомный курсор (дизайн v2): точка + кольцо с запаздыванием, состояния link / view / hide */
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  pointer-events: none;
+  display: none;
+  will-change: transform;
+}
+.has-cursor .cursor-dot,
+.has-cursor .cursor-ring {
+  display: block;
+}
+.cursor-dot {
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  mix-blend-mode: difference;
+}
+.cursor-ring {
+  width: var(--cursor-ring);
+  height: var(--cursor-ring);
+  margin: calc(var(--cursor-ring) / -2) 0 0 calc(var(--cursor-ring) / -2);
+}
+/* Круг рисует ::before — масштаб и заливка меняются без перерисовки раскладки */
+.cursor-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--accent);
+  mix-blend-mode: difference;
+  transition:
+    transform var(--dur-base) var(--ease-expo),
+    background-color var(--dur-base) var(--ease-expo),
+    opacity var(--dur-fast) var(--ease-out);
+}
+.cursor-ring span {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--accent-ink);
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity var(--dur-fast) var(--ease-out),
+    transform var(--dur-base) var(--ease-expo);
+}
+.cursor-ring[data-state="link"]::before {
+  transform: scale(1.6);
+  background: rgb(198 241 53 / 0.12);
+}
+.cursor-ring[data-state="view"]::before {
+  transform: scale(3.2);
+  background: var(--accent);
+  border-color: var(--accent);
+  mix-blend-mode: normal;
+}
+.cursor-ring[data-state="view"] span {
+  opacity: 1;
+  transform: none;
+}
+.cursor-ring[data-state="hide"]::before,
+.cursor-dot[data-state="hide"],
+.cursor-dot[data-state="view"] {
+  opacity: 0;
+}
+.cursor-press::before {
+  transform: scale(0.8);
+}
+@media (hover: none), (prefers-reduced-motion: reduce) {
+  .cursor-dot,
+  .cursor-ring {
+    display: none !important;
+  }
+}
+
 /* Плашка согласия на cookie (2026-10-22): непрозрачная, внизу экрана; пока открыта —
    липкая кнопка Телеграма спрятана (класс cookie-open на <html>) */
 .cookie {

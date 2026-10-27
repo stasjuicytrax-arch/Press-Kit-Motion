@@ -1,6 +1,7 @@
 import { UploadSimple, User } from "@phosphor-icons/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { Magnetic } from "../components/Magnetic";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { GlassPhone } from "../components/GlassPhone";
 import { SolidCta } from "../components/SolidCta";
@@ -141,7 +142,9 @@ export function Builder() {
             <p className="text-small text-muted">{b.note}</p>
           </fieldset>
 
-          <SolidCta label={b.cta} place="builder" text={message} className="w-full sm:w-auto sm:self-start" />
+          <Magnetic className="w-full sm:w-auto sm:self-start">
+            <SolidCta label={b.cta} place="builder" text={message} className="w-full sm:w-auto" />
+          </Magnetic>
         </div>
 
         <div className="builder-phone-wrap" data-reveal data-pause-offscreen>

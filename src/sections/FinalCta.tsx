@@ -1,4 +1,5 @@
 import { ru } from "../content/ru";
+import { Magnetic } from "../components/Magnetic";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { SolidCta } from "../components/SolidCta";
 import { siteMedia } from "../lib/media";
@@ -22,7 +23,9 @@ export function FinalCta() {
       <DisplayHeading id="final-h" text={final.h2Lines.join(" ")} lines={final.h2Lines} accent={final.h2Accent} className="final-title" />
       <div className="final-bottom" data-reveal>
         <p className="max-w-[40ch] text-lead leading-lead">{final.text}</p>
-        <SolidCta label={final.cta} place="cta" className="w-full md:w-auto" />
+        <Magnetic className="w-full md:w-auto">
+          <SolidCta label={final.cta} place="cta" className="w-full md:w-auto" />
+        </Magnetic>
       </div>
     </section>
   );
