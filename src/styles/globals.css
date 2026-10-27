@@ -1449,8 +1449,44 @@
   }
 
   /* 7.6 Как это работает */
-  .process-col {
-    max-width: var(--process-w);
+  /* v2: шахматка шагов */
+  .process-step {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-top: var(--space-9);
+  }
+  .process-lead {
+    display: block;
+    margin-bottom: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--step-lead);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--track-display);
+    line-height: 1.1;
+    color: var(--accent);
+  }
+  .process-step .pscene {
+    width: 100%;
+    max-width: var(--process-scene-w);
+    justify-self: center;
+  }
+  @media (min-width: 1024px) {
+    .process-step {
+      display: grid;
+      grid-template-columns: 4fr 7fr;
+      align-items: center;
+      gap: var(--space-9);
+    }
+    .process-step--flip {
+      grid-template-columns: 7fr 4fr;
+    }
+    .process-step--flip .process-text {
+      order: 2;
+    }
+    .process-text {
+      max-width: var(--measure-lead);
+    }
   }
   .process-rail {
     position: sticky;
@@ -1472,6 +1508,7 @@
   /* Живые сцены шагов (правки владельца 2026-10-21): нарисованы кодом, палитра сайта.
      Размеры внутри сцены — в cqw, чтобы сцена одинаково выглядела на 560px и на телефоне. */
   .pscene {
+    box-shadow: 0 0 0 1px var(--night-line), 0 -1px 0 0 var(--lime-glow) inset; /* taste-skill-ignore: светящаяся кромка сцены на тёмном */
     --ps-loop: 9s;
     --ps-line: rgb(242 242 238 / 0.14);
     --ps-fill: rgb(242 242 238 / 0.06);
