@@ -3,6 +3,7 @@ import { Nav } from "./components/Nav";
 import { StickyCta } from "./components/StickyCta";
 import { CookieBanner } from "./components/CookieBanner";
 import { Hero } from "./sections/Hero";
+import { MarqueeBand } from "./components/MarqueeBand";
 import { Problem } from "./sections/Problem";
 import { Work } from "./sections/Work";
 import { Inside } from "./sections/Inside";
@@ -29,6 +30,7 @@ export default function App() {
       <Nav />
       <main>
         <Hero />
+        <MarqueeBand />
         <Problem />
         <Work />
         <Inside />

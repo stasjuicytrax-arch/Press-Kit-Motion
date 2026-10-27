@@ -134,6 +134,85 @@
     padding-top: var(--section-gap);
   }
 
+  /* Первый экран: подзаголовок, факты и кнопка появляются по очереди, когда уходит шторка интро */
+  .js-motion .hero-bottom > div > *,
+  .js-motion .hero-actions > * {
+    opacity: 0;
+    filter: blur(var(--rise-blur));
+    transform: translateY(calc(var(--rise) * 1.5));
+    transition:
+      opacity var(--dur-slow) var(--ease-expo),
+      filter var(--dur-slow) var(--ease-expo),
+      transform var(--dur-reveal) var(--ease-expo);
+  }
+  .js-motion.intro-done .hero-bottom > div > *,
+  .js-motion.intro-done .hero-actions > * {
+    opacity: 1;
+    filter: none;
+    transform: none;
+  }
+  .js-motion.intro-done .hero-bottom > div > :nth-child(2) { transition-delay: 90ms; }
+  .js-motion.intro-done .hero-bottom > div > :nth-child(3) { transition-delay: 180ms; }
+  .js-motion.intro-done .hero-actions > :nth-child(1) { transition-delay: 240ms; }
+  .js-motion.intro-done .hero-actions > :nth-child(2) { transition-delay: 330ms; }
+
+  /* Бегущие ленты на стыке первого экрана и тёмной сцены (MarqueeBand) */
+  .band {
+    position: relative;
+    z-index: 3;
+    height: var(--band-h);
+    margin-bottom: calc(var(--band-h) * -0.5);
+    overflow: clip;
+    pointer-events: none;
+  }
+  .band-row {
+    position: absolute;
+    left: -5%;
+    right: -5%;
+    top: 50%;
+    padding-block: var(--space-3);
+    overflow: hidden;
+    font-family: var(--font-display);
+    font-size: var(--step-band);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .band-row--lime {
+    background: var(--accent);
+    color: var(--accent-ink);
+    transform: translateY(-50%) rotate(-2.5deg);
+    box-shadow: 0 0 var(--space-9) var(--lime-glow); /* taste-skill-ignore: свечение лаймовой ленты */
+  }
+  .band-row--dark {
+    background: var(--void);
+    color: var(--night-ink);
+    transform: translateY(-50%) rotate(2deg);
+  }
+  .band-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+  }
+  .band-half {
+    display: flex;
+  }
+  .band-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    padding-right: 0.5em;
+  }
+  .band-item i {
+    font-style: normal;
+    font-size: 0.7em;
+  }
+  .band-row--dark .band-item i {
+    color: var(--accent);
+  }
+
   /* Заголовки секций: дисплейный Unbounded, слова в масках (lib/motion.ts), курсив-акцент */
   .display-heading {
     font-family: var(--font-display);
@@ -339,6 +418,18 @@
     padding-top: var(--hero-top);
     overflow: clip;
     background: var(--bg);
+  }
+  /* Свет первого экрана (v2): только по нижним углам, вне траектории капли — её стекло
+     заливает фон ровным цветом, и пятно под каплей читалось бы как дырка */
+  .hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(40% 32% at 100% 100%, var(--lime-haze-light), transparent 72%), /* taste-skill-ignore: свет первого экрана */
+      radial-gradient(34% 28% at 0% 100%, var(--mint-haze), transparent 72%); /* taste-skill-ignore: свет первого экрана */
   }
 
   /* Монумент. DOM-текст — h1 и LCP. Когда сцена готова, те же слова рисует WebGL

@@ -18,8 +18,47 @@
       crossorigin
       href="./node_modules/@fontsource-variable/onest/files/onest-cyrillic-wght-normal.woff2"
     />
+    <style>
+      /* Интро (дизайн v2, 2026-10-27): счётчик 000→100, лаймовая полоса, шторка вверх. Чистый CSS */
+      @property --pkm-n { syntax: "<integer>"; initial-value: 0; inherits: false; }
+      #intro { position: fixed; inset: 0; z-index: 100; display: grid; grid-template-rows: 1fr auto; padding: 24px clamp(16px, 2.2vw, 32px);
+        background: #070806; color: #F2F2EE; font-family: "Unbounded Variable", "Onest Variable", system-ui, sans-serif;
+        animation: pkm-intro-out 900ms cubic-bezier(0.76, 0, 0.24, 1) 1150ms forwards; pointer-events: none; }
+      #intro .i-mark { align-self: center; justify-self: center; font-size: clamp(22px, 3.2vw, 44px); font-weight: 500; letter-spacing: -0.03em;
+        overflow: hidden; padding: 0.1em 0; }
+      #intro .i-mark span { display: inline-block; transform: translateY(110%); animation: pkm-rise 900ms cubic-bezier(0.19, 1, 0.22, 1) 100ms forwards; }
+      #intro .i-mark em { font-family: "Playfair Display", Georgia, serif; font-style: italic; font-weight: 400; color: #C6F135; }
+      #intro .i-foot { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+      #intro .i-line { flex: 1; height: 2px; background: rgb(242 242 238 / 0.14); overflow: hidden; margin-bottom: 0.6em; }
+      #intro .i-line i { display: block; height: 100%; background: #C6F135; transform-origin: left; transform: scaleX(0);
+        animation: pkm-line 1050ms cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+      #intro .i-num { font-size: clamp(56px, 11vw, 160px); font-weight: 500; line-height: 0.8; letter-spacing: -0.05em;
+        font-variant-numeric: tabular-nums; animation: pkm-count 1050ms cubic-bezier(0.65, 0, 0.35, 1) forwards; counter-reset: n var(--pkm-n); }
+      #intro .i-num::after { content: counter(n, decimal-leading-zero); }
+      @keyframes pkm-count { to { --pkm-n: 100; } }
+      @keyframes pkm-line { to { transform: scaleX(1); } }
+      @keyframes pkm-rise { to { transform: none; } }
+      @keyframes pkm-intro-out { to { transform: translateY(-100%); visibility: hidden; } }
+      .no-intro #intro { display: none; }
+      @media (prefers-reduced-motion: reduce) { #intro { display: none; } }
+    </style>
+    <script>
+      // Интро — один раз за сессию; в момент ухода шторки — событие intro-done (по нему падает капля)
+      (function () {
+        var skip = false;
+        try { skip = sessionStorage.getItem("pkm-intro") === "1"; sessionStorage.setItem("pkm-intro", "1"); } catch (e) {}
+        if (matchMedia("(prefers-reduced-motion: reduce)").matches) skip = true;
+        if (skip) document.documentElement.classList.add("no-intro");
+        var done = function () { window.__introDone = true; document.documentElement.classList.add("intro-done"); window.dispatchEvent(new Event("intro-done")); };
+        if (skip) done(); else setTimeout(done, 1250);
+      })();
+    </script>
   </head>
   <body>
+    <div id="intro" aria-hidden="true">
+      <div class="i-mark"><span>Press Kit <em>Motion</em></span></div>
+      <div class="i-foot"><div class="i-line"><i></i></div><div class="i-num"></div></div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

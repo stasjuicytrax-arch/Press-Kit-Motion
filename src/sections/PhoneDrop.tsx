@@ -39,7 +39,12 @@ export function PhoneDrop({ heroRef, titleRef, onFail }: Props) {
   // Падение стартует сразу; не дал браузер автоплей — статичный кадр
   const placed = box !== null;
   useEffect(() => {
-    if (placed) fallRef.current?.play().catch(onFail);
+    if (!placed) return;
+    // Падение — после ухода шторки интро (index.html), иначе его не видно
+    const play = () => fallRef.current?.play().catch(onFail);
+    if ((window as Window & { __introDone?: boolean }).__introDone) play();
+    else window.addEventListener("intro-done", play, { once: true });
+    return () => window.removeEventListener("intro-done", play);
   }, [placed, onFail]);
 
   // Цикл играет, только пока первый экран виден

@@ -186,11 +186,21 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
       tiltOn = true;
       window.addEventListener("deviceorientation", onTilt);
     };
+    // Скролл: стекло вздрагивает пропорционально скорости прокрутки, капля при этом стоит на месте
+    // (владелец: при скролле капля никуда не улетает). Только scrollY — без чтения раскладки
+    let lastY = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      uniforms.uRipple.value = Math.min(0.55, uniforms.uRipple.value + Math.abs(y - lastY) * 0.004);
+      lastY = y;
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("pointermove", onMove, { passive: true });
     hero.addEventListener("pointerdown", onDown);
     window.addEventListener("pointerup", onUp);
     window.addEventListener("pointercancel", onUp);
     return () => {
+      window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pointermove", onMove);
       hero.removeEventListener("pointerdown", onDown);
       window.removeEventListener("pointerup", onUp);
@@ -220,7 +230,9 @@ function Drop({ heroRef, titleRef, reduced, phone, onReady }: Omit<Props, "onLos
     if (!reduced) {
       if (s.phase === "fall") {
         // Падение 0.7с с ускорением, удар о «Kit»: расплющивание и волна
-        if (s.shown && (!REC || (window as Window & { __dropGo?: boolean }).__dropGo)) s.fallT += dt;
+        // Падение — когда сцена видна И шторка интро ушла (index.html, событие intro-done)
+        const w = window as Window & { __dropGo?: boolean; __introDone?: boolean };
+        if (s.shown && (REC ? w.__dropGo : w.__introDone === true)) s.fallT += dt;
         const p = Math.min(1, s.fallT / 0.7);
         s.y = s.startY + (layout.kit.y - s.startY) * p * p;
         if (p >= 1) {
