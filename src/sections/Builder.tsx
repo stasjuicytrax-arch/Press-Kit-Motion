@@ -82,15 +82,15 @@ export function Builder() {
 
           <div className="builder-fields">
             <label className="builder-field builder-field--wide">
-              <span className="text-small text-muted">{b.nameLabel}</span>
+              <span className="builder-label">{b.nameLabel}</span>
               <input className="builder-input" type="text" value={name} maxLength={28} placeholder={b.namePlaceholder} autoComplete="off" onChange={(e) => (setName(e.target.value), touched())} />
             </label>
             <label className="builder-field">
-              <span className="text-small text-muted">{b.cityLabel}</span>
+              <span className="builder-label">{b.cityLabel}</span>
               <input className="builder-input" type="text" value={city} maxLength={24} placeholder={b.cityPlaceholder} autoComplete="off" onChange={(e) => (setCity(e.target.value), touched())} />
             </label>
             <label className="builder-field">
-              <span className="text-small text-muted">{b.sinceLabel}</span>
+              <span className="builder-label">{b.sinceLabel}</span>
               <input className="builder-input tabular" type="text" inputMode="numeric" value={since} maxLength={4} placeholder={b.sincePlaceholder} autoComplete="off" onChange={(e) => (setSince(e.target.value.replace(/\D/g, "")), touched())} />
             </label>
           </div>
@@ -105,7 +105,7 @@ export function Builder() {
           </div>
 
           <fieldset className="builder-group">
-            <legend className="text-small text-muted">{b.colorLabel}</legend>
+            <legend className="builder-label">{b.colorLabel}</legend>
             <div className="flex gap-3">
               {b.colors.map((x, i) => (
                 <label key={x.key} className="builder-swatch" data-checked={i === color} style={{ "--sw": x.value } as React.CSSProperties}>
@@ -117,7 +117,7 @@ export function Builder() {
           </fieldset>
 
           <fieldset className="builder-group">
-            <legend className="text-small text-muted">{b.animLabel}</legend>
+            <legend className="builder-label">{b.animLabel}</legend>
             <div className="flex flex-wrap gap-2">
               {b.anims.map((x, i) => (
                 <label key={x.key} className="builder-chip" data-checked={i === anim}>
@@ -129,7 +129,7 @@ export function Builder() {
           </fieldset>
 
           <fieldset className="builder-group">
-            <legend className="text-small text-muted">{b.stylesLabel}</legend>
+            <legend className="builder-label">{b.stylesLabel}</legend>
             <div className="flex flex-wrap gap-2">
               {b.styles.map((x, i) => (
                 <label key={x.key} className="builder-chip" data-checked={i === style}>

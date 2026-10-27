@@ -35,6 +35,8 @@
   --step-ten: clamp(9rem, 3rem + 17vw, 21rem); /* контурная «10» в блоке «Промоутер» */
   --ten-stroke: clamp(1.5px, 0.18vw, 3px);
   --work-ghost: clamp(5rem, 1rem + 9vw, 11rem); /* контурное имя артиста за сценой «Работ» */
+  --step-label: 0.6875rem; /* 11px: подписи полей конструктора, капслок с трекингом */
+  --field-line: rgb(17 17 17 / 0.1);
   --band-h: clamp(140px, 13vw, 220px); /* зона перекрещённых лент */
   --step-band: clamp(1.5rem, 1rem + 2.4vw, 3.25rem);
   --scene-radius: 40px; /* скругление верха тёмной сцены, которая «наезжает» на светлый блок */
@@ -46,6 +48,7 @@
   --font-display: "Unbounded Variable", "Unbounded", var(--font-sans);
   --font-accent: "Playfair Display", Georgia, serif;
   --step-display: clamp(2.5rem, 1.1rem + 5.4vw, 7.5rem);
+  --step-display-sm: clamp(2.25rem, 1.3rem + 2.8vw, 4.25rem); /* дисплейный в узкой колонке */
   --track-display: -0.035em;
   --leading-display: 1;
   --display-weight: 500;
