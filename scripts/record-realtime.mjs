@@ -29,7 +29,8 @@ for (const [kind, d] of Object.entries(DEV)) {
   if (only && only !== kind) continue;
   rmSync(join(TMP, kind), { recursive: true, force: true });
   mkdirSync(join(TMP, kind), { recursive: true });
-  const size = { width: d.viewport.width * d.scale, height: d.viewport.height * d.scale };
+  // recordVideo пишет в CSS-пикселях окна: размер записи = размер окна (иначе картинка в углу серого холста)
+  const size = { width: d.viewport.width, height: d.viewport.height };
   const ctx = await browser.newContext({
     viewport: d.viewport, deviceScaleFactor: d.scale, isMobile: d.mobile, hasTouch: d.mobile,
     recordVideo: { dir: join(TMP, kind), size },
