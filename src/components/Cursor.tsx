@@ -35,7 +35,12 @@ export function Cursor() {
       my = e.clientY;
       d.style.transform = `translate3d(${mx}px,${my}px,0)`;
       if (!raf) raf = requestAnimationFrame(tick);
-      const t = e.target as Element;
+      setState(e.target as Element);
+    };
+    // Состояние по элементу под курсором; при прокрутке колесом мышь стоит, а элемент под ней
+    // меняется — пересчитываем и на scroll (раньше «Смотреть» залипал над чужим блоком)
+    const setState = (t: Element | null) => {
+      if (!t) return;
       const state = t.closest("input, textarea, select")
         ? "hide"
         : t.closest("[data-portfolio], .problem-shot, .work-browser, .work-phone, .carousel-card")
@@ -48,6 +53,15 @@ export function Cursor() {
         d.dataset.state = state;
       }
     };
+    let scrollRaf = 0;
+    const onScroll = () => {
+      if (scrollRaf || mx < 0) return;
+      scrollRaf = requestAnimationFrame(() => {
+        scrollRaf = 0;
+        setState(document.elementFromPoint(mx, my));
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
     const onLeave = () => {
       r.dataset.state = "hide";
       d.dataset.state = "hide";
@@ -60,6 +74,8 @@ export function Cursor() {
     window.addEventListener("pointerup", onUp);
     return () => {
       cancelAnimationFrame(raf);
+      cancelAnimationFrame(scrollRaf);
+      window.removeEventListener("scroll", onScroll);
       document.documentElement.classList.remove("has-cursor");
       window.removeEventListener("pointermove", onMove);
       document.documentElement.removeEventListener("pointerleave", onLeave);

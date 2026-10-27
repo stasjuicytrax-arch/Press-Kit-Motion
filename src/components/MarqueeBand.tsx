@@ -2,10 +2,9 @@ import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
 
 // Одна горизонтальная лаймовая полоса с приветствиями на разных языках (владелец 2026-10-27).
-// Скорость растёт от скорости скролла и плавно возвращается. Только transform: translate3d; вне экрана и во скрытой вкладке цикл стоит;
+// Скорость постоянная — от скролла не ускоряется (владелец 2026-10-27). Только transform: translate3d; вне экрана и во скрытой вкладке цикл стоит;
 // prefers-reduced-motion — ленты стоят.
 const BASE = 40; // px/с
-const BOOST = 0.9; // доля скорости скролла, добавляемая к ленте
 
 function Row({ words, className }: { words: readonly string[]; className: string }) {
   const half = (
@@ -36,18 +35,13 @@ export function MarqueeBand() {
     const tracks = [...root.querySelectorAll<HTMLElement>(".band-track")];
     const widths = tracks.map((t) => (t.firstElementChild as HTMLElement).offsetWidth);
     const x = tracks.map(() => 0);
-    let boost = 0;
-    let lastY = window.scrollY;
     let last = 0;
     let raf = 0;
     let visible = false;
     const frame = (t: number) => {
       const dt = last ? Math.min(0.05, (t - last) / 1000) : 0;
       last = t;
-      const y = window.scrollY;
-      boost += (Math.abs(y - lastY) / Math.max(dt, 0.001) * BOOST - boost) * Math.min(1, dt * 4);
-      lastY = y;
-      const v = (BASE + boost) * dt;
+      const v = BASE * dt;
       tracks.forEach((tr, i) => {
         x[i] = (x[i] + v) % widths[i];
         tr.style.transform = `translate3d(${-x[i]}px,0,0)`;
@@ -57,7 +51,6 @@ export function MarqueeBand() {
     const run = () => {
       if (raf || !visible || document.hidden) return;
       last = 0;
-      lastY = window.scrollY;
       raf = requestAnimationFrame(frame);
     };
     const stop = () => {

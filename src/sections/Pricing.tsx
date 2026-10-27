@@ -139,14 +139,15 @@ export function Pricing() {
         </ul>
       </div>
 
-      <div className="page-grid mt-9 gap-y-6" data-reveal>
-        <div className="col-span-full md:col-span-3 lg:col-span-5">
-          <h3 className="text-body font-semibold">{pricing.affectsTitle}</h3>
-          <p className="mt-1 text-body text-muted">{pricing.affects}</p>
+      {/* Под карточками, ровно по их ширине — две плашки рядом (владелец 2026-10-27: было раскидано по углам) */}
+      <div className="price-notes" data-reveal>
+        <div className="price-note">
+          <h3 className="price-note-title">{pricing.affectsTitle}</h3>
+          <p className="text-body text-muted">{pricing.affects}</p>
         </div>
-        <div className="col-span-full md:col-span-3 lg:col-span-5 lg:col-start-7">
-          <h3 className="text-body font-semibold">{pricing.needTitle}</h3>
-          <p className="mt-1 text-body text-muted">{pricing.need}</p>
+        <div className="price-note">
+          <h3 className="price-note-title">{pricing.needTitle}</h3>
+          <p className="text-body text-muted">{pricing.need}</p>
         </div>
       </div>
     </section>
