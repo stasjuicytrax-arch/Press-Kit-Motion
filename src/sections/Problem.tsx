@@ -61,12 +61,7 @@ export function Problem() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="problem section scene-dark" data-theme="dark" data-panel aria-labelledby="problem-h">
-      {/* Огромная контурная «10 сек» — про десять секунд из подписей; на компьютере с параллаксом */}
-      <div className="problem-ten" aria-hidden="true" data-parallax="-0.25">
-        {problem.bigNumber}
-        <span>{problem.bigNumberUnit}</span>
-      </div>
+    <section ref={sectionRef} className="problem section scene-dark" data-theme="dark" aria-labelledby="problem-h">
       <div className="relative px-margin" data-reveal>
         <DisplayHeading id="problem-h" text={problem.h2} accent={problem.h2Accent} className="max-w-[14ch]" />
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:gap-6">
@@ -81,13 +76,17 @@ export function Problem() {
       <div className="problem-pan" aria-label={problem.videoLabel} role="group" data-theme="dark">
         <div ref={trackRef} className="problem-track">
           {work.artists.map((a) => (
-            <figure key={a.key} className="problem-shot">
-              <div className="hidden h-full md:block">
-                <SiteVideo site={a.key} device="desktop" label={`Сайт-пресс-кит ${a.name}`} />
+            <figure key={a.key} className="problem-item">
+              {/* Экран меньше и аккуратнее (владелец 2026-10-27): компьютер — окно 16:10, телефон — телефон */}
+              <div className="problem-shot">
+                <div className="hidden h-full md:block">
+                  <SiteVideo site={a.key} device="desktop" label={`Сайт-пресс-кит ${a.name}`} />
+                </div>
+                <div className="h-full md:hidden">
+                  <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}`} />
+                </div>
               </div>
-              <div className="h-full md:hidden">
-                <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}`} />
-              </div>
+              <figcaption className="problem-name">{a.name}</figcaption>
             </figure>
           ))}
         </div>

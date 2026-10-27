@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { SwipeHint } from "../components/SwipeHint";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { SiteVideo } from "../components/SiteVideo";
 import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
@@ -133,10 +134,6 @@ export function Work() {
           </div>
 
           <div ref={sceneRef} className="work-scene col-span-8">
-            {/* v2: огромное контурное имя артиста за сценой — меняется вместе с вкладкой */}
-            <div key={`ghost-${a.key}`} className="work-ghost" aria-hidden="true">
-              {a.name}
-            </div>
             <div key={a.key} className="work-scene-in">
               <div className="work-browser">
                 <div className="work-browser-bar" aria-hidden="true">
@@ -162,7 +159,8 @@ export function Work() {
       </div>
 
       {/* Телефон и планшет: свайп */}
-      <div ref={swipeRef} className="work-swipe mt-7 lg:hidden" data-reveal>
+      <SwipeHint className="mt-6" />
+      <div ref={swipeRef} className="work-swipe mt-3 lg:hidden" data-reveal>
         {work.artists.map((x) => (
           <figure key={x.key} className="work-card">
             <div className="work-card-screen phone-frame" data-theme="dark">

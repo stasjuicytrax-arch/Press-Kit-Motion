@@ -39,7 +39,7 @@
   --field-line: rgb(17 17 17 / 0.1);
   --cursor-ring: 36px; /* кольцо кастомного курсора */
   --band-h: clamp(140px, 13vw, 220px); /* зона перекрещённых лент */
-  --step-band: clamp(1.5rem, 1rem + 2.4vw, 3.25rem);
+  --step-band: clamp(1rem, 0.8rem + 0.9vw, 1.5rem); /* небольшая полоса приветствий */
   --scene-radius: 40px; /* скругление верха тёмной сцены, которая «наезжает» на светлый блок */
   --scrollbar-thumb: rgb(17 17 17 / 0.4);
 
@@ -47,8 +47,8 @@
   --font-sans: "Onest Variable", "Onest", "Inter Tight", system-ui, sans-serif;
   /* v2: дисплейный для заголовков (кириллица) и курсив-акцент внутри заголовка */
   --font-display: "Unbounded Variable", "Unbounded", var(--font-sans);
-  --font-accent: "Playfair Display", Georgia, serif;
-  --step-display: clamp(2.5rem, 1.1rem + 5.4vw, 7.5rem);
+  --font-accent: var(--font-display); /* курсив-акцент убран (владелец 2026-10-27), акцент — цветом */
+  --step-display: clamp(2.25rem, 1.2rem + 3.6vw, 5rem); /* заголовки секций — меньше, в 1–2 строки */
   --step-display-sm: clamp(2.25rem, 1.3rem + 2.8vw, 4.25rem); /* дисплейный в узкой колонке */
   --track-display: -0.035em;
   --leading-display: 1;
@@ -135,9 +135,9 @@
   /* Секции 7.2–7.10 (TZ.md §7) */
   --section-gap: clamp(var(--space-9), 12vw, var(--space-11));
   --caption-w: 260px;
-  --pan-w: 58vw;
+  --pan-w: clamp(280px, 28vw, 440px); /* экраны ленты «Промоутер» (было 58vw — слишком огромные) */
   --pan-ratio: 16 / 10;
-  --swipe-w: 78vw;
+  --swipe-w: 62vw; /* карточки свайпа на телефоне (было 78vw — слишком широкие) */
   --bezel: 10px;
   --carousel-w: clamp(220px, 19vw, 300px);
   --carousel-h: calc(var(--carousel-w) * 16 / 9 + 150px);
@@ -157,14 +157,15 @@
   /* Цена из стекла */
   --price-block-w: 1100px;
   --price-card-w: 352px;
-  --price-rim: 12px; /* кромка карточки цены: только здесь живое преломление (п. 10) */
+  --price-rim: 8px; /* кромка карточки цены — статичное стекло */
+  --price-rim-fill: linear-gradient(160deg, rgb(242 242 238 / 0.22), rgb(242 242 238 / 0.06) 40%, rgb(242 242 238 / 0.12)); /* taste-skill-ignore: свет на кромке стекла */
   --price-glare-r: 260px; /* радиус блика за курсором, совпадает с GLARE в Pricing.tsx */
   --price-panel-light: rgb(250 250 247 / 0.62);
   --price-panel-dark: rgb(12 14 10 / 0.82);
   --price-panel-night: rgb(25 28 22 / 0.78); /* карточки цены на ночной сцене (v2) */
   --price-panel-rim: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 0 0 1px rgb(255 255 255 / 0.35);
   --price-panel-rim-dark: inset 0 1px 0 rgb(255 255 255 / 0.22), inset 0 0 0 1px rgb(198 241 53 / 0.55);
-  --price-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.9), inset 0 0 0 1px rgb(255 255 255 / 0.3), 0 30px 60px -28px rgb(17 17 17 / 0.35);
+  --price-glass-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 30px 60px -28px rgb(0 0 0 / 0.6);
   --footer-mark-em: 6.78; /* ширина «Press Kit Motion» в em (Onest 600, трекинг -0.06em) */
   --dot-sm: 6px;
   /* Конструктор */
@@ -176,12 +177,12 @@
   --work-bar-h: 36px;
   --work-browser-w: min(100%, calc((62svh - var(--work-bar-h)) * 1.6));
   --work-phone-w: clamp(132px, 12vw, 200px); /* телефон в шоуруме «Работы» */
-  --work-card-w: 64vw; /* карточка-телефон в свайпе «Работ» на телефоне: 9:19.5 влезает в экран с подписью */
+  --work-card-w: 54vw; /* карточка-телефон в свайпе «Работ» на телефоне: 9:19.5 влезает в экран с подписью */
   --phone-bezel: 3px; /* тонкая рамка экрана телефона */
   --phone-radius: 13% / 6%; /* скругление корпуса как у современного айфона (по ширине / по высоте) */
   --field-muted: rgb(242 242 238 / 0.68); /* вторичный текст на --field, контраст ≈ 9:1 */
   --online: #34C759; /* зелёная точка «сайт онлайн» в сцене запуска */
-  --step-final: clamp(3rem, 10vw, 11rem);
+  --step-final: var(--step-display); /* финал — как остальные заголовки (было 10vw — на весь экран) */
   --drift-w: clamp(160px, 16vw, 240px);
 
   /* §5 Глубина и стекло */
@@ -238,8 +239,8 @@
     --step-hero: 27vw;
     --drop-size: 30vw;
     --hero-lead-size: 1.125rem; /* 18px на телефоне (TZ.md §7.1) */
-    --pan-w: 64vw;
-    --pan-ratio: 4 / 5;
+    --pan-w: 46vw;
+    --pan-ratio: 9 / 16;
     --builder-phone-w: min(62vw, 34svh);
   }
 }

@@ -6,7 +6,7 @@ import Lenis from "lenis";
 // те же значения, что --ease-expo / --dur-* в tokens.css.
 //  · Lenis — плавный скролл только на компьютере (мышь/тачпад); на телефоне нативная прокрутка.
 //  · Заголовки [data-split]: слова поднимаются из-под маски по очереди с лёгким наклоном.
-//  · Тёмные сцены [data-panel]: «наезжают» на светлый блок — масштаб 0.94 → 1 по скроллу.
+//  · «Наезд» тёмных сцен убран (владелец 2026-10-27: переходы чистые, без наложений).
 // prefers-reduced-motion: ничего из этого не включается, всё стоит на месте.
 export const EASE = "expo.out";
 export const DUR = { fast: 0.2, base: 0.45, slow: 0.8, reveal: 1.1 };
@@ -53,19 +53,6 @@ function revealHeadings() {
   });
 }
 
-function panels() {
-  // Только компьютер. Только transform (scale) — композитинг без пересчёта стилей и раскладки;
-  // скругление верхних углов у сцены статичное (globals.css .scene-dark)
-  if (!finePointer()) return;
-  document.querySelectorAll<HTMLElement>("[data-panel]").forEach((p) => {
-    gsap.fromTo(
-      p,
-      { scale: 0.94, transformOrigin: "50% 0%" },
-      { scale: 1, ease: "none", scrollTrigger: { trigger: p, start: "top bottom", end: "top 30%", scrub: true } },
-    );
-  });
-}
-
 function parallax() {
   if (!finePointer()) return;
   document.querySelectorAll<HTMLElement>("[data-parallax]").forEach((el) => {
@@ -86,7 +73,6 @@ export function startMotion() {
   if (reduced()) return;
   startLenis();
   revealHeadings();
-  panels();
   parallax();
   // Видео, шрифты и картинки меняют высоту блоков — пересчитать триггеры после загрузки
   window.addEventListener("load", () => ScrollTrigger.refresh());

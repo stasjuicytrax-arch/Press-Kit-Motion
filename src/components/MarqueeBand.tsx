@@ -1,10 +1,8 @@
-import { Asterisk } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
 
-// Две перекрещённые бегущие ленты (дизайн v2, 2026-10-27): лаймовая с жанрами и городами,
-// под ней тёмная с блоками пресс-кита — идут навстречу. Скорость растёт от скорости скролла
-// и плавно возвращается. Только transform: translate3d; вне экрана и во скрытой вкладке цикл стоит;
+// Одна горизонтальная лаймовая полоса с приветствиями на разных языках (владелец 2026-10-27).
+// Скорость растёт от скорости скролла и плавно возвращается. Только transform: translate3d; вне экрана и во скрытой вкладке цикл стоит;
 // prefers-reduced-motion — ленты стоят.
 const BASE = 40; // px/с
 const BOOST = 0.9; // доля скорости скролла, добавляемая к ленте
@@ -15,7 +13,7 @@ function Row({ words, className }: { words: readonly string[]; className: string
       {words.map((w, i) => (
         <span key={i} className="band-item">
           {w}
-          <Asterisk weight="bold" aria-hidden="true" className="band-star" />
+          <i aria-hidden="true">//</i>
         </span>
       ))}
     </>
@@ -51,9 +49,8 @@ export function MarqueeBand() {
       lastY = y;
       const v = (BASE + boost) * dt;
       tracks.forEach((tr, i) => {
-        const dir = i === 0 ? -1 : 1;
         x[i] = (x[i] + v) % widths[i];
-        tr.style.transform = `translate3d(${dir < 0 ? -x[i] : x[i] - widths[i]}px,0,0)`;
+        tr.style.transform = `translate3d(${-x[i]}px,0,0)`;
       });
       raf = requestAnimationFrame(frame);
     };
@@ -83,8 +80,7 @@ export function MarqueeBand() {
 
   return (
     <div ref={ref} className="band" aria-hidden="true">
-      <Row words={ru.band.bottom} className="band-row--dark" />
-      <Row words={ru.band.top} className="band-row--lime" />
+      <Row words={ru.band} className="band-row--lime" />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { SolidCta } from "../components/SolidCta";
@@ -63,42 +63,6 @@ function useTilt() {
   return ref;
 }
 
-// Кромка: четыре тонкие полосы жидкого стекла по контуру (живое преломление только здесь)
-// Полосы шире кромки и заходят под панель: их внутренний край (с бликом линзы) прячется под ней
-const RIM_W = "calc(var(--price-rim) * 2.5)";
-const RIM: React.CSSProperties[] = [
-  { inset: "0 0 auto 0", height: RIM_W },
-  { inset: "auto 0 0 0", height: RIM_W },
-  { top: "var(--price-rim)", bottom: "var(--price-rim)", left: 0, width: RIM_W },
-  { top: "var(--price-rim)", bottom: "var(--price-rim)", right: 0, width: RIM_W },
-];
-
-// На телефоне полос нет: 12 живых фильтров над бегущей надписью заметно грузили прокрутку,
-// а на узком экране кромку 12px всё равно рисует статичная тень --price-glass-shadow
-const rimOn = () => typeof window !== "undefined" && window.matchMedia("(min-width: 768px)").matches;
-
-function Rim({ dark }: { dark: boolean }) {
-  const [on] = useState(rimOn);
-  if (!on) return null;
-  return (
-    <span aria-hidden="true" className="price-rim">
-      {RIM.map((st, i) => (
-        <LiquidGlass
-          key={i}
-          refraction={10}
-          bezel={6}
-          blur={2}
-          dispersion={0.2}
-          appearance={dark ? "dark" : "light"}
-          fallbackBlur={8}
-          className="absolute !rounded-none"
-          style={{ ...st, boxShadow: "none" }}
-        />
-      ))}
-    </span>
-  );
-}
-
 function Card({ pk }: { pk: Pkg }) {
   const { pricing } = ru;
   const ref = useTilt();
@@ -108,7 +72,6 @@ function Card({ pk }: { pk: Pkg }) {
     <li className={`price-card${pk.featured ? " price-card--featured" : ""}${"premium" in pk && pk.premium ? " price-card--premium" : ""}`}>
       <div ref={ref} className="price-tilt">
         <div className="price-glass">
-          <Rim dark={pk.featured} />
           <div className="price-panel" data-theme={pk.featured ? "dark" : undefined}>
             <span aria-hidden="true" className="price-ghost" />
             <span aria-hidden="true" className="price-tint" />

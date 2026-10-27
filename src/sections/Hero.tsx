@@ -37,15 +37,18 @@ export function Hero() {
   // капли не показываем: раньше запасной кадр появлялся на медленном устройстве, исчезал,
   // и капля падала заново. На телефоне — видео живой капли (PhoneDrop). Статичный кадр —
   // только если WebGL нет/упал, reduced-motion или телефон запретил автоплей.
-  const phoneVideo = !webgl() && isPhone() && !opts.reduced;
-  const [stillOn, setStillOn] = useState(() => !webgl() && !phoneVideo);
+  // Режим капли решается ОДИН раз при загрузке: при смене ширины без перезагрузки (DevTools,
+  // поворот планшета) раньше одновременно жили 3D-капля и видео-капля — две капли
+  const [mode] = useState(() => ({ gl: webgl(), video: !webgl() && isPhone() && !opts.reduced }));
+  const phoneVideo = mode.video;
+  const [stillOn, setStillOn] = useState(() => !mode.gl && !mode.video);
   const [videoFailed, setVideoFailed] = useState(false);
   const onVideoFail = useCallback(() => {
     setVideoFailed(true);
     setStillOn(true);
   }, []);
   useEffect(() => {
-    if (webgl()) setMount(true);
+    if (mode.gl) setMount(true);
   }, []);
 
   // Статичный кадр капли стоит над «Kit»

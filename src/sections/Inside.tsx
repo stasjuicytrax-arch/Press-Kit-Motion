@@ -1,6 +1,7 @@
 import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ru } from "../content/ru";
+import { SwipeHint } from "../components/SwipeHint";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { LiquidGlassButton } from "../components/ui/apple-tahoe-liquid-glass-button";
 
@@ -49,7 +50,7 @@ export function Inside() {
 
 
   return (
-    <section className="section scene-dark" data-theme="dark" data-panel aria-labelledby="inside-h">
+    <section className="section scene-dark" data-theme="dark" aria-labelledby="inside-h">
       <div className="page-grid" data-reveal>
         <DisplayHeading id="inside-h" text={inside.h2} accent={inside.h2Accent} className="col-span-full lg:col-span-7" />
         <div className="col-span-full flex max-w-body flex-col gap-3 self-end text-body text-muted lg:col-span-4 lg:col-start-8">
@@ -123,7 +124,8 @@ export function Inside() {
       </div>
 
       {/* Телефон: свайп */}
-      <div className="inside-swipe mt-7 lg:hidden">
+      <SwipeHint className="mt-6" />
+      <div className="inside-swipe mt-3 lg:hidden">
         {inside.cards.map((c) => (
           <figure key={c.title} className="inside-card">
             <Shot base={base} shot={c.shot} title={c.title} lazy />

@@ -1,7 +1,5 @@
 @import "@fontsource-variable/onest";
 @import "@fontsource-variable/unbounded";
-@import "@fontsource/playfair-display/latin-400-italic.css";
-@import "@fontsource/playfair-display/cyrillic-400-italic.css";
 @import "./tokens.css";
 
 @tailwind base;
@@ -115,20 +113,19 @@
     isolation: isolate;
     background: var(--bg);
     color: var(--ink);
-    border-radius: var(--scene-radius) var(--scene-radius) 0 0;
   }
-  /* Световые пятна: лаймовое сверху, мятное сбоку — статичные, рисуются один раз */
+  /* Световые пятна внутри сцены. Маска гасит их к верхнему и нижнему краю: свет не «падает»
+     на соседний блок, стыки чистые (правка владельца 2026-10-27) */
   .scene-dark::before {
     content: "";
     position: absolute;
     inset: 0;
     z-index: -1;
-    border-radius: inherit;
     pointer-events: none;
     background:
-      radial-gradient(60% 45% at 85% 0%, var(--lime-haze), transparent 70%), /* taste-skill-ignore: свет в ночной сцене */
-      radial-gradient(45% 40% at 0% 55%, var(--mint-haze), transparent 70%), /* taste-skill-ignore: свет в ночной сцене */
-      radial-gradient(70% 50% at 50% 110%, var(--lime-haze), transparent 70%); /* taste-skill-ignore: свет в ночной сцене, дизайн v2 */
+      radial-gradient(55% 40% at 88% 35%, var(--lime-haze), transparent 70%), /* taste-skill-ignore: свет в ночной сцене */
+      radial-gradient(45% 35% at 5% 65%, var(--mint-haze), transparent 70%); /* taste-skill-ignore: свет в ночной сцене */
+    mask-image: linear-gradient(transparent, #000 22%, #000 78%, transparent); /* taste-skill-ignore: гасит свет к краям сцены */
   }
   /* Ночные сцены без отступа-«склейки»: свой воздух сверху и снизу */
   /* Специфичность выше, чем у «.section + .section { padding-top: 0 }» ниже по файлу */
@@ -163,16 +160,11 @@
   .band {
     position: relative;
     z-index: 3;
-    height: var(--band-h);
-    margin-bottom: calc(var(--band-h) * -0.5);
     overflow: clip;
     pointer-events: none;
   }
   .band-row {
-    position: absolute;
-    left: -5%;
-    right: -5%;
-    top: 50%;
+    position: relative;
     padding-block: var(--space-3);
     overflow: hidden;
     font-family: var(--font-display);
@@ -186,13 +178,6 @@
   .band-row--lime {
     background: var(--accent);
     color: var(--accent-ink);
-    transform: translateY(-50%) rotate(-2.5deg);
-    box-shadow: 0 0 var(--space-9) var(--lime-glow); /* taste-skill-ignore: свечение лаймовой ленты */
-  }
-  .band-row--dark {
-    background: var(--void);
-    color: var(--night-ink);
-    transform: translateY(-50%) rotate(2deg);
   }
   .band-track {
     display: flex;
@@ -208,12 +193,9 @@
     gap: 0.5em;
     padding-right: 0.5em;
   }
-  .band-star {
-    width: 0.7em;
-    height: 0.7em;
-  }
-  .band-row--dark .band-star {
-    color: var(--accent);
+  .band-item i {
+    font-style: normal;
+    opacity: 0.45;
   }
 
   /* Заголовки секций: дисплейный Unbounded, слова в масках (lib/motion.ts), курсив-акцент */
@@ -237,20 +219,13 @@
     display: inline-block;
     will-change: transform;
   }
+  /* Акцентное слово — тот же шрифт, только цвет (владелец 2026-10-27: без смеси курсива и плашки).
+     На светлом — тёмный лайм (читается на жемчужном фоне), на тёмном — чистый лайм */
   .dh-accent {
-    font-family: var(--font-accent);
-    font-style: italic;
-    font-weight: 400;
-    font-size: 1.12em;
-    letter-spacing: -0.01em;
-    line-height: 0.8;
-    /* На светлом — лаймовая плашка под словом, как маркер на афише */
-    padding-inline: 0.12em;
-    background: linear-gradient(transparent 58%, var(--accent) 58%, var(--accent) 92%, transparent 92%); /* taste-skill-ignore: маркер-плашка под акцентом */
+    font-style: normal;
+    color: var(--accent-deep);
   }
-  /* На тёмном — чистый лайм вместо плашки (свечение маска слова обрезала бы в «коробку») */
   .scene-dark .dh-accent {
-    background: none;
     color: var(--accent);
   }
 
@@ -424,16 +399,6 @@
   }
   /* Свет первого экрана (v2): только по нижним углам, вне траектории капли — её стекло
      заливает фон ровным цветом, и пятно под каплей читалось бы как дырка */
-  .hero::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background:
-      radial-gradient(40% 32% at 100% 100%, var(--lime-haze-light), transparent 72%), /* taste-skill-ignore: свет первого экрана */
-      radial-gradient(34% 28% at 0% 100%, var(--mint-haze), transparent 72%); /* taste-skill-ignore: свет первого экрана */
-  }
 
   /* Монумент. DOM-текст — h1 и LCP. Когда сцена готова, те же слова рисует WebGL
      (стекло должно их преломлять), а DOM-текст становится прозрачным, но держит место. */
@@ -604,44 +569,14 @@
   .problem-caption {
     max-width: var(--caption-w);
   }
-  /* v2: контурная «10 сек» справа за заголовком */
-  .problem-ten {
-    position: absolute;
-    top: calc(var(--section-gap) * 0.4);
-    right: var(--margin);
-    display: flex;
-    align-items: flex-start;
-    font-family: var(--font-display);
-    font-size: var(--step-ten);
-    font-weight: 700;
-    line-height: 0.8;
-    letter-spacing: -0.06em;
-    color: transparent;
-    -webkit-text-stroke: var(--ten-stroke) var(--accent);
-    opacity: 0.9;
-    pointer-events: none;
-    user-select: none;
-  }
-  .problem-ten span {
-    margin: 0.18em 0 0 0.06em;
-    font-size: 0.22em;
-    letter-spacing: 0;
-    color: var(--accent);
-    -webkit-text-stroke: 0;
-  }
-  @media (max-width: 767px) {
-    .problem-ten {
-      opacity: 0.35;
-    }
-  }
   /* Экраны панорамы: на компьютере при наведении приподнимаются и получают лаймовую кромку */
   @media (hover: hover) and (pointer: fine) {
-    .problem-shot {
+    .problem-item .problem-shot {
       transition:
         transform var(--dur-base) var(--ease-expo),
         box-shadow var(--dur-base) var(--ease-expo);
     }
-    .problem-shot:hover {
+    .problem-item:hover .problem-shot {
       transform: translateY(calc(var(--space-3) * -1)) scale(1.02);
       box-shadow: /* taste-skill-ignore: только при наведении */
         0 0 0 2px var(--accent),
@@ -659,13 +594,24 @@
     padding-inline: var(--margin);
     will-change: transform;
   }
-  .problem-shot {
+  .problem-item {
     flex: 0 0 auto;
     width: var(--pan-w);
+  }
+  .problem-shot {
     aspect-ratio: var(--pan-ratio);
-    border-radius: var(--radius-screen);
+    border-radius: var(--radius-panel);
     overflow: hidden;
     background: var(--field);
+    box-shadow: 0 0 0 1px var(--night-line); /* taste-skill-ignore: тонкая кромка экрана на тёмном */
+  }
+  .problem-name {
+    margin-top: var(--space-3);
+    font-family: var(--font-display);
+    font-size: var(--step-small);
+    font-weight: var(--display-weight);
+    letter-spacing: 0.02em;
+    color: var(--muted);
   }
 
   /* 7.3 Работы — шоурум (правки владельца 2026-10-21) */
@@ -747,25 +693,6 @@
     z-index: -1;
     pointer-events: none;
     background: radial-gradient(50% 50% at 55% 55%, var(--lime-haze-light), transparent 70%); /* taste-skill-ignore: свет за браузером */
-  }
-  .work-ghost {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: calc(var(--work-ghost) * -0.62);
-    z-index: -1;
-    overflow: hidden;
-    font-family: var(--font-display);
-    font-size: var(--work-ghost);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.05em;
-    text-align: right;
-    white-space: nowrap;
-    color: transparent;
-    -webkit-text-stroke: var(--ten-stroke) rgb(17 17 17 / 0.16);
-    pointer-events: none;
-    animation: work-ghost var(--dur-reveal) var(--ease-expo) both;
   }
   .work-tab-bar {
     display: block;
@@ -2054,18 +1981,16 @@
     }
   }
   /* Двойной безель: кромка жидкого стекла --price-rim по контуру, внутри панель */
+  /* Кромка — статичное стекло (владелец 2026-10-27: живые полосы давали рваные углы и разрывы):
+     ровный полупрозрачный ободок, блик по верхнему краю, тень */
   .price-glass {
     position: relative;
     isolation: isolate;
     padding: var(--price-rim);
     border-radius: var(--radius-screen);
     overflow: hidden;
+    background: var(--price-rim-fill);
     box-shadow: var(--price-glass-shadow); /* taste-skill-ignore: статичный блик и тень стекла */
-  }
-  .price-rim {
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
   }
   .price-panel {
     position: relative;
@@ -2446,12 +2371,6 @@
 }
 
 
-@keyframes work-ghost {
-  from {
-    opacity: 0;
-    transform: translateY(30%);
-  }
-}
 @keyframes work-progress {
   from {
     transform: scaleX(0);
@@ -2741,6 +2660,44 @@
 /* Пока грузится чанк нижних секций — место под ними, чтобы не было скачка */
 .below-placeholder {
   min-height: 100svh;
+}
+
+/* Подсказка «Листай →» над горизонтальными лентами на телефоне */
+.swipe-hint {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-2);
+  padding-inline: var(--margin);
+  font-family: var(--font-display);
+  font-size: var(--step-label);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: opacity var(--dur-base) var(--ease-out);
+}
+.swipe-hint[data-gone="true"] {
+  opacity: 0;
+}
+.swipe-hint-arrow {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  padding: 3px;
+  border-radius: var(--radius-pill);
+  background: var(--accent);
+  color: var(--accent-ink);
+  animation: swipe-nudge 1.6s var(--ease-inout) infinite;
+}
+@keyframes swipe-nudge {
+  50% {
+    transform: translateX(6px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .swipe-hint-arrow {
+    animation: none;
+  }
 }
 
 /* Плашка согласия на cookie (2026-10-22): непрозрачная, внизу экрана; пока открыта —

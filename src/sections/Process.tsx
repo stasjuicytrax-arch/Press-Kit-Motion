@@ -34,7 +34,7 @@ export function Process() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="section scene-dark" data-theme="dark" data-panel aria-labelledby="process-h">
+    <section ref={sectionRef} className="section scene-dark" data-theme="dark" aria-labelledby="process-h">
       <div className="page-grid">
         <div className="hidden lg:col-span-1 lg:col-start-1 lg:flex lg:justify-start" aria-hidden="true">
           <div className="process-rail">
