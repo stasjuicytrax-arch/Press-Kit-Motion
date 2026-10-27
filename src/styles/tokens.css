@@ -34,6 +34,7 @@
   --grain-opacity: 0.07;
   --step-ten: clamp(9rem, 3rem + 17vw, 21rem); /* контурная «10» в блоке «Промоутер» */
   --ten-stroke: clamp(1.5px, 0.18vw, 3px);
+  --work-ghost: clamp(5rem, 1rem + 9vw, 11rem); /* контурное имя артиста за сценой «Работ» */
   --band-h: clamp(140px, 13vw, 220px); /* зона перекрещённых лент */
   --step-band: clamp(1.5rem, 1rem + 2.4vw, 3.25rem);
   --scene-radius: 40px; /* скругление верха тёмной сцены, которая «наезжает» на светлый блок */

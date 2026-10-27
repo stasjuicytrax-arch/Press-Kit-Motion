@@ -123,7 +123,7 @@ export function Work() {
         <div className="work-stage page-grid">
           <div className="work-info col-span-4" aria-live="polite">
             <div key={a.key} className="work-fade flex flex-col gap-4">
-              <p className="text-head font-semibold leading-head tracking-head">{a.name}</p>
+              <p className="work-name">{a.name}</p>
               <p className="text-body">{meta(a)}</p>
               {facts(a) && <p className="text-small text-muted">{facts(a)}</p>}
               <div className="mt-2">
@@ -133,6 +133,10 @@ export function Work() {
           </div>
 
           <div ref={sceneRef} className="work-scene col-span-8">
+            {/* v2: огромное контурное имя артиста за сценой — меняется вместе с вкладкой */}
+            <div key={`ghost-${a.key}`} className="work-ghost" aria-hidden="true">
+              {a.name}
+            </div>
             <div key={a.key} className="work-scene-in">
               <div className="work-browser">
                 <div className="work-browser-bar" aria-hidden="true">
