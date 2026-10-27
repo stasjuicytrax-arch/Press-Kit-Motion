@@ -2330,6 +2330,18 @@
     opacity: 0.25;
     pointer-events: none;
   }
+  /* v2: финал — сцена переходит в подвал без шва (одна ночь), заголовок над затемнением */
+  .final.scene-dark::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: linear-gradient(to bottom, transparent 40%, var(--graphite) 96%); /* taste-skill-ignore: затемнение афиш к подвалу */
+  }
+  .scene-dark--flat::before {
+    display: none;
+  }
   .final-drift-track {
     display: flex;
     gap: var(--gutter);
@@ -2385,6 +2397,7 @@
     margin-top: var(--space-9);
     padding-inline: var(--margin);
     overflow: hidden;
+    color: var(--accent);
     font-size: calc((100vw - 2 * var(--margin)) / var(--footer-mark-em));
     font-weight: 600;
     line-height: var(--leading-hero);
