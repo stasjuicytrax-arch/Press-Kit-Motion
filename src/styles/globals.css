@@ -595,6 +595,50 @@
   .problem-caption {
     max-width: var(--caption-w);
   }
+  /* v2: контурная «10 сек» справа за заголовком */
+  .problem-ten {
+    position: absolute;
+    top: calc(var(--section-gap) * 0.4);
+    right: var(--margin);
+    display: flex;
+    align-items: flex-start;
+    font-family: var(--font-display);
+    font-size: var(--step-ten);
+    font-weight: 700;
+    line-height: 0.8;
+    letter-spacing: -0.06em;
+    color: transparent;
+    -webkit-text-stroke: var(--ten-stroke) var(--accent);
+    opacity: 0.9;
+    pointer-events: none;
+    user-select: none;
+  }
+  .problem-ten span {
+    margin: 0.18em 0 0 0.06em;
+    font-size: 0.22em;
+    letter-spacing: 0;
+    color: var(--accent);
+    -webkit-text-stroke: 0;
+  }
+  @media (max-width: 767px) {
+    .problem-ten {
+      opacity: 0.35;
+    }
+  }
+  /* Экраны панорамы: на компьютере при наведении приподнимаются и получают лаймовую кромку */
+  @media (hover: hover) and (pointer: fine) {
+    .problem-shot {
+      transition:
+        transform var(--dur-base) var(--ease-expo),
+        box-shadow var(--dur-base) var(--ease-expo);
+    }
+    .problem-shot:hover {
+      transform: translateY(calc(var(--space-3) * -1)) scale(1.02);
+      box-shadow:
+        0 0 0 2px var(--accent),
+        0 var(--space-6) var(--space-9) calc(var(--space-6) * -1) var(--lime-glow); /* taste-skill-ignore: свечение при наведении */
+    }
+  }
   .problem-pan {
     margin-top: var(--space-7);
     overflow: hidden;

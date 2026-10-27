@@ -62,7 +62,12 @@ export function Problem() {
 
   return (
     <section ref={sectionRef} className="problem section scene-dark" data-theme="dark" data-panel aria-labelledby="problem-h">
-      <div className="px-margin" data-reveal>
+      {/* Огромная контурная «10 сек» — про десять секунд из подписей; на компьютере с параллаксом */}
+      <div className="problem-ten" aria-hidden="true" data-parallax="-0.25">
+        {problem.bigNumber}
+        <span>{problem.bigNumberUnit}</span>
+      </div>
+      <div className="relative px-margin" data-reveal>
         <DisplayHeading id="problem-h" text={problem.h2} accent={problem.h2Accent} className="max-w-[14ch]" />
         <div className="mt-6 flex flex-col gap-4 md:flex-row md:gap-6">
           {problem.captions.map((c) => (

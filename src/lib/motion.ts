@@ -66,11 +66,28 @@ function panels() {
   });
 }
 
+function parallax() {
+  if (!finePointer()) return;
+  document.querySelectorAll<HTMLElement>("[data-parallax]").forEach((el) => {
+    const k = Number(el.dataset.parallax) || 0;
+    gsap.fromTo(
+      el,
+      { y: () => -k * window.innerHeight * 0.5 },
+      {
+        y: () => k * window.innerHeight * 0.5,
+        ease: "none",
+        scrollTrigger: { trigger: el.parentElement, start: "top bottom", end: "bottom top", scrub: true, invalidateOnRefresh: true },
+      },
+    );
+  });
+}
+
 export function startMotion() {
   if (reduced()) return;
   startLenis();
   revealHeadings();
   panels();
+  parallax();
   // Видео, шрифты и картинки меняют высоту блоков — пересчитать триггеры после загрузки
   window.addEventListener("load", () => ScrollTrigger.refresh());
   document.fonts?.ready.then(() => ScrollTrigger.refresh());
