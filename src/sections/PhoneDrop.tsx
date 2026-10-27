@@ -63,6 +63,9 @@ export function PhoneDrop({ heroRef, titleRef, onFail }: Props) {
   if (!box) return null;
   return (
     <div className="hero-drop-video" style={{ top: box.top, height: box.height }} aria-hidden="true">
+      {/* Первый кадр той же сцены картинкой (preload в index.html): рисуется сразу и становится
+          крупнейшим элементом экрана, а видео поверх — уже не «новый» крупнейший элемент (LCP) */}
+      <img className="hero-drop-poster" src={`${base}media/drop/drop-poster.jpg`} alt="" width={780} height={1052} {...{ fetchpriority: "high" }} />
       <video
         ref={fallRef}
         muted
@@ -74,7 +77,7 @@ export function PhoneDrop({ heroRef, titleRef, onFail }: Props) {
         <source src={`${base}media/drop/drop-fall.mp4`} type="video/mp4" />
         <source src={`${base}media/drop/drop-fall.webm`} type="video/webm" />
       </video>
-      <video ref={loopRef} muted playsInline loop preload="auto" data-on={looping}>
+      <video ref={loopRef} muted playsInline loop preload={looping ? "auto" : "none"} data-on={looping}>
         <source src={`${base}media/drop/drop-loop.mp4`} type="video/mp4" />
         <source src={`${base}media/drop/drop-loop.webm`} type="video/webm" />
       </video>

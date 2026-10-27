@@ -1,29 +1,32 @@
-import { useEffect } from "react";
+import { Suspense, lazy, useEffect } from "react";
 import { Nav } from "./components/Nav";
 import { StickyCta } from "./components/StickyCta";
 import { CookieBanner } from "./components/CookieBanner";
 import { Cursor } from "./components/Cursor";
 import { Hero } from "./sections/Hero";
 import { MarqueeBand } from "./components/MarqueeBand";
-import { Problem } from "./sections/Problem";
-import { Work } from "./sections/Work";
-import { Inside } from "./sections/Inside";
-import { Builder } from "./sections/Builder";
-import { Process } from "./sections/Process";
-import { Pricing } from "./sections/Pricing";
-import { Faq } from "./sections/Faq";
-import { FinalCta } from "./sections/FinalCta";
-import { Footer } from "./sections/Footer";
 import { startReveal } from "./lib/reveal";
-import { startMotion } from "./lib/motion";
 import { startOffscreenPause } from "./lib/offscreen";
+
+// Всё ниже первого экрана — отдельным чанком: первый экран рисуется и становится интерактивным
+// быстрее (Lighthouse: меньше стартового JS и блокировки потока). GSAP и Lenis — тоже отдельно,
+// после первой отрисовки.
+const Below = lazy(() => import("./sections/Below"));
+const Footer = lazy(() => import("./sections/Footer").then((m) => ({ default: m.Footer })));
 
 // Порядок секций — TZ.md §7: утверждение → доказательство.
 export default function App() {
-  useEffect(() => {
+  // Появления, пауза вне экрана и движение стартуют, когда нижние секции уже в DOM (onReady)
+  const onBelowReady = () => {
     startReveal();
-    startMotion();
     startOffscreenPause();
+    const go = () => import("./lib/motion").then((m) => m.startMotion());
+    const w = window as Window & { requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => void };
+    if (w.requestIdleCallback) w.requestIdleCallback(go, { timeout: 1500 });
+    else setTimeout(go, 200);
+  };
+  useEffect(() => {
+    document.documentElement.classList.add("app-ready");
   }, []);
 
   return (
@@ -32,16 +35,13 @@ export default function App() {
       <main>
         <Hero />
         <MarqueeBand />
-        <Problem />
-        <Work />
-        <Inside />
-        <Builder />
-        <Process />
-        <Pricing />
-        <Faq />
-        <FinalCta />
+        <Suspense fallback={<div className="below-placeholder" />}>
+          <Below onReady={onBelowReady} />
+        </Suspense>
       </main>
-      <Footer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
       <StickyCta />
       <CookieBanner />
       <Cursor />

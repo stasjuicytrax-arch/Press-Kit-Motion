@@ -10,6 +10,8 @@
 
 @layer base {
   html {
+    /* overflow-x: clip — а не только на body: широкие бегущие ленты и сцены не дают горизонтальный скролл */
+    overflow-x: clip;
     background: var(--bg);
     color: var(--ink);
     font-family: var(--font-sans);
@@ -524,6 +526,12 @@
     width: 100%;
     height: 100%;
   }
+  .hero-drop-poster {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
   .hero-drop-video video[data-on="false"] {
     visibility: hidden;
   }
@@ -743,7 +751,7 @@
   .work-ghost {
     position: absolute;
     left: 0;
-    right: calc(var(--work-phone-w) * -0.5);
+    right: 0;
     top: calc(var(--work-ghost) * -0.62);
     z-index: -1;
     overflow: hidden;
@@ -2728,6 +2736,11 @@
   .cursor-ring {
     display: none !important;
   }
+}
+
+/* Пока грузится чанк нижних секций — место под ними, чтобы не было скачка */
+.below-placeholder {
+  min-height: 100svh;
 }
 
 /* Плашка согласия на cookie (2026-10-22): непрозрачная, внизу экрана; пока открыта —
