@@ -129,8 +129,9 @@
       radial-gradient(70% 50% at 50% 110%, var(--lime-haze), transparent 70%); /* taste-skill-ignore: свет в ночной сцене, дизайн v2 */
   }
   /* Ночные сцены без отступа-«склейки»: свой воздух сверху и снизу */
-  .scene-dark.section,
-  .scene-dark + .section {
+  /* Специфичность выше, чем у «.section + .section { padding-top: 0 }» ниже по файлу */
+  .section.scene-dark.section,
+  .section.scene-dark + .section.section {
     padding-top: var(--section-gap);
   }
 
@@ -2246,34 +2247,64 @@
     white-space: nowrap;
   }
 
-  /* 7.8 FAQ */
+  /* 7.8 FAQ — v2: строки афиши, открытый вопрос заливается лаймом */
+  .faq-list {
+    border-top: 1px solid var(--field-line); /* taste-skill-ignore: линейка списка вопросов */
+  }
   .faq-item {
+    border-bottom: 1px solid var(--field-line); /* taste-skill-ignore: линейка списка вопросов */
     border-radius: var(--radius-panel);
-    transition: background-color var(--dur-fast) var(--ease-out);
+    transition:
+      background-color var(--dur-base) var(--ease-expo),
+      border-color var(--dur-base) var(--ease-expo);
   }
   .faq-item[open] {
-    background: var(--surface);
+    background: var(--accent);
+    color: var(--accent-ink);
+    border-color: transparent;
   }
   .faq-q {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-4);
+    gap: var(--space-5);
     min-height: var(--tap);
-    padding: var(--space-4) var(--space-5);
-    border-radius: var(--radius-panel);
+    padding: var(--space-5) var(--space-5);
     list-style: none;
     cursor: pointer;
   }
   .faq-q::-webkit-details-marker {
     display: none;
   }
+  .faq-num {
+    flex: 0 0 auto;
+    font-family: var(--font-display);
+    font-size: var(--step-label);
+    letter-spacing: 0.08em;
+    opacity: 0.5;
+  }
+  .faq-text {
+    flex: 1;
+    font-family: var(--font-display);
+    font-size: var(--step-lead);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--track-display);
+    line-height: 1.15;
+    transition: transform var(--dur-base) var(--ease-expo);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .faq-item:not([open]) .faq-q:hover .faq-text {
+      transform: translateX(var(--space-3));
+    }
+  }
+  .faq-a {
+    padding: 0 var(--space-5) var(--space-6) calc(var(--space-5) * 2 + 1.6em);
+  }
   .faq-chevron {
     flex: 0 0 auto;
     transition: transform var(--dur-base) var(--ease-spring);
   }
   .faq-item[open] .faq-chevron {
-    transform: rotate(180deg);
+    transform: rotate(135deg);
   }
 
   /* 7.9 Финальный призыв */
