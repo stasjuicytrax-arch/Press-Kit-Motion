@@ -634,7 +634,7 @@
     }
     .problem-shot:hover {
       transform: translateY(calc(var(--space-3) * -1)) scale(1.02);
-      box-shadow:
+      box-shadow: /* taste-skill-ignore: только при наведении */
         0 0 0 2px var(--accent),
         0 var(--space-6) var(--space-9) calc(var(--space-6) * -1) var(--lime-glow); /* taste-skill-ignore: свечение при наведении */
     }
