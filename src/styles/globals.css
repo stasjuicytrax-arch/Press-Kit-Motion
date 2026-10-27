@@ -2129,10 +2129,30 @@
     display: flex;
     align-items: baseline;
     white-space: nowrap;
+    font-family: var(--font-display);
     font-size: var(--step-price);
-    font-weight: 300;
+    font-weight: 400;
     line-height: 0.9;
-    letter-spacing: var(--track-head);
+    letter-spacing: var(--track-display);
+  }
+  /* v2: на ночной сцене все карточки — тёмное стекло (светлые серели и теряли контраст) */
+  .scene-dark .price-tint {
+    background: var(--price-panel-night);
+  }
+  .scene-dark .price-glare {
+    background: radial-gradient(closest-side, rgb(242 242 238 / 0.14), transparent); /* taste-skill-ignore: блик стекла под курсором */
+  }
+  /* Хедлайнер — премиальная: лаймовый ободок со свечением, лаймовая цена, лаймовый блик */
+  .price-card--premium .price-glass {
+    box-shadow:
+      0 0 0 1.5px var(--accent),
+      0 0 var(--space-9) calc(var(--space-4) * -1) var(--lime-glow); /* taste-skill-ignore: свечение карточки «Хедлайнер» */
+  }
+  .price-card--premium .price-figure {
+    color: var(--accent);
+  }
+  .scene-dark .price-card--premium .price-glare {
+    background: radial-gradient(closest-side, rgb(198 241 53 / 0.22), transparent); /* taste-skill-ignore: лаймовый блик под курсором */
   }
   /* Знак рубля мельче, на одной линии с числом */
   .price-cur {

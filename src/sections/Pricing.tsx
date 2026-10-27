@@ -105,7 +105,7 @@ function Card({ pk }: { pk: Pkg }) {
   // «10 000 ₽»: число крупно, знак рубля мельче после него
   const amount = pk.price.replace(/s*₽$/, "");
   return (
-    <li className={`price-card${pk.featured ? " price-card--featured" : ""}`}>
+    <li className={`price-card${pk.featured ? " price-card--featured" : ""}${"premium" in pk && pk.premium ? " price-card--premium" : ""}`}>
       <div ref={ref} className="price-tilt">
         <div className="price-glass">
           <Rim dark={pk.featured} />

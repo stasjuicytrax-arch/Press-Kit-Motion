@@ -34,7 +34,8 @@ export function ArrowChip({ tone = "ink" }: { tone?: "ink" | "accent" }) {
   return (
     <span
       className={`grid size-tap shrink-0 place-items-center rounded-pill ${
-        tone === "ink" ? "bg-ink text-accent" : "bg-accent text-accent-ink"
+        // тёмный кружок — всегда --void: на ночной сцене --ink светлый, и кружок терял контраст
+        tone === "ink" ? "bg-[color:var(--void)] text-accent" : "bg-accent text-accent-ink"
       }`}
     >
       <ArrowUpRight

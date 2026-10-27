@@ -274,6 +274,7 @@ export const ru = {
         days: "10 дней",
         cta: "Выбрать Хедлайнер",
         featured: false,
+        premium: true, // Хедлайнер: лаймовое свечение, лаймовая цена (дизайн v2)
       },
     ],
     daysLabel: "Срок",
