@@ -1,3 +1,4 @@
+import { Asterisk } from "@phosphor-icons/react";
 import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
 
@@ -14,7 +15,7 @@ function Row({ words, className }: { words: readonly string[]; className: string
       {words.map((w, i) => (
         <span key={i} className="band-item">
           {w}
-          <i aria-hidden="true">✳</i>
+          <Asterisk weight="bold" aria-hidden="true" className="band-star" />
         </span>
       ))}
     </>

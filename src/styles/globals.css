@@ -205,11 +205,11 @@
     gap: 0.5em;
     padding-right: 0.5em;
   }
-  .band-item i {
-    font-style: normal;
-    font-size: 0.7em;
+  .band-star {
+    width: 0.7em;
+    height: 0.7em;
   }
-  .band-row--dark .band-item i {
+  .band-row--dark .band-star {
     color: var(--accent);
   }
 
