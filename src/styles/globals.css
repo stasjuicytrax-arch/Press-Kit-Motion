@@ -957,6 +957,18 @@
     height: var(--carousel-h);
     perspective: var(--carousel-perspective);
   }
+  /* v2: лаймовый «прожектор» под центральной карточкой */
+  .carousel-stage::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 8%;
+    width: calc(var(--carousel-w) * 2.4);
+    height: calc(var(--carousel-w) * 1.9);
+    transform: translateX(-50%);
+    pointer-events: none;
+    background: radial-gradient(closest-side, var(--lime-haze), transparent); /* taste-skill-ignore: прожектор под карточкой */
+  }
   .carousel-card {
     position: absolute;
     left: 50%;
@@ -990,7 +1002,20 @@
     text-align: center;
   }
   .carousel-caption > span:first-child {
+    font-family: var(--font-display);
     font-size: var(--step-caption);
+    font-weight: var(--display-weight);
+    letter-spacing: var(--track-display);
+  }
+  /* На тёмной сцене неактивные точки — светлые полупрозрачные, иначе сливаются с фоном */
+  .scene-dark .carousel-dot:not([aria-selected="true"]) {
+    background-color: rgb(242 242 238 / 0.28);
+  }
+  /* v2: центральная карточка — светящийся лаймовый ободок */
+  .carousel-card[aria-hidden="false"] .carousel-glass {
+    box-shadow:
+      0 0 0 1.5px var(--accent),
+      0 var(--space-6) var(--space-10) calc(var(--space-7) * -1) var(--lime-glow); /* taste-skill-ignore: свечение центральной карточки */
   }
   /* Кадр 9:16 мобильной версии сайта на всю карточку, без подложки и рамки.
      Кромка — тонкое жидкое стекло (--carousel-rim): блик сверху, мягкая тень по контуру */
