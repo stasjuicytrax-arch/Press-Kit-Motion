@@ -420,6 +420,8 @@ export const ru = {
       [{ label: "Политика конфиденциальности", href: "privacy/" }],
     ],
     legal: "© 2026 Press Kit Motion · Сайт использует Яндекс Метрику",
+    // Разработчик сайта (владелец 2026-10-27)
+    credit: { label: "Разработка сайта —", name: "brandknight.ru", href: "https://brandknight.ru" },
     // TODO-OWNER: данные исполнителя (после оформления самозанятости)
     top: "Наверх",
   },

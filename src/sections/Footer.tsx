@@ -37,7 +37,16 @@ export function Footer() {
         ))}
       </p>
       <div className="footer-legal">
-        <span>{footer.legal}</span>
+        <span>
+          {footer.legal}
+          <span className="footer-credit">
+            {" · "}
+            {footer.credit.label}{" "}
+            <a href={footer.credit.href} target="_blank" rel="noopener" className="underline">
+              {footer.credit.name}
+            </a>
+          </span>
+        </span>
         <a href="#top" className="inline-flex min-h-tap items-center gap-2 underline">
           {footer.top}
           <ArrowUp aria-hidden="true" className="size-icon-sm" />

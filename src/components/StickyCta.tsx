@@ -14,8 +14,8 @@ export function StickyCta() {
   useEffect(() => {
     const root = document.documentElement;
     const hero = document.getElementById("top");
-    const blockers = [...document.querySelectorAll("[data-hide-sticky]")];
     const visible = new Set<Element>();
+    const watched = new Set<Element>();
 
     const heroObs = new IntersectionObserver(([e]) => setPastHero(!e.isIntersecting));
     if (hero) heroObs.observe(hero);
@@ -24,7 +24,17 @@ export function StickyCta() {
       for (const e of entries) e.isIntersecting ? visible.add(e.target) : visible.delete(e.target);
       setBlocked(visible.size > 0);
     });
-    blockers.forEach((b) => blockObs.observe(b));
+    // Нижние секции грузятся отдельным чанком позже — подхватываем блоки по мере появления
+    const watch = () =>
+      document.querySelectorAll("[data-hide-sticky]").forEach((b) => {
+        if (!watched.has(b)) {
+          watched.add(b);
+          blockObs.observe(b);
+        }
+      });
+    watch();
+    const domObs = new MutationObserver(watch);
+    domObs.observe(document.body, { childList: true, subtree: true });
 
     const menuObs = new MutationObserver(() => setMenuOpen(root.classList.contains("menu-open")));
     menuObs.observe(root, { attributes: true, attributeFilter: ["class"] });
@@ -32,6 +42,7 @@ export function StickyCta() {
     return () => {
       heroObs.disconnect();
       blockObs.disconnect();
+      domObs.disconnect();
       menuObs.disconnect();
     };
   }, []);
