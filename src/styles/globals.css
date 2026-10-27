@@ -2144,7 +2144,7 @@
   }
   /* Хедлайнер — премиальная: лаймовый ободок со свечением, лаймовая цена, лаймовый блик */
   .price-card--premium .price-glass {
-    box-shadow:
+    box-shadow: /* taste-skill-ignore: свечение Хедлайнера */
       0 0 0 1.5px var(--accent),
       0 0 var(--space-9) calc(var(--space-4) * -1) var(--lime-glow); /* taste-skill-ignore: свечение карточки «Хедлайнер» */
   }
