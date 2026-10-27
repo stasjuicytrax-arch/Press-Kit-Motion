@@ -23,7 +23,7 @@
 
 import { chromium } from "playwright";
 import { execFileSync } from "node:child_process";
-import { mkdirSync, rmSync, writeFileSync, statSync, readdirSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync, statSync, readdirSync, renameSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { SITES } from "./sites.mjs";
 
@@ -192,8 +192,24 @@ async function record(browser, key, site, kind) {
   }
   const secs = ((Date.now() - t0) / 1000).toFixed(0);
 
+  // Сайты-слайдеры (cleanup: true): между слайдами сайт на миг становится чёрным, а между жестами
+  // кадр подолгу стоит — ролик выглядит «тормозящим» (владелец 2026-10-27, DJ Nagoo).
+  // Чёрные кадры (PNG в разы меньше среднего) выкидываем, кадры перенумеровываем; долгие
+  // стоп-кадры сжимает mpdecimate при кодировании.
+  if (site.cleanup) {
+    const names = readdirSync(raw).filter((n) => n.endsWith(".png")).sort();
+    const sizes = names.map((n) => statSync(join(raw, n)).size);
+    const median = [...sizes].sort((a, b) => a - b)[Math.floor(sizes.length / 2)];
+    const keep = names.filter((_, i) => sizes[i] > median * 0.35);
+    names.forEach((n) => renameSync(join(raw, n), join(raw, "o_" + n)));
+    keep.forEach((n, i) => renameSync(join(raw, "o_" + n), join(raw, `f_${String(i).padStart(4, "0")}.png`)));
+    readdirSync(raw).filter((n) => n.startsWith("o_")).forEach((n) => rmSync(join(raw, n)));
+    console.log(`  ${kind}: убрано чёрных кадров ${names.length - keep.length} из ${names.length}`);
+  }
+
   // Кодирование
-  const scale = `scale=${dev.outWidth}:-2:flags=lanczos,format=yuv420p`;
+  const dedupe = site.cleanup ? "mpdecimate=hi=768:lo=320:frac=0.5:max=10,setpts=N/FRAME_RATE/TB," : "";
+  const scale = `${dedupe}scale=${dev.outWidth}:-2:flags=lanczos,format=yuv420p`;
   const input = ["-framerate", String(FPS), "-i", join(raw, "f_%04d.png")];
   const mp4 = join(dir, `${kind}.mp4`);
   const webm = join(dir, `${kind}.webm`);

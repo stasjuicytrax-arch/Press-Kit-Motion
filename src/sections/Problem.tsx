@@ -1,52 +1,14 @@
-import { useEffect, useRef } from "react";
 import { ru } from "../content/ru";
 import { DisplayHeading } from "../components/DisplayHeading";
 import { SiteVideo } from "../components/SiteVideo";
-import { SwipeHint } from "../components/SwipeHint";
 
 // Проблема — «Заголовок как подпись к панораме» (TZ.md §7.2).
-// Лента из записей всех сайтов — прокручивается вбок сама (свайп, тачпад, перетаскивание мышью).
-// Десктоп — десктопные записи 16:10, телефон — мобильные в рамке 4:5.
+// Лента из записей всех сайтов медленно и бесконечно плывёт влево, как афиши в финале
+// (владелец 2026-10-27). Две одинаковые половины, CSS-анимация translateX(−50%) — шов не виден.
+// При наведении на компьютере стоит; вне экрана стоит (data-pause-offscreen).
+// Десктоп — десктопные записи 16:10, телефон — мобильные 9:16.
 export function Problem() {
   const { problem, work } = ru;
-  const trackRef = useRef<HTMLDivElement>(null);
-
-  // Лента — обычная горизонтальная прокрутка (владелец 2026-10-27: «не работает скролл»):
-  // свайп и тачпад/Shift+колесо нативно, мышью — перетаскиванием
-  useEffect(() => {
-    const row = trackRef.current;
-    if (!row || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
-    let down = false;
-    let x0 = 0;
-    let s0 = 0;
-    let moved = false;
-    const onDown = (e: PointerEvent) => {
-      down = true;
-      moved = false;
-      x0 = e.clientX;
-      s0 = row.scrollLeft;
-    };
-    const onMove = (e: PointerEvent) => {
-      if (!down) return;
-      const dx = e.clientX - x0;
-      if (Math.abs(dx) > 4) moved = true;
-      row.scrollLeft = s0 - dx;
-    };
-    const onUp = () => (down = false);
-    const onClick = (e: MouseEvent) => {
-      if (moved) e.preventDefault();
-    };
-    row.addEventListener("pointerdown", onDown);
-    window.addEventListener("pointermove", onMove);
-    window.addEventListener("pointerup", onUp);
-    row.addEventListener("click", onClick, true);
-    return () => {
-      row.removeEventListener("pointerdown", onDown);
-      window.removeEventListener("pointermove", onMove);
-      window.removeEventListener("pointerup", onUp);
-      row.removeEventListener("click", onClick, true);
-    };
-  }, []);
 
   return (
     <section className="problem section scene-dark" data-theme="dark" aria-labelledby="problem-h">
@@ -61,23 +23,38 @@ export function Problem() {
         </div>
       </div>
 
-      <SwipeHint className="mt-7 problem-hint" />
-      <div ref={trackRef} className="problem-pan" aria-label={problem.videoLabel} role="group" data-theme="dark">
+      <div className="problem-pan" aria-label={problem.videoLabel} role="group" data-theme="dark" data-pause-offscreen>
         <div className="problem-track">
-          {work.artists.map((a) => (
-            <figure key={a.key} className="problem-item">
-              {/* Экран меньше и аккуратнее (владелец 2026-10-27): компьютер — окно 16:10, телефон — телефон */}
-              <div className="problem-shot">
-                <div className="hidden h-full md:block">
-                  <SiteVideo site={a.key} device="desktop" label={`Сайт-пресс-кит ${a.name}`} />
+          <div className="problem-half">
+            {work.artists.map((a) => (
+              <figure key={a.key} className="problem-item">
+                <div className="problem-shot">
+                  <div className="hidden h-full md:block">
+                    <SiteVideo site={a.key} device="desktop" label={`Сайт-пресс-кит ${a.name}`} />
+                  </div>
+                  <div className="h-full md:hidden">
+                    <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}`} />
+                  </div>
                 </div>
-                <div className="h-full md:hidden">
-                  <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}`} />
+                <figcaption className="problem-name">{a.name}</figcaption>
+              </figure>
+            ))}
+          </div>
+          <div className="problem-half" aria-hidden="true">
+            {work.artists.map((a) => (
+              <figure key={a.key} className="problem-item">
+                <div className="problem-shot">
+                  <div className="hidden h-full md:block">
+                    <SiteVideo site={a.key} device="desktop" label={`Сайт-пресс-кит ${a.name}`} />
+                  </div>
+                  <div className="h-full md:hidden">
+                    <SiteVideo site={a.key} device="mobile" label={`Сайт-пресс-кит ${a.name}`} />
+                  </div>
                 </div>
-              </div>
-              <figcaption className="problem-name">{a.name}</figcaption>
-            </figure>
-          ))}
+                <figcaption className="problem-name">{a.name}</figcaption>
+              </figure>
+            ))}
+          </div>
         </div>
       </div>
     </section>

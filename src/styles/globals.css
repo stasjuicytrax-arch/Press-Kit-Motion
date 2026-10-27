@@ -165,11 +165,11 @@
   }
   .band-row {
     position: relative;
-    padding-block: var(--space-3);
+    padding-block: var(--space-2);
     overflow: hidden;
     font-family: var(--font-display);
     font-size: var(--step-band);
-    font-weight: 600;
+    font-weight: 400;
     line-height: 1;
     letter-spacing: -0.02em;
     text-transform: uppercase;
@@ -587,12 +587,27 @@
     margin-top: var(--space-7);
     overflow: hidden;
   }
-  /* Сдвиг ленты пишет Problem.tsx прямо в transform (без CSS-переменной) */
+  /* Бесконечная лента: две одинаковые половины, сдвиг на −50% за --pan-loop — без шва */
   .problem-track {
     display: flex;
-    gap: var(--gutter);
-    padding-inline: var(--margin);
+    width: max-content;
+    animation: drift var(--pan-loop) linear infinite;
     will-change: transform;
+  }
+  .problem-half {
+    display: flex;
+    gap: var(--gutter);
+    padding-right: var(--gutter);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    .problem-pan:hover .problem-track {
+      animation-play-state: paused;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .problem-track {
+      animation: none;
+    }
   }
   .problem-item {
     flex: 0 0 auto;
@@ -2690,26 +2705,6 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--accent);
-}
-
-/* Лента «Промоутер»: горизонтальная прокрутка без полосы, мышью — перетаскиванием */
-.problem-pan {
-  overflow-x: auto !important;
-  scrollbar-width: none;
-  cursor: grab;
-}
-.problem-pan::-webkit-scrollbar {
-  display: none;
-}
-.problem-pan:active {
-  cursor: grabbing;
-}
-.problem-pan video {
-  pointer-events: none;
-}
-/* Подсказка «Листай» у ленты «Промоутер» — на всех экранах */
-.problem-hint.swipe-hint {
-  display: flex;
 }
 
 /* Подсказка «Листай →» над горизонтальными лентами на телефоне */
